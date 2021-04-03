@@ -146,18 +146,6 @@ export default class WebsocketManager {
         return;
     }
 
-    console.log(packet);
-
-    client.emit(
-      packet.data.command,
-      packet.data.data as {
-        type: number;
-        data: any;
-        id?: number;
-        lengths?: number;
-      }
-    );
-
     if (packet.data.id) this.id = packet.data.id + 1;
 
     switch (packet.data.command) {
@@ -184,13 +172,50 @@ export default class WebsocketManager {
       case "migrate":
         this.reconnect(packet.data.data.endpoint);
         break;
+      case "nope":
+        console.error(
+          `${packet.data.command.toUpperCase()}: ${packet.data.reason}`
+        );
+        break;
+      case "error":
+        console.error(
+          `${packet.data.command.toUpperCase()}: ${packet.data.data}`
+        );
+        break;
+      case "kick":
+        console.error(
+          `${packet.data.command.toUpperCase()}: ${packet.data.data.reason}`
+        );
+        break;
     }
+
+    if (
+      ![
+        "Buffer",
+        "error",
+        "hello",
+        "ige",
+        "migrate",
+        "migrated",
+        "nope",
+        "ok",
+      ].includes(packet.data.command)
+    )
+      client.emit(
+        packet.data.command,
+        packet.data.data as {
+          type: number;
+          data: any;
+          id?: number;
+          lengths?: number;
+        }
+      );
   }
 
   public send(msg: any): void {
     try {
       const buffer = msgpack.encode(msg);
-      this.socket.send(buffer);
+      if (this.socket.OPEN) this.socket.send(buffer);
       this.messageHistory.push(buffer);
     } catch (e) {
       console.error(e);
@@ -200,7 +225,7 @@ export default class WebsocketManager {
   private heartbeat(ms: number): NodeJS.Timeout {
     return setTimeout(() => {
       const heartbeat = Buffer.from([0xb0, 0x0b]);
-      this.socket.send(heartbeat); // Heartbeat payload
+      if (this.socket.OPEN) this.socket.send(heartbeat); // Heartbeat payload
     }, ms);
   }
 

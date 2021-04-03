@@ -36,15 +36,18 @@ export default class Client extends EventEmitter {
   private roomID!: string;
 
   public token!: string;
-  public social: object = {
+  public social: ClientSocial = {
     message: this._socialDM.bind(this),
     invite: this._socialInvite.bind(this),
     presence: this._socialPresence.bind(this),
   };
-  public room: object = {
-    join: this.join.bind(this),
-    leave: this.leave.bind(this),
-    mode: this.mode.bind(this),
+  public room: ClientRoom = {
+    join: this._join.bind(this),
+    leave: this._leave.bind(this),
+    selfMode: this._switchBracket.bind(this),
+    setMode: this._switchBracketHost.bind(this),
+    updateSettings: this._updateConfig.bind(this),
+    message: this._chat.bind(this),
   };
 
   /**
@@ -101,21 +104,52 @@ export default class Client extends EventEmitter {
   /**
    * @param {string} room - Room ID.
    */
-  private join(r: string): void {
+  private _join(r: string): void {
     this.ws.send({ id: this.ws.id, command: "joinroom", data: r });
+    this.room.id = r;
   }
 
-  /**
-   * @param {string} presence - Room ID.
-   */
-  private leave(): void {
+  private _leave(): void {
     this.ws.send({ id: this.ws.id, command: "leaveroom", data: false });
+    this.room.id = undefined;
   }
 
   /**
    * @param {string} mode - Mode.
    */
-  private mode(mode: "player" | "special"): void {
+  private _switchBracket(mode: "player" | "spectator"): void {
     this.ws.send({ id: this.ws.id, command: "switchbracket", data: mode });
   }
+
+  private _switchBracketHost(user: string, mode: "player" | "spectator"): void {
+    this.ws.send({
+      id: this.ws.id,
+      command: "switchbrackethost",
+      data: { uid: user, bracket: mode },
+    });
+  }
+
+  private _updateConfig(options: { index: string; value: any }[]): void {
+    this.ws.send({ id: this.ws.id, command: "updateconfig", data: options });
+  }
+
+  private _chat(message: string): void {
+    this.ws.send({ id: this.ws.id, command: "chat", data: message });
+  }
+}
+
+interface ClientRoom {
+  join(r: string): void;
+  leave(): void;
+  selfMode(mode: "player" | "spectator"): void;
+  setMode(user: string, mode: "player" | "spectator"): void;
+  updateSettings(options: { index: string; value: any }[]): void;
+  message(message: string): void;
+  id?: string;
+}
+
+interface ClientSocial {
+  message(recipient: string, msg: string): void;
+  invite(recipient: string): void;
+  presence(presence: Payloads.Presence): void;
 }
