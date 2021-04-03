@@ -5,15 +5,7 @@ export class Client {
   /**
    * @type {string} - Client token.
    */
-  public token!: string;
-
-  /**
-   * @constructor
-   * @param {Handling} handling - TETR.IO handling settings.
-   */
-  public constructor(
-    public handling: Handling = { arr: "1", das: "1", sdf: "5", safelock: true }
-  );
+  public token: string;
 
   public social: ClientSocial;
   public room: ClientRoom;
