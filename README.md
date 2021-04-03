@@ -29,6 +29,7 @@ $ npm i tetr.js --save
 ## Technologies
 
 - [TypeScript](https://www.typescriptlang.org/)
+- [TypeDoc](https://typedoc.org//)
 
 ## Contributing
 
