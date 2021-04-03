@@ -1,1 +1,5 @@
-{ "entryPoints": ["src/classes/Client.d.ts"], "out": "docs" }
+{
+  "name": "TETR.JS",
+  "out": "docs",
+  "entryPoints": "src/classes/Client.d.ts"
+}
