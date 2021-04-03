@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/img/gips_scaled.png">
+  <img src="logo.png">
 </p>
 
 <p align="center">

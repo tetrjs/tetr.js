@@ -45,8 +45,12 @@ export default class Client extends EventEmitter {
     this.ws = new WebsocketManager(this);
   }
 
-  public login(token: string) {
+  public login(token: string): void {
     this.token = token;
     this.ws.connect();
+  }
+
+  public socialDM(recipient: string, msg: string): void {
+    this.ws.send({ command: "social.dm", data: { recipient, msg } });
   }
 }
