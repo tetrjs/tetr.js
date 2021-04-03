@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
+ An API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 </p>
 
 <p align="center">
