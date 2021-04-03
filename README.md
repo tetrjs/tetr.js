@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-A mid-level Game Engine for TypeScript
+API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 </p>
 
 <p align="center">
