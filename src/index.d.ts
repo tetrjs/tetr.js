@@ -24,108 +24,85 @@ SOFTWARE.
 
 */
 
-import WebsocketManager from "./WebsocketManager";
+export type ClientEvent =
+  | "ready"
+  | "message"
+  | "game_update"
+  | "social_dm"
+  | "social_invite"
+  | "social_presence"
+  | "start_multiplayer";
 
-class EventEmitter {
-  private events: EventEmitterEvent[] = [];
-
-  public on(event: ClientEvent, func: Function): void {
-    this.events.push({
-      event,
-      func,
-    });
-  }
-
-  public emit(event: ClientEvent, args?: any) {
-    const array = this.events.filter((x) => x.event == event);
-
-    array.forEach((element) => {
-      if (args) element.func(args);
-      else element.func();
-    });
-  }
-}
-
-interface EventEmitterEvent {
-  event: string;
-  func: Function;
-}
-
-export class Client extends EventEmitter {
-  private ws!: WebsocketManager;
+export class Client {
+  /* Properties */
 
   /**
    * @type {string} token - The client's token.
    */
-  public token!: string;
+  public token: string;
+
   /**
    * @type {ClientUser} user - The client's user.
    */
-  public user!: ClientUser;
+  public user: ClientUser;
+
   /**
    * @type {Room} - The client's current room.
    */
-  public room!: Room;
+  public room: Room;
+
+  /* Constructor */
+
+  /**
+   * @type {Handling} handling - The client's settings.
+   */
+  public handling: Handling;
 
   /**
    * @constructor
    * @param {Handling} handling - The client's settings.
    */
-  public constructor(
-    public handling: Handling = { arr: "1", das: "1", sdf: "5", safelock: true }
-  ) {
-    super();
+  public constructor(handling: Handling);
 
-    this.ws = new WebsocketManager(this);
-
-    this.room = new Room(this.ws);
-  }
+  /* Methods */
 
   /**
    * @returns {void}
    * @param {string} token - The client's token.
    */
+  public login(token: string): void;
 
-  public login(token: string): void {
-    this.token = token;
-    this.ws.connect();
-  }
+  /**
+   * @returns {void}
+   * @param {Event} event - The event to set it's function for.
+   * @param {Function} func - The function to call when emitted.
+   */
+  public on(event: ClientEvent, func: Function): void;
 
   /**
    * @returns {void}
    * @param {string} room - The room to join.
    */
-  public joinRoom(room: string): void {
-    if (this.room.id) {
-      this.leaveRoom();
-    }
-
-    this.ws.send({ id: this.ws.messageID, command: "joinroom", data: room });
-
-    this.room.id = room;
-  }
+  public joinRoom(room: string): void;
   /**
    * @returns {void}
    */
-  public leaveRoom(): void {
-    this.ws.send({ id: this.ws.messageID, command: "leaveroom", data: false });
-
-    this.room.id = undefined;
-  }
+  public leaveRoom(): void;
   /**
    * @returns {void}
    */
-  public destroy(): void {
-    this.ws.disconnect();
-  }
+  public destroy(): void;
 }
 
 export class ClientUser {
+  /* Constructor */
+  public id: string;
+
   /**
    * @constructor
    * @param {string} id - The client's ID.
    */
-  public constructor(private ws: WebsocketManager) {}
+  public constructor(id: string);
 
   /* Methods */
   /**
@@ -133,13 +110,13 @@ export class ClientUser {
    * @param {string} user - The user to send the message to.
    * @param {string} message - The message content.
    */
-  public message(user: string, message: string): void {
-    this.ws.send({
-      command: "social.dm",
-      data: { recipient: user, msg: message },
-    });
-  }
+  public message(user: string, message: string): void;
 
+  /**
+   * @returns {void}
+   * @param {"online" | "away" | "busy" | "invisible"} status - The type of presence.
+   * @param {string} message - The presence details.
+   */
   public setPresence(options: {
     status: "online" | "away" | "busy" | "invisible";
     detail:
@@ -162,67 +139,13 @@ export class ClientUser {
       | "tl_end"
       | "tl_mn_complete"
       | string;
-  }): void {
-    this.ws.send({ command: "social.presence", data: options });
-  }
-
-  public invite(user: string): void {
-    this.ws.send({ command: "social.invite", data: user });
-  }
-}
-
-export class Room {
-  /**
-   * @type {string} id -  The room ID.
-   */
-  public id?: string;
-
-  public constructor(private ws: WebsocketManager) {}
+  }): void;
 
   /**
    * @returns {void}
-   * @param {string} msg - The message content.
+   * @param {string} user - The user to invite.
    */
-  public message(msg: string): void {
-    this.ws.send({ id: this.ws.messageID, command: "chat", data: msg });
-  }
-
-  /**
-   * @returns {void}
-   * @param {"player" | "spectator"} mode - The mode to set.
-   */
-  public selfMode(mode: "player" | "spectator"): void {
-    this.ws.send({
-      id: this.ws.messageID,
-      command: "switchbracket",
-      data: mode,
-    });
-  }
-  /**
-   * @returns {void}
-   * @param {string} user - The user's ID.
-   * @param {"player" | "spectator"} mode - The mode to set.
-   */
-  public setMode(user: string, mode: "player" | "spectator"): void {
-    this.ws.send({
-      id: this.ws.messageID,
-      command: "switchbrackethost",
-      data: { uid: user, bracket: mode },
-    });
-  }
-
-  /**
-   * @returns {void}
-   * @param {{ index: string; value: any }[]} options - The configuration.
-   */
-
-  public setConfig(options: { index: string; value: any }[]): void {
-    this.ws.send({
-      id: this.ws.messageID,
-      command: "updateconfig",
-      data: options,
-    });
-  }
+  public invite(user: string): void;
 }
 
 export interface Handling {
@@ -232,11 +155,38 @@ export interface Handling {
   safelock: boolean;
 }
 
-export type ClientEvent =
-  | "ready"
-  | "message"
-  | "game_update"
-  | "social_dm"
-  | "social_invite"
-  | "social_presence"
-  | "start_multiplayer";
+export class Room {
+  /* Properties */
+
+  /**
+   * @type {string} id -  The room ID.
+   */
+  public id?: string;
+
+  /* Methods */
+
+  /**
+   * @returns {void}
+   * @param {string} msg - The message content.
+   */
+  public message(msg: string): void;
+
+  /**
+   * @returns {void}
+   * @param {"player" | "spectator"} mode - The mode to set.
+   */
+  public selfMode(mode: "player" | "spectator"): void;
+
+  /**
+   * @returns {void}
+   * @param {string} user - The user's ID.
+   * @param {"player" | "spectator"} mode - The mode to set.
+   */
+  public setMode(user: string, mode: "player" | "spectator"): void;
+
+  /**
+   * @returns {void}
+   * @param {{ index: string; value: any }[]} options - The configuration.
+   */
+  public setConfig(options: { index: string; value: any }[]): void;
+}

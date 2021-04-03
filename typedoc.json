@@ -1,4 +1,4 @@
 {
   "out": "docs",
-  "entryPoints": "src/classes/Client.ts"
+  "entryPoints": "src/index.ts"
 }
