@@ -38,13 +38,15 @@ export default class WebsocketManager {
   constructor(private client: Client) {}
 
   private async reconnect(endpoint: string): Promise<void> {
+    if (this.socket) this.socket.close();
+
     if (this.heartbeatTimeout) clearTimeout(this.heartbeatTimeout);
     this.socket = new WebSocket(endpoint);
     this.socket.onopen = () => {
       const resume: Payloads.Resume = {
         command: "resume",
         socketid: this.socketID,
-        resumeid: this.resumeID,
+        resumetoken: this.resumeID,
       };
 
       this.send(resume);

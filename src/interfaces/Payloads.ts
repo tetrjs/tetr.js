@@ -80,7 +80,7 @@ export interface Ping {
 export interface Resume {
   command: "resume";
   socketid: string;
-  resumeid: string;
+  resumetoken: string;
 }
 
 export interface SocialDM {
