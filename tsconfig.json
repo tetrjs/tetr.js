@@ -10,5 +10,9 @@
 
     "esModuleInterop": true,
     "resolveJsonModule": true
+  },
+  "typedocOptions": {
+    "entryPoints": ["src/classes/Client.d.ts"],
+    "out": "docs"
   }
 }
