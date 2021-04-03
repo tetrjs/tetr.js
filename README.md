@@ -128,7 +128,7 @@ $ npm i tetr.js --save
    */
   ```
 
-      - room.setMode
+  - room.setMode
 
   ```ts
   /**
