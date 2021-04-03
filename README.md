@@ -35,7 +35,7 @@ const { Client } = require("tetr.js");
 
 const client = new Client();
 
-client.on("authorize", () => {
+client.on("ready", () => {
   console.log("Bot online");
 });
 
@@ -53,7 +53,11 @@ Feedback and PRs are welcome!
 
 ## Discord
 
-<p align="center"><iframe src="https://canary.discord.com/widget?id=827703471822078002&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></p>
+<p align="center">
+  <a href="https://discord.gg/e3vFHq9WZz">
+    <img src="https://discordapp.com/api/guilds/827703471822078002/widget.png?style=banner3"/>
+  </a>
+</p>
 
 ## License
 
