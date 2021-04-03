@@ -143,8 +143,7 @@ $ npm i tetr.js --save
   ```ts
   /**
    * @return {void}
-   * @param { GameOptions
-    } options
+   * @param {GameOptions} options - Options to change in the room.
    */
   ```
 
