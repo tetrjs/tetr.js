@@ -28,10 +28,62 @@ import msgpack from "msgpack-lite";
 export default class WebsocketManager {
   private socket!: WebSocket;
   public id: number = 1;
+  private socketID!: string;
+  private resumeID!: string;
+  private heartbeatTimeout?: NodeJS.Timeout;
+  private messageHistory: Buffer[] = [];
+  private lastRecalculation?: number;
+  private cacheSize: number = 0;
 
   constructor(private client: Client) {}
 
-  async connect() {
+  private async reconnect(endpoint: string): Promise<void> {
+    if (this.heartbeatTimeout) clearTimeout(this.heartbeatTimeout);
+    this.socket = new WebSocket(endpoint);
+    this.socket.onopen = () => {
+      const resume: Payloads.Resume = {
+        command: "resume",
+        socketid: this.socketID,
+        resumeid: this.resumeID,
+      };
+
+      this.send(resume);
+
+      if (this.id % 100 == 0) {
+        var messagesPerSecond =
+          1000 /
+          (!this.lastRecalculation
+            ? 1
+            : (Date.now() - this.lastRecalculation) / 1000) /
+          100;
+        this.cacheSize = Math.max(100, Math.min(30 * messagesPerSecond, 2000));
+      }
+
+      const hello: Payloads.Hello = {
+        command: "hello",
+        packets: this.messageHistory.slice(
+          this.messageHistory.length - this.cacheSize,
+          this.messageHistory.length
+        ),
+      };
+
+      this.send(hello);
+
+      this.heartbeatTimeout = this.heartbeat(5000);
+
+      this.socket.onerror = (e: WebSocket.ErrorEvent) => {
+        throw new Error(e.message);
+      };
+
+      const client = this.client;
+
+      this.socket.onmessage = (e) => {
+        this.receive(e, client);
+      };
+    };
+  }
+
+  async connect(): Promise<void> {
     try {
       this.socket = new WebSocket(Constants.GATEWAY);
 
@@ -42,7 +94,11 @@ export default class WebsocketManager {
 
         this.send(payload);
 
-        this.heartbeat(5000);
+        this.heartbeatTimeout = this.heartbeat(5000);
+      };
+
+      this.socket.onerror = (e: WebSocket.ErrorEvent) => {
+        throw new Error(e.message);
       };
 
       const client = this.client;
@@ -55,7 +111,7 @@ export default class WebsocketManager {
     }
   }
 
-  private receive(e: MessageEvent, client: Client) {
+  private receive(e: MessageEvent, client: Client): void {
     let packet: Payloads.Payload = { type: 0x00, data: null };
 
     switch (Number((e.data.slice(0, 1) as Buffer[])[0])) {
@@ -104,7 +160,11 @@ export default class WebsocketManager {
 
     switch (packet.data.command) {
       case "hello":
-        this.identify(client.token, client.handling);
+        if (!this.socketID || !this.resumeID) {
+          this.socketID = packet.data.id;
+          this.resumeID = packet.data.resume;
+          this.identify(client.token, client.handling);
+        }
         break;
       case "authorize":
         const presenceData: Payloads.Presence = {
@@ -119,18 +179,23 @@ export default class WebsocketManager {
         this.send(presenceChange);
 
         break;
+      case "migrate":
+        this.reconnect(packet.data.data.endpoint);
+        break;
     }
   }
 
-  public send(msg: any) {
+  public send(msg: any): void {
     try {
-      this.socket.send(msgpack.encode(msg));
+      const buffer = msgpack.encode(msg);
+      this.socket.send(buffer);
+      this.messageHistory.push(buffer);
     } catch (e) {
       console.error(e);
     }
   }
 
-  private heartbeat(ms: number) {
+  private heartbeat(ms: number): NodeJS.Timeout {
     return setTimeout(() => {
       const heartbeat = Buffer.from([0xb0, 0x0b]);
       this.socket.send(heartbeat); // Heartbeat payload

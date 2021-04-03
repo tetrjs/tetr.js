@@ -47,9 +47,9 @@ export interface Chat {
   data: string;
 }
 
-export interface Die {
-  command: "die";
-}
+export const Die = {
+  command: "die",
+};
 
 export interface Hello {
   command: "hello";

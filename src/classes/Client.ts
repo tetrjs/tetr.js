@@ -24,7 +24,7 @@ SOFTWARE.
 
 */
 
-import WebsocketManager, { Handling } from "../managers/WebsocketManager";
+import WebsocketManager, { Handling } from "../ws/WebsocketManager";
 import * as Payloads from "../interfaces/Payloads";
 import EventEmitter from "events";
 /**
@@ -37,14 +37,14 @@ export default class Client extends EventEmitter {
 
   public token!: string;
   public social: object = {
-    message: this._socialDM,
-    invite: this._socialInvite,
-    presence: this._socialPresence,
+    message: this._socialDM.bind(this),
+    invite: this._socialInvite.bind(this),
+    presence: this._socialPresence.bind(this),
   };
-  private room: object = {
-    join: this.join,
-    leave: this.leave,
-    mode: this.mode,
+  public room: object = {
+    join: this.join.bind(this),
+    leave: this.leave.bind(this),
+    mode: this.mode.bind(this),
   };
 
   /**

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png">
+  <img src="images/logo.png">
 </p>
 
 <p align="center">
@@ -17,6 +17,7 @@ API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 - [Technologies](#technologies)
 - [Contributing](#contributing)
 - [License](#license)
+- [Disclaimer](#disclaimer)
 
 ## Install
 
@@ -35,3 +36,7 @@ Feedback and PRs are welcome!
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Disclaimer
+
+TETR.JS is not associated with TETR.IO or osk

@@ -29,6 +29,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "node test/index"
+    "test": "node test/index",
+    "dev": "npm run build && npm test"
   }
 }
