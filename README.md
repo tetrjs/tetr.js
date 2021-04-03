@@ -8,7 +8,7 @@ API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 
 <p align="center">
  <a href="https://www.typescriptlang.org/" rel="TypeScript"><img src="https://badges.frapsoft.com/typescript/version/typescript-v18.svg?v=101"></a>
- <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/bundlephobia/min/tetr.io"></a>
+ <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/bundlephobia/min/tetr.js"></a>
  <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Version"><img src=" https://img.shields.io/npm/v/tetr.js"></a>
 
 </p>

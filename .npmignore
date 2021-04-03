@@ -1,6 +1,6 @@
 test/
 .vscode/
-.env/
+.env
 .gitignore
 tsconfig.json
 src/

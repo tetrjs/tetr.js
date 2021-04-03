@@ -102,7 +102,7 @@ export default class Client extends EventEmitter {
   }
 
   /**
-   * @param {string} room - Room ID.
+   * @param {string} r - Room ID.
    */
   private _join(r: string): void {
     this.ws.send({ id: this.ws.id, command: "joinroom", data: r });
