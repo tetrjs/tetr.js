@@ -54,7 +54,9 @@ export default class WebsocketManager {
       })
     ).json();
 
-    if (!user.success) throw "Invalid Token.";
+    if (!user.success) {
+      throw "Invalid Token.";
+    }
 
     if (user.user.role !== "bot")
       throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
