@@ -88,7 +88,7 @@ export default class Client extends EventEmitter {
    * @param {string} recipient - The recipient's ID.
    */
   private _socialInvite(recipient: string): void {
-    if (!this.roomID) throw new Error("Client is not in a invitable lobby!");
+    if (!this.roomID) throw new Error("Client is not in a inevitable lobby!");
     if (!this.ws) throw new Error("test");
 
     this.ws.send({ command: "social.invite", data: recipient });

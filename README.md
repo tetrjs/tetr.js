@@ -177,7 +177,7 @@ $ npm i tetr.js --save
 
 ### Event
 
-A good expelentation is in the unoffical documentation for TETR.IO. This can be found [here](https://github.com/Poyo-SSB/tetrio-bot-docs#pages)
+A good explanation is in the unofficial documentation for TETR.IO. This can be found [here](https://github.com/Poyo-SSB/tetrio-bot-docs#pages)
 
 ## Technologies
 
@@ -197,4 +197,4 @@ TETR.JS is not associated with TETR.IO or osk. The token provided must match an 
 
 ## Credits
 
-Special thanks to [Poyo-SSB](https://github.com/Poyo-SSB) for doccumenting how the [TETR.IO Ribbon system](https://github.com/Poyo-SSB/tetrio-bot-docs) operates.
+Special thanks to [Poyo-SSB](https://github.com/Poyo-SSB) for documenting how the [TETR.IO Ribbon system](https://github.com/Poyo-SSB/tetrio-bot-docs) operates.
