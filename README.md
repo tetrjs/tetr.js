@@ -18,6 +18,7 @@ API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 - [Contributing](#contributing)
 - [License](#license)
 - [Disclaimer](#disclaimer)
+- [Credits](#credits)
 
 ## Install
 
@@ -192,4 +193,8 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 ## Disclaimer
 
-TETR.JS is not associated with TETR.IO or osk. Code is written using [VSCode's LiveShare plugin](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare-pack), so it seems "BumpyBill" has written little amounts of code.
+TETR.JS is not associated with TETR.IO or osk. The token provided must match an account that has been approved as a bot account. Contact osk on Discord to receive such bot accounts. Code is written using [VSCode's LiveShare plugin](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare-pack), so it seems "BumpyBill" has written little amounts of code.
+
+## Credits
+
+Special thanks to [Poyo-SSB](https://github.com/Poyo-SSB) for doccumenting how the [TETR.IO Ribbon system](https://github.com/Poyo-SSB/tetrio-bot-docs) operates.
