@@ -17,6 +17,7 @@
 - [Example](#example)
 - [Technologies](#technologies)
 - [Contributing](#contributing)
+- [Discord](#discord)
 - [License](#license)
 - [Disclaimer](#disclaimer)
 - [Credits](#credits)
@@ -49,6 +50,10 @@ client.login("YOUR TOKEN HERE");
 ## Contributing
 
 Feedback and PRs are welcome!
+
+## Discord
+
+<iframe src="https://canary.discord.com/widget?id=827703471822078002&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" align="center"></iframe>
 
 ## License
 
