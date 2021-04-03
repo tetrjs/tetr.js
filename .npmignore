@@ -1,8 +1,9 @@
-test/
+examples/
 .vscode/
 .env
 .gitignore
 tsconfig.json
-src/
+typedoc.json
 images/
 assets/
+docs/
