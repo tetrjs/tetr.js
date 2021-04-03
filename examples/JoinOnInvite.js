@@ -10,4 +10,4 @@ client.on("social_invite", (data) => {
   client.joinRoom(data.room);
 });
 
-client.login("YOUR CLIENT TOKEN HERE");
+client.login("YOUR TOKEN HERE");
