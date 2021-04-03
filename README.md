@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="80%" src="https://github.com/Proximitynow19/TETR.JS/blob/f9d0a831e2302330dd3d75a396e70077957e76c3/images/large.png">
+  <img width="80%" src="https://raw.githubusercontent.com/Proximitynow19/TETR.JS/master/images/large_shadow.png">
 </p>
 
 <p align="center">
