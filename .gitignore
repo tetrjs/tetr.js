@@ -105,6 +105,3 @@ dist
 
 # VS Code Settings
 .vscode/
-
-# Testing Files
-test/

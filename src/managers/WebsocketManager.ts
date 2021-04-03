@@ -111,7 +111,7 @@ export default class WebsocketManager {
     }
   }
 
-  private send(msg: any) {
+  public send(msg: any) {
     try {
       this.socket.send(msgpack.encode(msg));
     } catch (e) {
