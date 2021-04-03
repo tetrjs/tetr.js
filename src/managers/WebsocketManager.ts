@@ -27,6 +27,7 @@ import msgpack from "msgpack-lite";
 
 export default class WebsocketManager {
   private socket!: WebSocket;
+  public id: number = 1;
 
   constructor(private client: Client) {}
 
@@ -87,9 +88,19 @@ export default class WebsocketManager {
         return;
     }
 
-    // console.log(packet);
+    console.log(packet);
 
-    client.emit(packet.data.command, packet.data.data);
+    client.emit(
+      packet.data.command,
+      packet.data.data as {
+        type: number;
+        data: any;
+        id?: number;
+        lengths?: number;
+      }
+    );
+
+    if (packet.data.id) this.id = packet.data.id + 1;
 
     switch (packet.data.command) {
       case "hello":
@@ -128,7 +139,7 @@ export default class WebsocketManager {
 
   private identify(token: string, handling: Handling): void {
     const identity: Payloads.Authorize = {
-      id: 1,
+      id: this.id,
       command: "authorize",
       data: {
         token,

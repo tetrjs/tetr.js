@@ -7,9 +7,12 @@ client.on("authorize", () => {
   console.log("Bot online");
 });
 
-client.on("social.dm", (data) => {
-  console.log("message received");
-  client.socialDM(data.data.user, "dont message me D:<");
+client.on("social.invite", (data) => {
+  client.room.join(data.roomid);
+});
+
+client.on("joinroom", () => {
+  client.room.mode("player");
 });
 
 client.login(process.env.TOKEN);

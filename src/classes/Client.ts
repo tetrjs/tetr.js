@@ -25,13 +25,32 @@ SOFTWARE.
 */
 
 import WebsocketManager, { Handling } from "../managers/WebsocketManager";
+import * as Payloads from "../interfaces/Payloads";
 import EventEmitter from "events";
-
+/**
+ * @param {Handling} handling - TETR.IO handling settings.
+ */
 export default class Client extends EventEmitter {
   // https://nodejs.dev/learn/the-nodejs-event-emitter
   private ws: WebsocketManager;
-  public token!: string;
+  private roomID!: string;
 
+  public token!: string;
+  public social: object = {
+    message: this._socialDM,
+    invite: this._socialInvite,
+    presence: this._socialPresence,
+  };
+  private room: object = {
+    join: this.join,
+    leave: this.leave,
+    mode: this.mode,
+  };
+
+  /**
+   * @constructor
+   * @param {Handling} handling - TETR.IO handling settings.
+   */
   public constructor(
     public handling: Handling = {
       arr: "1",
@@ -45,12 +64,58 @@ export default class Client extends EventEmitter {
     this.ws = new WebsocketManager(this);
   }
 
+  /**
+   * @param {string} token - Token of the client.
+   */
   public login(token: string): void {
     this.token = token;
     this.ws.connect();
   }
 
-  public socialDM(recipient: string, msg: string): void {
+  /**
+   * @param {string} recipient - The recipient's ID.
+   * @param {string} msg - Content of the message.
+   */
+
+  private _socialDM(recipient: string, msg: string): void {
     this.ws.send({ command: "social.dm", data: { recipient, msg } });
+  }
+
+  /**
+   * @param {string} recipient - The recipient's ID.
+   */
+  private _socialInvite(recipient: string): void {
+    if (!this.roomID) throw new Error("Client is not in a invitable lobby!");
+    if (!this.ws) throw new Error("test");
+
+    this.ws.send({ command: "social.invite", data: recipient });
+  }
+
+  /**
+   * @param {Payloads.Presence} presence - Presence of the client.
+   */
+  private _socialPresence(presence: Payloads.Presence): void {
+    this.ws.send({ command: "social.presence", data: presence });
+  }
+
+  /**
+   * @param {string} room - Room ID.
+   */
+  private join(r: string): void {
+    this.ws.send({ id: this.ws.id, command: "joinroom", data: r });
+  }
+
+  /**
+   * @param {string} presence - Room ID.
+   */
+  private leave(): void {
+    this.ws.send({ id: this.ws.id, command: "leaveroom", data: false });
+  }
+
+  /**
+   * @param {string} mode - Mode.
+   */
+  private mode(mode: "player" | "special"): void {
+    this.ws.send({ id: this.ws.id, command: "switchbracket", data: mode });
   }
 }

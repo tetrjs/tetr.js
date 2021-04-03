@@ -7,6 +7,11 @@
     "type": "git",
     "url": "git+https://github.com/Proximitynow19/tetr.js.git"
   },
+  "keywords": [
+    "tetr.js",
+    "tetr.io",
+    "api-wrapper"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Proximitynow19/tetr.js/issues"
@@ -21,5 +26,9 @@
     "@types/node": "^14.14.37",
     "@types/ws": "^7.4.1",
     "dotenv": "^8.2.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node test/index"
   }
 }

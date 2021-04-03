@@ -1,0 +1,8 @@
+test/
+.vscode/
+.env/
+.gitignore
+tsconfig.json
+src/
+images/
+assets/
