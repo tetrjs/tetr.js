@@ -3,17 +3,18 @@
 </p>
 
 <p align="center">
-API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
+  API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 </p>
 
 <p align="center">
- <a href="https://www.typescriptlang.org/" rel="TypeScript"><img src="https://badges.frapsoft.com/typescript/version/typescript-v18.svg?v=101"></a>
- <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/bundlephobia/min/tetr.js"></a>
- <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Version"><img src=" https://img.shields.io/npm/v/tetr.js"></a>
-
+  <!-- Flat style -->
+  <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/badge/v4.2.3-TypeScript-blue"></a>
+  <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/bundlephobia/min/tetr.js"></a>
+  <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Version"><img src=" https://img.shields.io/npm/v/tetr.js"></a>
 </p>
 
 - [Install](#install)
+- [Example](#example)
 - [Technologies](#technologies)
 - [Contributing](#contributing)
 - [License](#license)
@@ -24,6 +25,20 @@ API Wrapper For <a href="https://tetr.io/">TETR.IO</a>
 
 ```sh
 $ npm i tetr.js --save
+```
+
+## Example
+
+```js
+const { Client } = require("tetr.js");
+
+const client = new Client();
+
+client.on("authorize", () => {
+  console.log("Bot online");
+});
+
+client.login("YOUR TOKEN HERE");
 ```
 
 ## Technologies

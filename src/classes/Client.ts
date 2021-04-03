@@ -27,9 +27,7 @@ SOFTWARE.
 import WebsocketManager, { Handling } from "../ws/WebsocketManager";
 import * as Payloads from "../interfaces/Payloads";
 import EventEmitter from "events";
-/**
- * @param {Handling} handling - TETR.IO handling settings.
- */
+
 export class Client extends EventEmitter {
   // https://nodejs.dev/learn/the-nodejs-event-emitter
   private ws: WebsocketManager;
