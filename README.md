@@ -53,7 +53,7 @@ Feedback and PRs are welcome!
 
 ## Discord
 
-<iframe src="https://canary.discord.com/widget?id=827703471822078002&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" align="center"></iframe>
+<p align="center"><iframe src="https://canary.discord.com/widget?id=827703471822078002&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></p>
 
 ## License
 
