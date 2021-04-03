@@ -26,6 +26,6 @@ SOFTWARE.
 
 // A place to export all classes
 
-import Client from "./classes/Client";
+import { Client } from "./classes/Client";
 
 export { Client };

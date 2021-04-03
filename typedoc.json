@@ -1,5 +1,5 @@
 {
   "name": "TETR.JS",
   "out": "docs",
-  "entryPoints": "src/classes/Client.d.ts"
+  "entryPoints": "src/classes/Client.ts"
 }

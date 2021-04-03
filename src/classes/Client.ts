@@ -30,7 +30,7 @@ import EventEmitter from "events";
 /**
  * @param {Handling} handling - TETR.IO handling settings.
  */
-export default class Client extends EventEmitter {
+export class Client extends EventEmitter {
   // https://nodejs.dev/learn/the-nodejs-event-emitter
   private ws: WebsocketManager;
   private roomID!: string;

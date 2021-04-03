@@ -18,7 +18,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Client from "../classes/Client";
+import { Client } from "../classes/Client";
 import { Constants } from "../constants/Constants";
 import * as Payloads from "../interfaces/Payloads";
 

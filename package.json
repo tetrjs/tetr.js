@@ -33,6 +33,6 @@
     "build": "tsc",
     "test": "node test/index",
     "dev": "npm run build && npm test",
-    "docs": "typedoc"
+    "docs": "typedoc --excludePrivate"
   }
 }
