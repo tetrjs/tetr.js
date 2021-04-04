@@ -55,19 +55,23 @@ export class Client extends EventEmitter {
   private ws!: WebsocketManager;
 
   /**
+   * The client's token.
    * @type {string} token - The client's token.
    */
   public token!: string;
   /**
+   * The ClientUser object. All client-related methods and properties.
    * @type {ClientUser} user - The client's user.
    */
   public user!: ClientUser;
   /**
+   * The Room object. All room-related methods and properties.
    * @type {Room} - The client's current room.
    */
   public room!: Room;
 
   /**
+   * The handling options that the client uses when connecting to the server.
    * @constructor
    * @param {Handling} handling - The client's settings.
    */
@@ -82,6 +86,7 @@ export class Client extends EventEmitter {
   }
 
   /**
+   * Method to initiate the client.
    * @returns {void}
    * @param {string} token - The client's token.
    */
@@ -92,6 +97,7 @@ export class Client extends EventEmitter {
   }
 
   /**
+   * Get the client to join a room.
    * @returns {void}
    * @param {string} room - The room to join.
    */
@@ -105,14 +111,18 @@ export class Client extends EventEmitter {
     this.room.id = room;
   }
   /**
+   * Get the client to the leave the current room.
    * @returns {void}
    */
   public leaveRoom(): void {
+    if (!this.room.id) return;
+
     this.ws.send({ id: this.ws.messageID, command: "leaveroom", data: false });
 
     this.room.id = undefined;
   }
   /**
+   * Destroy the client and disconnect from the server.
    * @returns {void}
    */
   public destroy(): void {
@@ -122,6 +132,7 @@ export class Client extends EventEmitter {
 
 export class ClientUser {
   /**
+   * The ClientUser object. All client-related methods and properties.
    * @constructor
    * @param {string} id - The client's ID.
    */
@@ -129,6 +140,7 @@ export class ClientUser {
 
   /* Methods */
   /**
+   * Send a direct message to a user.
    * @returns {void}
    * @param {string} user - The user to send the message to.
    * @param {string} message - The message content.
@@ -140,6 +152,12 @@ export class ClientUser {
     });
   }
 
+  /**
+   * Set the client's presence.
+   * @returns {void}
+   * @param {"online" | "away" | "busy" | "invisible"} status - The type of presence.
+   * @param {string} message - The presence details.
+   */
   public setPresence(options: {
     status: "online" | "away" | "busy" | "invisible";
     detail:
@@ -166,6 +184,11 @@ export class ClientUser {
     this.ws.send({ command: "social.presence", data: options });
   }
 
+  /**
+   * Invite a user to join the client's session.
+   * @returns {void}
+   * @param {string} user - The user to invite.
+   */
   public invite(user: string): void {
     this.ws.send({ command: "social.invite", data: user });
   }
@@ -173,6 +196,7 @@ export class ClientUser {
 
 export class Room {
   /**
+   * The current room that the client is in.
    * @type {string} id -  The room ID.
    */
   public id?: string;
@@ -180,6 +204,7 @@ export class Room {
   public constructor(private ws: WebsocketManager) {}
 
   /**
+   * Send a message to the room.
    * @returns {void}
    * @param {string} msg - The message content.
    */
@@ -188,6 +213,7 @@ export class Room {
   }
 
   /**
+   * Switch the client's mode.
    * @returns {void}
    * @param {"player" | "spectator"} mode - The mode to set.
    */
@@ -199,6 +225,7 @@ export class Room {
     });
   }
   /**
+   * Switch a user's mode.
    * @returns {void}
    * @param {string} user - The user's ID.
    * @param {"player" | "spectator"} mode - The mode to set.
@@ -212,6 +239,7 @@ export class Room {
   }
 
   /**
+   * Update the room config.
    * @returns {void}
    * @param {{ index: string; value: any }[]} options - The configuration.
    */
@@ -225,10 +253,32 @@ export class Room {
   }
 }
 
+/**
+ * The handlings options that the client uses when connecting to the server.
+ * @prop {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
+ * @prop {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
+ * @prop {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
+ * @prop {boolean} safelock - Represents the "prevent accidental hard drops" setting.
+ */
 export interface Handling {
+  /**
+   * A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
+   * @type {string}
+   */
   arr: string;
+  /**
+   * A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
+   * @type {string}
+   */
   das: string;
+  /**
+   * An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
+   * @type {string}
+   */
   sdf: string;
+  /**
+   * Represents the "prevent accidental hard drops" setting.
+   */
   safelock: boolean;
 }
 

@@ -37,42 +37,49 @@ declare module "tetr.js" {
     /* Properties */
 
     /**
-     * @type {string} token - The client's token.
+     * The client's token.
+     * @type {string}
      */
     public token: string;
 
     /**
-     * @type {ClientUser} user - The client's user.
+     * The ClientUser object. All client-related methods and properties.
+     * @type {ClientUser}
      */
     public user: ClientUser;
 
     /**
-     * @type {Room} - The client's current room.
+     * The Room object. All room-related methods and properties.
+     * @type {Room}
      */
     public room: Room;
 
     /* Constructor */
 
     /**
-     * @type {Handling} handling - The client's settings.
+     * The handling options that the client uses when connecting to the server.
+     * @type {Handling}
      */
     public handling: Handling;
 
     /**
+     * The handlings options that the client uses when connecting to the server.
      * @constructor
-     * @param {Handling} handling - The client's settings.
+     * @param {Handling} handling
      */
     public constructor(handling: Handling);
 
     /* Methods */
 
     /**
+     * Method to initiate the client.
      * @returns {void}
      * @param {string} token - The client's token.
      */
     public login(token: string): void;
 
     /**
+     * Emitted when an event occurs.
      * @returns {void}
      * @param {Event} event - The event to set it's function for.
      * @param {Function} func - The function to call when emitted.
@@ -80,15 +87,18 @@ declare module "tetr.js" {
     public on(event: ClientEvent, func: Function): void;
 
     /**
+     * Get the client to join a room.
      * @returns {void}
      * @param {string} room - The room to join.
      */
     public joinRoom(room: string): void;
     /**
+     * Get the client to the leave the current room.
      * @returns {void}
      */
     public leaveRoom(): void;
     /**
+     * Destroy the client and disconnect from the server.
      * @returns {void}
      */
     public destroy(): void;
@@ -99,6 +109,7 @@ declare module "tetr.js" {
     public id: string;
 
     /**
+     * The ClientUser object. All client-related methods and properties.
      * @constructor
      * @param {string} id - The client's ID.
      */
@@ -106,6 +117,7 @@ declare module "tetr.js" {
 
     /* Methods */
     /**
+     * Send a direct message to a user.
      * @returns {void}
      * @param {string} user - The user to send the message to.
      * @param {string} message - The message content.
@@ -113,6 +125,7 @@ declare module "tetr.js" {
     public message(user: string, message: string): void;
 
     /**
+     * Set the client's presence.
      * @returns {void}
      * @param {"online" | "away" | "busy" | "invisible"} status - The type of presence.
      * @param {string} message - The presence details.
@@ -142,42 +155,40 @@ declare module "tetr.js" {
     }): void;
 
     /**
+     * Invite a user to join the client's session.
      * @returns {void}
      * @param {string} user - The user to invite.
      */
     public invite(user: string): void;
   }
 
-  export interface Handling {
-    arr: string;
-    das: string;
-    sdf: string;
-    safelock: boolean;
-  }
-
   export class Room {
     /* Properties */
 
     /**
-     * @type {string} id -  The room ID.
+     * The current room that the client is in.
+     * @type {string}
      */
     public id?: string;
 
     /* Methods */
 
     /**
+     * Send a message to the room.
      * @returns {void}
      * @param {string} msg - The message content.
      */
     public message(msg: string): void;
 
     /**
+     * Switch the client's mode.
      * @returns {void}
      * @param {"player" | "spectator"} mode - The mode to set.
      */
     public selfMode(mode: "player" | "spectator"): void;
 
     /**
+     * Switch a user's mode.
      * @returns {void}
      * @param {string} user - The user's ID.
      * @param {"player" | "spectator"} mode - The mode to set.
@@ -185,9 +196,40 @@ declare module "tetr.js" {
     public setMode(user: string, mode: "player" | "spectator"): void;
 
     /**
+     * Update the room config.
      * @returns {void}
      * @param {{ index: string; value: any }[]} options - The configuration.
      */
     public setConfig(options: { index: string; value: any }[]): void;
+  }
+
+  /**
+   * The handlings options that the client uses when connecting to the server.
+   * @prop {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
+   * @prop {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
+   * @prop {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
+   * @prop {boolean} safelock - Represents the "prevent accidental hard drops" setting.
+   */
+  export interface Handling {
+    /**
+     * A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
+     * @type {string}
+     */
+    arr: string;
+    /**
+     * A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
+     * @type {string}
+     */
+    das: string;
+    /**
+     * An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
+     * @type {string}
+     */
+    sdf: string;
+    /**
+     * Represents the "prevent accidental hard drops" setting.
+     * @type {boolean}
+     */
+    safelock: boolean;
   }
 }
