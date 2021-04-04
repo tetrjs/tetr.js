@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/Proximitynow19/tetr.js/issues"
   },
-  "homepage": "https://github.com/Proximitynow19/tetr.js#readme",
+  "homepage": "https://tetr.js.org",
   "dependencies": {
     "msgpack-lite": "^0.1.26",
     "node-fetch": "^2.6.1",
