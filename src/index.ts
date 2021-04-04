@@ -68,7 +68,7 @@ export class Client extends EventEmitter {
 
   /**
    * The client's token.
-   * @type {string} token - The client's token.
+   * @type {string} token - The client's tokexn.
    */
   public token!: string;
   /**
