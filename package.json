@@ -1,6 +1,6 @@
 {
   "name": "tetr.js",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "An API Wrapper For TETR.IO",
   "main": "dist/index.js",
   "repository": {
@@ -44,6 +44,7 @@
     "build": "tsc",
     "test": "node test/index",
     "dev": "npm run build && npm test",
-    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --excludeExternals --favicon 'images/small.png' --hideDate --hideTime"
+    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --excludeExternals --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
+    "publish": "npm run build && npm run docs"
   }
 }
