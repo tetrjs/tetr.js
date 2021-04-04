@@ -29,6 +29,12 @@ import WebsocketManager from "./WebsocketManager";
 class EventEmitter {
   private events: EventEmitterEvent[] = [];
 
+  /**
+   * Emitted when an event occurs.
+   * @returns {void}
+   * @param {ClientEvent} event - The event to set it's function for.
+   * @param {Function} func - The function to call when emitted.
+   */
   public on(event: ClientEvent, func: Function): void {
     this.events.push({
       event,
@@ -36,7 +42,13 @@ class EventEmitter {
     });
   }
 
-  public emit(event: ClientEvent, args?: any) {
+  /**
+   * Manually emit an event.
+   * @returns {void}
+   * @param {ClientEvent} event - The event to set it's function for.
+   * @param {any} args - The function to call when emitted.
+   */
+  public emit(event: ClientEvent, args?: any): void {
     const array = this.events.filter((x) => x.event == event);
 
     array.forEach((element) => {
@@ -82,6 +94,7 @@ export class Client extends EventEmitter {
 
     this.ws = new WebsocketManager(this);
 
+    this.user = new ClientUser(this.ws);
     this.room = new Room(this.ws);
   }
 
@@ -131,14 +144,12 @@ export class Client extends EventEmitter {
 }
 
 export class ClientUser {
-  /**
-   * The ClientUser object. All client-related methods and properties.
-   * @constructor
-   * @param {string} id - The client's ID.
-   */
+  /* Constructor */
+
   public constructor(private ws: WebsocketManager) {}
 
   /* Methods */
+
   /**
    * Send a direct message to a user.
    * @returns {void}
@@ -195,13 +206,19 @@ export class ClientUser {
 }
 
 export class Room {
+  /* Constructor */
+
+  public constructor(private ws: WebsocketManager) {}
+
+  /* Properties */
+
   /**
    * The current room that the client is in.
    * @type {string} id -  The room ID.
    */
   public id?: string;
 
-  public constructor(private ws: WebsocketManager) {}
+  /* Methods /
 
   /**
    * Send a message to the room.

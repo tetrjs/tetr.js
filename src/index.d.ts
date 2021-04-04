@@ -33,7 +33,45 @@ declare module "tetr.js" {
     | "social_presence"
     | "start_multiplayer";
 
-  export class Client {
+  export class EventEmitter {
+    /* Methods */
+
+    /**
+     * Emitted when an event occurs.
+     * @returns {void}
+     * @param {ClientEvent} event - The event to set it's function for.
+     * @param {Function} func - The function to call when emitted.
+     */
+    public on(event: ClientEvent, func: Function): void;
+
+    /**
+     * Manually emit an event.
+     * @returns {void}
+     * @param {ClientEvent} event - The event to set it's function for.
+     * @param {any} args - The function to call when emitted.
+     */
+    public emit(event: ClientEvent, args?: any): void;
+  }
+
+  export interface EventMessage {
+    content: string;
+    author: string;
+    systemMessage: boolean;
+  }
+
+  export interface EventDM {
+    content: string;
+    author: string;
+    system: boolean;
+    timestamp: string;
+  }
+
+  export interface EventInvite {
+    room: string;
+    author: string;
+  }
+
+  export class Client extends EventEmitter {
     /* Properties */
 
     /**
@@ -79,14 +117,6 @@ declare module "tetr.js" {
     public login(token: string): void;
 
     /**
-     * Emitted when an event occurs.
-     * @returns {void}
-     * @param {Event} event - The event to set it's function for.
-     * @param {Function} func - The function to call when emitted.
-     */
-    public on(event: ClientEvent, func: Function): void;
-
-    /**
      * Get the client to join a room.
      * @returns {void}
      * @param {string} room - The room to join.
@@ -105,17 +135,8 @@ declare module "tetr.js" {
   }
 
   export class ClientUser {
-    /* Constructor */
-    public id: string;
-
-    /**
-     * The ClientUser object. All client-related methods and properties.
-     * @constructor
-     * @param {string} id - The client's ID.
-     */
-    public constructor(id: string);
-
     /* Methods */
+
     /**
      * Send a direct message to a user.
      * @returns {void}
