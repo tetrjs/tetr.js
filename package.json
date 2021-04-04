@@ -9,8 +9,16 @@
   },
   "keywords": [
     "tetr.js",
+    "tetrjs",
     "tetr.io",
-    "api-wrapper"
+    "tetrio",
+    "api-wrapper",
+    "ribbon",
+    "ws",
+    "websocket",
+    "osk",
+    "osk.sh",
+    "stacker"
   ],
   "license": "MIT",
   "bugs": {
