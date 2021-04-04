@@ -63,33 +63,41 @@ interface EventEmitterEvent {
   func: Function;
 }
 
+/**
+ * The main Client class.
+ * @extends {EventEmitter}
+ */
 export class Client extends EventEmitter {
-  private ws!: WebsocketManager;
+  private ws: WebsocketManager;
 
   /**
    * The client's token.
    * @type {string} token - The client's tokexn.
    */
   public token!: string;
-  /**
-   * The ClientUser object. All client-related methods and properties.
-   * @type {ClientUser} user - The client's user.
-   */
-  public user!: ClientUser;
-  /**
-   * The Room object. All room-related methods and properties.
-   * @type {Room} - The client's current room.
-   */
-  public room!: Room;
 
   /**
-   * The handling options that the client uses when connecting to the server.
-   * @constructor
-   * @extends {EventEmitter}
-   * @param {Handling} handling - The client's settings.
+   * The ClientUser object. All client-related methods and properties.
+   * @type {ClientUser} token - The client's user.
+   */
+  public user: ClientUser;
+
+  /**
+   * The Room object. All room-related methods and properties.
+   * @type {Room} token - The client's current room.
+   */
+  public room: Room;
+
+  /**
+   * @param {Handling} handling - The handling options that the client uses when connecting to the server.
    */
   public constructor(
-    public handling: Handling = { arr: "1", das: "1", sdf: "5", safelock: true }
+    public handling: Handling = {
+      arr: "1",
+      das: "1",
+      sdf: "5",
+      safelock: true,
+    }
   ) {
     super();
 
@@ -131,7 +139,11 @@ export class Client extends EventEmitter {
   public leaveRoom(): void {
     if (!this.room.id) return;
 
-    this.ws.send({ id: this.ws.messageID, command: "leaveroom", data: false });
+    this.ws.send({
+      id: this.ws.messageID,
+      command: "leaveroom",
+      data: false,
+    });
 
     this.room.id = undefined;
   }
