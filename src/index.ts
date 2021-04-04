@@ -85,6 +85,7 @@ export class Client extends EventEmitter {
   /**
    * The handling options that the client uses when connecting to the server.
    * @constructor
+   * @extends {EventEmitter}
    * @param {Handling} handling - The client's settings.
    */
   public constructor(
@@ -272,10 +273,10 @@ export class Room {
 
 /**
  * The handlings options that the client uses when connecting to the server.
- * @prop {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
- * @prop {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
- * @prop {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
- * @prop {boolean} safelock - Represents the "prevent accidental hard drops" setting.
+ * @param {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
+ * @param {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
+ * @param {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
+ * @param {boolean} safelock - Represents the "prevent accidental hard drops" setting.
  */
 export interface Handling {
   /**
@@ -295,6 +296,7 @@ export interface Handling {
   sdf: string;
   /**
    * Represents the "prevent accidental hard drops" setting.
+   * @type {boolean}
    */
   safelock: boolean;
 }
