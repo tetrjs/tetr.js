@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 import WebsocketManager from "./WebsocketManager";
+import fetch from "node-fetch";
 
 class EventEmitter {
   private events: EventEmitterEvent[] = [];
@@ -103,7 +104,7 @@ export class Client extends EventEmitter {
 
     this.ws = new WebsocketManager(this);
 
-    this.user = new ClientUser(this.ws);
+    this.user = new ClientUser(this.ws, this.ws.userID);
     this.room = new Room(this.ws);
   }
 
@@ -156,23 +157,47 @@ export class Client extends EventEmitter {
   }
 }
 
-export class ClientUser {
+export class User {
   /* Constructor */
 
-  public constructor(private ws: WebsocketManager) {}
+  public constructor(public id: string) {
+    this.getUser(id);
+  }
+
+  /* Methods */
+
+  private async getUser(id: string): Promise<void> {
+    this.username = (
+      await (await fetch(`https://ch.tetr.io/api/users/${id}`)).json()
+    ).data.user.username;
+  }
+
+  /* Properties */
+  public username!: string;
+}
+
+/**
+ * @extends {User}
+ */
+export class ClientUser extends User {
+  /* Constructor */
+
+  public constructor(private ws: WebsocketManager, public id: string) {
+    super(id);
+  }
 
   /* Methods */
 
   /**
    * Send a direct message to a user.
    * @returns {void}
-   * @param {string} user - The user to send the message to.
+   * @param {User} user - The user to send the message to.
    * @param {string} message - The message content.
    */
-  public message(user: string, message: string): void {
+  public message(user: User, message: string): void {
     this.ws.send({
       command: "social.dm",
-      data: { recipient: user, msg: message },
+      data: { recipient: user.id, msg: message },
     });
   }
 
@@ -211,10 +236,10 @@ export class ClientUser {
   /**
    * Invite a user to join the client's session.
    * @returns {void}
-   * @param {string} user - The user to invite.
+   * @param {User} user - The user to invite.
    */
-  public invite(user: string): void {
-    this.ws.send({ command: "social.invite", data: user });
+  public invite(user: User): void {
+    this.ws.send({ command: "social.invite", data: user.id });
   }
 }
 
@@ -257,14 +282,14 @@ export class Room {
   /**
    * Switch a user's mode.
    * @returns {void}
-   * @param {string} user - The user's ID.
+   * @param {User} user - The user's ID.
    * @param {"player" | "spectator"} mode - The mode to set.
    */
-  public setMode(user: string, mode: "player" | "spectator"): void {
+  public setMode(user: User, mode: "player" | "spectator"): void {
     this.ws.send({
       id: this.ws.messageID,
       command: "switchbrackethost",
-      data: { uid: user, bracket: mode },
+      data: { uid: user.id, bracket: mode },
     });
   }
 

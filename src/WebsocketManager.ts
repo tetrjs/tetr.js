@@ -25,13 +25,12 @@ SOFTWARE.
 */
 
 import WebSocket, { ErrorEvent, MessageEvent } from "ws";
-import { Client } from ".";
+import { Client, User } from ".";
 import { EventDM, EventInvite, EventMessage } from "./Events";
 import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
 
 export default class WebsocketManager {
-  private client!: Client;
   private socket!: WebSocket;
   private socketID!: string;
   private resumeID!: string;
@@ -41,10 +40,9 @@ export default class WebsocketManager {
   private heartbeatTO?: NodeJS.Timeout;
 
   public messageID: number = 1;
+  public userID!: string;
 
-  public constructor(client: Client) {
-    this.client = client;
-  }
+  public constructor(private client: Client) {}
 
   public async connect(): Promise<void> {
     const user = await (
@@ -60,6 +58,8 @@ export default class WebsocketManager {
 
     if (user.user.role !== "bot")
       throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
+
+    this.userID = user.data.user._id;
 
     this.socket = new WebSocket("wss://tetr.io/ribbon");
 
@@ -204,7 +204,7 @@ export default class WebsocketManager {
       case "chat":
         const message: EventMessage = {
           content: packet.data.data.content,
-          author: packet.data.data.user._id,
+          author: new User(packet.data.data.user._id),
           systemMessage: packet.data.data.system,
         };
         ws.client.emit("message", message);
@@ -217,7 +217,7 @@ export default class WebsocketManager {
           content: packet.data.data.data.content,
           author: packet.data.data.data.system
             ? undefined
-            : packet.data.data.data.user,
+            : new User(packet.data.data.data.user),
           system: packet.data.data.data.system,
           timestamp: packet.data.data.ts,
         };
@@ -226,7 +226,7 @@ export default class WebsocketManager {
       case "social.invite":
         const invite: EventInvite = {
           room: packet.data.data.roomid,
-          author: packet.data.data.sender,
+          author: new User(packet.data.data.sender),
         };
         ws.client.emit("social_invite", invite);
         break;

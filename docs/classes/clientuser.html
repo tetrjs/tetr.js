@@ -68,7 +68,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ClientUser</span>
+						<a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">ClientUser</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -79,7 +84,14 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="clientuser.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="clientuser.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-inherited">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="clientuser.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="clientuser.html#username" class="tsd-kind-icon">username</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -95,17 +107,18 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Client<wbr>User<span class="tsd-signature-symbol">(</span>ws<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">default</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="clientuser.html" class="tsd-signature-type" data-tsd-kind="Class">ClientUser</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Client<wbr>User<span class="tsd-signature-symbol">(</span>ws<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">default</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="clientuser.html" class="tsd-signature-type" data-tsd-kind="Class">ClientUser</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="user.html">User</a>.<a href="user.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/794e066/src/index.ts#L159">index.ts:159</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5568829/src/index.ts#L182">index.ts:182</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -113,10 +126,35 @@
 								<li>
 									<h5>ws: <span class="tsd-signature-type">default</span></h5>
 								</li>
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="clientuser.html" class="tsd-signature-type" data-tsd-kind="Class">ClientUser</a></h4>
 						</li>
 					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#id">id</a></p>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="username" class="tsd-anchor"></a>
+					<h3>username</h3>
+					<div class="tsd-signature tsd-kind-icon">username<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#username">username</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5568829/src/index.ts#L176">index.ts:176</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -125,13 +163,13 @@
 					<a name="invite" class="tsd-anchor"></a>
 					<h3>invite</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">invite<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">invite<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/794e066/src/index.ts#L216">index.ts:216</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5568829/src/index.ts#L241">index.ts:241</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -142,7 +180,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>user: <span class="tsd-signature-type">string</span></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The user to invite.</p>
 									</div>
@@ -156,13 +194,13 @@
 					<a name="message" class="tsd-anchor"></a>
 					<h3>message</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a>, message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/794e066/src/index.ts#L172">index.ts:172</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5568829/src/index.ts#L197">index.ts:197</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -173,7 +211,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>user: <span class="tsd-signature-type">string</span></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The user to send the message to.</p>
 									</div>
@@ -199,7 +237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/794e066/src/index.ts#L185">index.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5568829/src/index.ts#L210">index.ts:210</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -245,8 +283,14 @@
 					<li class="current tsd-kind-class">
 						<a href="clientuser.html" class="tsd-kind-icon">Client<wbr>User</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="clientuser.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="clientuser.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="clientuser.html#username" class="tsd-kind-icon">username</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="clientuser.html#invite" class="tsd-kind-icon">invite</a>
@@ -263,6 +307,9 @@
 				<ul class="after-current">
 					<li class=" tsd-kind-class">
 						<a href="room.html" class="tsd-kind-icon">Room</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="user.html" class="tsd-kind-icon">User</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/handling.html" class="tsd-kind-icon">Handling</a>
@@ -285,10 +332,11 @@
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 		</div>
 	</div>

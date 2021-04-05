@@ -24,20 +24,22 @@ SOFTWARE.
 
 */
 
+import { User } from ".";
+
 export interface EventMessage {
   content: string;
-  author: string;
+  author: User;
   systemMessage: boolean;
 }
 
 export interface EventDM {
   content: string;
-  author: string;
+  author?: User;
   system: boolean;
   timestamp: string;
 }
 
 export interface EventInvite {
   room: string;
-  author: string;
+  author: User;
 }
