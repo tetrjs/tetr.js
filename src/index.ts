@@ -81,7 +81,7 @@ export class Client extends EventEmitter {
    * The ClientUser object. All client-related methods and properties.
    * @type {ClientUser}
    */
-  public user: ClientUser;
+  public user!: ClientUser;
 
   /**
    * The Room object. All room-related methods and properties.
@@ -104,7 +104,6 @@ export class Client extends EventEmitter {
 
     this.ws = new WebsocketManager(this);
 
-    this.user = new ClientUser(this.ws, this.ws.userID);
     this.room = new Room(this.ws);
   }
 
@@ -174,11 +173,13 @@ export class User {
   /* Methods */
 
   private async getUser(id: string): Promise<void> {
-    const user = (
-      await (await fetch(`https://ch.tetr.io/api/users/${id}`)).json()
-    ).data.user;
+    const userData = await (
+      await fetch(`https://ch.tetr.io/api/users/${id}`)
+    ).json();
 
-    if (!user.success) throw user.error;
+    if (!userData.success) throw userData.error;
+
+    const user = userData.data.user;
 
     for (var key in user) {
       if (key != "_id" || "league") {
@@ -211,6 +212,14 @@ export class User {
    */
 
   public role!: string;
+
+  /**
+   * The bot's owner. (If Applicable)
+   * @type {?string}
+   * @readonly
+   */
+
+  public botmaster?: string;
 
   /**
    * The user's badges.

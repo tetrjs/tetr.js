@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 import WebSocket, { ErrorEvent, MessageEvent } from "ws";
-import { Client, User } from ".";
+import { Client, ClientUser, User } from ".";
 import { EventDM, EventInvite, EventMessage } from "./Events";
 import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
@@ -40,7 +40,6 @@ export default class WebsocketManager {
   private heartbeatTO?: NodeJS.Timeout;
 
   public messageID: number = 1;
-  public userID!: string;
 
   public constructor(private client: Client) {}
 
@@ -59,7 +58,7 @@ export default class WebsocketManager {
     if (user.user.role !== "bot")
       throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
 
-    this.userID = user.user._id;
+    this.client.user = new ClientUser(this, user.user._id);
 
     this.socket = new WebSocket("wss://tetr.io/ribbon");
 
