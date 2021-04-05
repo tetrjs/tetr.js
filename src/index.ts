@@ -190,6 +190,12 @@ export class User {
       if (!["_id", "league"].includes(key)) {
         // @ts-ignore
         this[key] = user[key];
+
+        if (key === "username") this.username = user.username.toUpperCase();
+      }
+
+      if (key === "_id") {
+        this.id = user._id;
       }
     }
 

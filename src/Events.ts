@@ -28,13 +28,13 @@ import { User } from ".";
 
 export interface EventMessage {
   content: string;
-  author: User;
+  user: User;
   systemMessage: boolean;
 }
 
 export interface EventDM {
   content: string;
-  author?: User;
+  user?: User;
   system: boolean;
   timestamp: string;
 }

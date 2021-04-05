@@ -133,7 +133,10 @@ export default class WebsocketManager {
     this.bufferHistory.push(buffer);
   }
 
-  async receive(e: MessageEvent, ws: WebsocketManager): Promise<void> {
+  async receive(
+    e: MessageEvent | { data: Buffer },
+    ws: WebsocketManager
+  ): Promise<void> {
     var packet: Packet = {
       type: Number((e.data.slice(0, 1) as Buffer[])[0]),
       data: null,
@@ -144,13 +147,33 @@ export default class WebsocketManager {
         packet.data = msgpack.decode(e.data.slice(1) as Buffer);
         break;
       case 0xae: // Extracted ID Tag
-        packet.id = 174;
         packet.data = msgpack.decode(e.data.slice(5) as Buffer);
         break;
       case 0x58: // Batch Tag
-        packet.lengths = 4;
-        packet.data = msgpack.decode(e.data.slice(1) as Buffer);
-        break;
+        var lengths = [];
+
+        for (
+          var i = 0;
+          i <
+          Buffer.from(
+            (e.data.slice(1) as Buffer)
+              .join("")
+              .split(new RegExp(`${[0x00, 0x00, 0x00, 0x00].join("")}`, "g"))[0]
+          ).length /
+            4 -
+            1;
+          i++
+        ) {
+          lengths.push(e.data.slice(1 + i * 4, 5 + i * 4) as Buffer[]);
+        }
+
+        ws.receive(
+          {
+            data: e.data.slice(5 + lengths.length * 4) as Buffer,
+          },
+          ws
+        );
+        return;
       case 0xb0: // Extension Tag
         packet.data = e.data.slice(1);
 
@@ -161,7 +184,6 @@ export default class WebsocketManager {
     }
 
     if (packet.data.id) ws.messageID = packet.data.id + 1;
-
     switch (packet.data.command) {
       case "hello":
         if (!ws.socketID || !ws.resumeID) {
@@ -202,18 +224,17 @@ export default class WebsocketManager {
         ws.migrate(packet.data.data.endpoint);
         break;
       case "nope":
-        console.error(packet.data.reason);
-        break;
+        throw packet.data.reason;
+      case "err":
+        throw packet.data.data;
       case "error":
-        console.error(packet.data.data);
-        break;
+        throw packet.data.data;
       case "kick":
-        console.error(packet.data.data.reason);
-        break;
+        throw packet.data.data.reason;
       case "chat":
         const message: EventMessage = {
           content: packet.data.data.content,
-          author: await new User().getUser(packet.data.data.user._id),
+          user: await new User().getUser(packet.data.data.user._id),
           systemMessage: packet.data.data.system,
         };
         ws.client.emit("message", message);
@@ -224,7 +245,7 @@ export default class WebsocketManager {
       case "social.dm":
         const dm: EventDM = {
           content: packet.data.data.data.content,
-          author: packet.data.data.data.system
+          user: packet.data.data.data.system
             ? undefined
             : await new User().getUser(packet.data.data.data.user),
           system: packet.data.data.data.system,
@@ -257,6 +278,4 @@ export default class WebsocketManager {
 interface Packet {
   type: Number;
   data: any;
-  id?: number;
-  lengths?: number;
 }
