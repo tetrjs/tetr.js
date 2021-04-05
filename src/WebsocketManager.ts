@@ -59,7 +59,9 @@ export default class WebsocketManager {
     if (user.user.role !== "bot")
       throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
 
-    this.userID = user.data.user._id;
+    console.log(user);
+
+    this.userID = user.user._id;
 
     this.socket = new WebSocket("wss://tetr.io/ribbon");
 
