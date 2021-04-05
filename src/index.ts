@@ -163,16 +163,21 @@ export class User {
   /* Constructor */
 
   /**
-   *
-   * @param {string} id - ID of the user.
+   * @constructor
+   * @param {?string} id
    */
-  constructor(id: string) {
-    this.getUser(id);
+  public constructor(id?: string) {
+    if (id) this.getUser(id);
   }
 
   /* Methods */
 
-  private async getUser(id: string): Promise<void> {
+  /**
+   * Fetch a user and fill the User object.
+   * @param {string} id - User ID.
+   * @returns {Promise<User>}
+   */
+  public async getUser(id: string): Promise<User> {
     const userData = await (
       await fetch(`https://ch.tetr.io/api/users/${id}`)
     ).json();
@@ -182,11 +187,13 @@ export class User {
     const user = userData.data.user;
 
     for (var key in user) {
-      if (key != "_id" || "league") {
+      if (!["_id", "league"].includes(key)) {
         // @ts-ignore
         this[key] = user[key];
       }
     }
+
+    return this;
   }
 
   /* Properties */

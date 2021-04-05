@@ -133,7 +133,7 @@ export default class WebsocketManager {
     this.bufferHistory.push(buffer);
   }
 
-  receive(e: MessageEvent, ws: WebsocketManager): void {
+  async receive(e: MessageEvent, ws: WebsocketManager): Promise<void> {
     var packet: Packet = {
       type: Number((e.data.slice(0, 1) as Buffer[])[0]),
       data: null,
@@ -203,7 +203,7 @@ export default class WebsocketManager {
       case "chat":
         const message: EventMessage = {
           content: packet.data.data.content,
-          author: new User(packet.data.data.user._id),
+          author: await new User().getUser(packet.data.data.user._id),
           systemMessage: packet.data.data.system,
         };
         ws.client.emit("message", message);
@@ -216,7 +216,7 @@ export default class WebsocketManager {
           content: packet.data.data.data.content,
           author: packet.data.data.data.system
             ? undefined
-            : new User(packet.data.data.data.user),
+            : await new User().getUser(packet.data.data.data.user),
           system: packet.data.data.data.system,
           timestamp: packet.data.data.ts,
         };
@@ -225,7 +225,7 @@ export default class WebsocketManager {
       case "social.invite":
         const invite: EventInvite = {
           room: packet.data.data.roomid,
-          author: new User(packet.data.data.sender),
+          author: await new User().getUser(packet.data.data.sender),
         };
         ws.client.emit("social_invite", invite);
         break;

@@ -105,3 +105,6 @@ dist
 
 # VS Code Settings
 .vscode/
+
+# Testing
+testing.js

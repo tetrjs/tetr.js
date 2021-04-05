@@ -1,3 +1,4 @@
+# Not Needed
 examples/
 .vscode/
 .env
@@ -8,3 +9,6 @@ images/
 assets/
 docs/
 src/
+
+# Testing
+testing.js

@@ -1,6 +1,6 @@
 {
   "name": "tetr.js",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "An API Wrapper For TETR.IO",
   "main": "dist/index.js",
   "repository": {
