@@ -168,13 +168,23 @@ export default class WebsocketManager {
           ws.socketID = packet.data.id;
           ws.resumeID = packet.data.resume;
 
+          const file = await fetch("https://tetr.io/js/tetrio.js");
+          const text = await file.text();
+          const id = text.match(/"commit":{"id":"(.{7})"/);
+
+          if (!id || !id[1]) throw "Unable to fetch commit ID.";
+
           ws.send({
             id: ws.messageID,
             command: "authorize",
             data: {
               token: ws.client.token,
               handling: ws.client.handling,
-              signature: { commit: { id: "2d05c95" } },
+              signature: {
+                commit: {
+                  id: id[1],
+                },
+              },
             },
           });
         }
