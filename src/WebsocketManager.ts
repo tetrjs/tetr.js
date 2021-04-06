@@ -34,9 +34,8 @@ export default class WebsocketManager {
   private socket!: WebSocket;
   private socketID!: string;
   private resumeID!: string;
-  private bufferHistory: Buffer[] = [];
-  private lastRecalculation: number = 0;
-  private cacheSize: number = 0;
+  private sendHistory: any[] = [];
+  private sendQueue: Buffer[] = [];
   private heartbeatTO?: NodeJS.Timeout;
 
   public messageID: number = 1;
@@ -85,28 +84,21 @@ export default class WebsocketManager {
     this.socket = new WebSocket(endpoint);
 
     this.socket.onopen = () => {
+      for (var i = 0; this.sendQueue.length; i++) {
+        this.socket.send(this.sendQueue[i]);
+
+        this.sendQueue.splice(i, 1);
+      }
+
       this.send({
         command: "resume",
         socketid: this.socketID,
         resumetoken: this.resumeID,
       });
 
-      if (this.messageID % 100 == 0) {
-        var messagesPerSecond =
-          1000 /
-          (!this.lastRecalculation
-            ? 1
-            : (Date.now() - this.lastRecalculation) / 1000) /
-          100;
-        this.cacheSize = Math.max(100, Math.min(30 * messagesPerSecond, 2000));
-      }
-
       this.send({
         command: "hello",
-        packets: this.bufferHistory.slice(
-          this.bufferHistory.length - this.cacheSize,
-          this.bufferHistory.length
-        ),
+        packets: this.sendHistory,
       });
 
       this.heartbeatTO = this.heartbeat(5000);
@@ -131,10 +123,20 @@ export default class WebsocketManager {
 
   send(payload: any): void {
     const buffer = msgpack.encode(payload);
-    if (this.socket.OPEN) this.socket.send(buffer);
-    this.bufferHistory.push(buffer);
 
-    if (payload.id) this.messageID++;
+    if (this.socket.OPEN) {
+      this.socket.send(buffer);
+    } else {
+      this.sendQueue.push(buffer);
+    }
+
+    this.sendHistory.push(buffer);
+
+    if (this.sendHistory.length > 500) {
+      this.sendHistory.splice(0, this.sendHistory.length - 500);
+    }
+
+    if (payload.id) this.messageID = payload.id + 1;
   }
 
   async receive(
