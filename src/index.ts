@@ -148,7 +148,7 @@ export class Client extends EventEmitter {
       data: false,
     });
 
-    this.room.id = undefined;
+    this.room = new Room(this.ws);
   }
   /**
    * Destroy the client and disconnect from the server.
@@ -387,21 +387,21 @@ export class Room {
    * @type {string} id -  The room ID.
    * @readonly
    */
-  public id?: string;
+  public id!: string;
 
   /**
    * The current room settings.
    * @type {object[]}
    * @readonly
    */
-  public options!: { key: string; value: any }[];
+  public options: { key: string; value: any }[] = [];
 
   /**
    * The users that are connected to the room and their mode.
    * @type {object[]}
    * @readonly
    */
-  public players!: { mode: "player" | "spectator"; user: User }[];
+  public players: { mode: "player" | "spectator"; user: User }[] = [];
 
   /**
    * Whether or not the current room is mid-game.
