@@ -395,7 +395,7 @@ export class Room {
    * The users that are connected to the room and their mode.
    * @type {object[]}
    */
-  public players: { mode: "player" | "spectator"; user: User }[] = [];
+  public players!: { mode: "player" | "spectator"; user: User }[];
 
   /* Methods /
 
