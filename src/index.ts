@@ -385,6 +385,18 @@ export class Room {
    */
   public id?: string;
 
+  /**
+   * The current room settings.
+   * @type {object[]}
+   */
+  public options!: { key: string; value: any }[];
+
+  /**
+   * The users that are connected to the room and their mode.
+   * @type {object[]}
+   */
+  public players: { mode: "player" | "spectator"; user: User }[] = [];
+
   /* Methods /
 
   /**
@@ -470,7 +482,10 @@ export interface Handling {
 export type ClientEvent =
   | "ready"
   | "message"
-  | "game_update"
+  | "options_update"
+  | "switch_mode"
+  | "player_join"
+  | "player_leave"
   | "social_dm"
   | "social_invite"
   | "social_presence"

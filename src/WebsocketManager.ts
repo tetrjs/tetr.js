@@ -123,7 +123,9 @@ export default class WebsocketManager {
 
   heartbeat(ms: number): NodeJS.Timeout {
     return setTimeout(() => {
-      if (this.socket.OPEN) this.socket.send(Buffer.from([0xb0, 0x0b]));
+      if (this.socket.OPEN) {
+        this.socket.send(Buffer.from([0xb0, 0x0b]));
+      } else return this.heartbeat(200);
     }, ms);
   }
 
@@ -131,6 +133,8 @@ export default class WebsocketManager {
     const buffer = msgpack.encode(payload);
     if (this.socket.OPEN) this.socket.send(buffer);
     this.bufferHistory.push(buffer);
+
+    if (payload.id) this.messageID++;
   }
 
   async receive(
@@ -147,43 +151,58 @@ export default class WebsocketManager {
         packet.data = msgpack.decode(e.data.slice(1) as Buffer);
         break;
       case 0xae: // Extracted ID Tag
-        packet.data = msgpack.decode(e.data.slice(5) as Buffer);
-        break;
+        var buffer = Buffer.alloc((e.data as Buffer).length - 4);
+
+        buffer.set(
+          [
+            [0x45, 0xae, 0x58, 0xb0].includes(
+              (e.data.slice(1, 5) as Buffer).readInt32BE(0)
+            )
+              ? Number(e.data.slice(1, 5))
+              : 0x45,
+          ],
+          0
+        );
+
+        buffer.set(e.data.slice(5) as Buffer, 1);
+
+        ws.receive({ data: buffer }, ws);
+        return;
       case 0x58: // Batch Tag
         var lengths = [];
 
-        for (
-          var i = 0;
-          i <
-          Buffer.from(
-            (e.data.slice(1) as Buffer)
-              .join("")
-              .split(new RegExp(`${[0x00, 0x00, 0x00, 0x00].join("")}`, "g"))[0]
-          ).length /
-            4 -
-            1;
-          i++
-        ) {
-          lengths.push(e.data.slice(1 + i * 4, 5 + i * 4) as Buffer[]);
+        for (var i = 0; true; i++) {
+          if (
+            (e.data.slice(i * 4 + 1, i * 4 + 5) as Buffer).readInt32BE(0) === 0
+          )
+            break;
+
+          lengths.push(
+            (e.data.slice(i * 4 + 1, i * 4 + 5) as Buffer).readInt32BE(0)
+          );
         }
 
-        ws.receive(
-          {
-            data: e.data.slice(5 + lengths.length * 4) as Buffer,
-          },
-          ws
-        );
+        for (var i = 0; i < lengths.length; i++) {
+          var message = e.data.slice(
+            lengths.length * 4 + 5 + (i > 0 ? lengths[i - 1] : 0),
+            lengths.length * 4 + 5 + (i > 0 ? lengths[i - 1] : 0) + lengths[i]
+          ) as Buffer;
+
+          ws.receive({ data: message }, ws);
+        }
         return;
       case 0xb0: // Extension Tag
-        packet.data = e.data.slice(1);
-
-        if (Buffer.compare(packet.data as Buffer, Buffer.from([0x0c])) === 0)
+        if (
+          Buffer.compare(e.data.slice(1) as Buffer, Buffer.from([0x0c])) === 0
+        )
           ws.heartbeat(5000);
 
         return;
+      default:
+        packet.data = msgpack.decode(e.data as Buffer);
+        packet.type = undefined;
     }
 
-    if (packet.data.id) ws.messageID = packet.data.id + 1;
     switch (packet.data.command) {
       case "hello":
         if (!ws.socketID || !ws.resumeID) {
@@ -209,6 +228,27 @@ export default class WebsocketManager {
               },
             },
           });
+        } else {
+          for (var i = 0; i < packet.data.packets.length; i++) {
+            if (
+              !["authorize", "migrate"].includes(packet.data.packets[i].command)
+            ) {
+              var buf = Buffer.alloc(
+                msgpack.encode(packet.data.packets[i]).length + 1
+              );
+
+              buf.set([0x45], 0);
+
+              buf.set(msgpack.encode(packet.data.packets[i]), 1);
+
+              ws.receive(
+                {
+                  data: buf,
+                },
+                ws
+              );
+            }
+          }
         }
 
         break;
@@ -240,7 +280,52 @@ export default class WebsocketManager {
         ws.client.emit("message", message);
         break;
       case "gmupdate":
-        ws.client.emit("game_update", packet.data.data.game.options);
+        ws.client.room.options = packet.data.data.game.options;
+
+        ws.client.room.players = [];
+
+        for (var i = 0; i < packet.data.data.players.length; i++) {
+          ws.client.room.players.push({
+            mode: packet.data.data.players[i].bracket,
+            user: await new User().getUser(packet.data.data.players[i]._id),
+          });
+        }
+
+        ws.client.emit("options_update", packet.data.data.game.options);
+        break;
+      case "gmupdate.bracket":
+        // @ts-ignore
+        ws.client.room.players.find(
+          (u) => u.user.id === packet.data.data.uid
+        ).mode = packet.data.data.bracket;
+
+        ws.client.emit(
+          "switch_mode",
+          ws.client.room.players.find((u) => u.user.id === packet.data.data.uid)
+        );
+        break;
+      case "gmupdate.join":
+        var userJoin = await new User().getUser(packet.data.data._id);
+
+        ws.client.room.players.push({
+          mode: packet.data.data.bracket,
+          user: userJoin,
+        });
+
+        ws.client.emit("player_join", userJoin);
+        break;
+      case "gmupdate.leave":
+        var userLeave = await new User().getUser(packet.data.data);
+
+        ws.client.room.players.splice(
+          ws.client.room.players.indexOf(
+            // @ts-ignore
+            ws.client.room.players.find((u) => u.user.id === packet.data.data)
+          ),
+          1
+        );
+
+        ws.client.emit("player_leave", userLeave);
         break;
       case "social.dm":
         const dm: EventDM = {
@@ -276,6 +361,6 @@ export default class WebsocketManager {
 }
 
 interface Packet {
-  type: Number;
+  type?: Number;
   data: any;
 }
