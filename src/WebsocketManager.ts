@@ -203,6 +203,8 @@ export default class WebsocketManager {
         packet.type = undefined;
     }
 
+    if (!packet.data) return;
+
     switch (packet.data.command) {
       case "hello":
         if (!ws.socketID || !ws.resumeID) {
