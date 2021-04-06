@@ -151,44 +151,31 @@ export default class WebsocketManager {
         packet.data = msgpack.decode(e.data.slice(1) as Buffer);
         break;
       case 0xae: // Extracted ID Tag
-        var buffer = Buffer.alloc((e.data as Buffer).length - 4);
+        packet.data = msgpack.decode(e.data.slice(5) as Buffer);
+        packet.data.id = (e.data as Buffer).readUInt32BE(1);
 
-        buffer.set(
-          [
-            [0x45, 0xae, 0x58, 0xb0].includes(
-              (e.data.slice(1, 5) as Buffer).readInt32BE(0)
-            )
-              ? Number(e.data.slice(1, 5))
-              : 0x45,
-          ],
-          0
-        );
-
-        buffer.set(e.data.slice(5) as Buffer, 1);
-
-        ws.receive({ data: buffer }, ws);
-        return;
+        break;
       case 0x58: // Batch Tag
         var lengths = [];
 
         for (var i = 0; true; i++) {
-          if (
-            (e.data.slice(i * 4 + 1, i * 4 + 5) as Buffer).readInt32BE(0) === 0
-          )
-            break;
+          if ((e.data.slice(i * 4 + 1) as Buffer).readUInt32BE() === 0) break;
 
-          lengths.push(
-            (e.data.slice(i * 4 + 1, i * 4 + 5) as Buffer).readInt32BE(0)
-          );
+          lengths.push((e.data.slice(i * 4 + 1) as Buffer).readUInt32BE());
         }
 
-        for (var i = 0; i < lengths.length; i++) {
-          var message = e.data.slice(
-            lengths.length * 4 + 5 + (i > 0 ? lengths[i - 1] : 0),
-            lengths.length * 4 + 5 + (i > 0 ? lengths[i - 1] : 0) + lengths[i]
-          ) as Buffer;
-
-          ws.receive({ data: message }, ws);
+        var pointer = 0;
+        for (let i = 0; i < lengths.length; i++) {
+          ws.receive(
+            {
+              data: e.data.slice(
+                1 + lengths.length * 4 + 4 + pointer,
+                1 + lengths.length * 4 + 4 + pointer + lengths[i]
+              ) as Buffer,
+            },
+            ws
+          );
+          pointer += lengths[i];
         }
         return;
       case 0xb0: // Extension Tag
@@ -293,9 +280,20 @@ export default class WebsocketManager {
           });
         }
 
+        ws.client.room.host = await new User().getUser(packet.data.data.owner);
+
+        ws.client.room.gameStarted = packet.data.data.game.status === "ingame";
+
         ws.client.emit("options_update", packet.data.data.game.options);
         break;
       case "gmupdate.bracket":
+        if (
+          !ws.client.room.players.find(
+            (u) => u.user.id === packet.data.data.uid
+          )
+        )
+          return;
+
         // @ts-ignore
         ws.client.room.players.find(
           (u) => u.user.id === packet.data.data.uid
@@ -305,6 +303,13 @@ export default class WebsocketManager {
           "switch_mode",
           ws.client.room.players.find((u) => u.user.id === packet.data.data.uid)
         );
+        break;
+      case "gmupdate.host":
+        var newHost = await new User().getUser(packet.data.data);
+
+        ws.client.room.host = newHost;
+
+        ws.client.emit("host_switch", newHost);
         break;
       case "gmupdate.join":
         var userJoin = await new User().getUser(packet.data.data._id);
@@ -351,7 +356,14 @@ export default class WebsocketManager {
         ws.client.emit("social_presence", packet.data.data);
         break;
       case "startmulti":
-        ws.client.emit("start_multiplayer");
+        ws.client.room.gameStarted = true;
+
+        ws.client.emit("room_start");
+        break;
+      case "endmulti":
+        ws.client.room.gameStarted = false;
+
+        ws.client.emit("room_end");
         break;
     }
   }

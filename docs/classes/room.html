@@ -85,6 +85,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="room.html#gamestarted" class="tsd-kind-icon">game<wbr>Started</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="room.html#host" class="tsd-kind-icon">host</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="room.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="room.html#options" class="tsd-kind-icon">options</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="room.html#players" class="tsd-kind-icon">players</a></li>
@@ -97,6 +99,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="room.html#selfmode" class="tsd-kind-icon">self<wbr>Mode</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="room.html#setconfig" class="tsd-kind-icon">set<wbr>Config</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="room.html#setmode" class="tsd-kind-icon">set<wbr>Mode</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="room.html#startroom" class="tsd-kind-icon">start<wbr>Room</a></li>
 							</ul>
 						</section>
 					</div>
@@ -114,7 +117,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L375">index.ts:375</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L378">index.ts:378</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -131,18 +134,60 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="gamestarted" class="tsd-anchor"></a>
+					<h3>game<wbr>Started</h3>
+					<div class="tsd-signature tsd-kind-icon">game<wbr>Started<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L411">index.ts:411</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Whether or not the current room is mid-game.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>readonly</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="host" class="tsd-anchor"></a>
+					<h3>host</h3>
+					<div class="tsd-signature tsd-kind-icon">host<span class="tsd-signature-symbol">:</span> <a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L418">index.ts:418</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Host of the room.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>readonly</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="id" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L386">index.ts:386</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L390">index.ts:390</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The current room that the client is in.</p>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>readonly</dt>
+							<dd></dd>
+						</dl>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
@@ -151,13 +196,17 @@
 					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L392">index.ts:392</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L397">index.ts:397</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The current room settings.</p>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>readonly</dt>
+							<dd></dd>
+						</dl>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
@@ -166,13 +215,17 @@
 					<div class="tsd-signature tsd-kind-icon">players<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>mode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;player&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;spectator&quot;</span><span class="tsd-signature-symbol">; </span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L398">index.ts:398</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L404">index.ts:404</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The users that are connected to the room and their mode.</p>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>readonly</dt>
+							<dd></dd>
+						</dl>
 					</div>
 				</section>
 			</section>
@@ -188,7 +241,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L407">index.ts:407</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L427">index.ts:427</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -211,7 +264,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L416">index.ts:416</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L436">index.ts:436</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -242,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L443">index.ts:443</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L471">index.ts:471</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -270,7 +323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/5697369/src/index.ts#L429">index.ts:429</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L450">index.ts:450</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -293,6 +346,28 @@
 									</div>
 								</li>
 							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="startroom" class="tsd-anchor"></a>
+					<h3>start<wbr>Room</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">start<wbr>Room<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/b550664/src/index.ts#L462">index.ts:462</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Start the room.</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -324,6 +399,12 @@
 								<a href="room.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="room.html#gamestarted" class="tsd-kind-icon">game<wbr>Started</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="room.html#host" class="tsd-kind-icon">host</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="room.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -343,6 +424,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="room.html#setmode" class="tsd-kind-icon">set<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="room.html#startroom" class="tsd-kind-icon">start<wbr>Room</a>
 							</li>
 						</ul>
 					</li>

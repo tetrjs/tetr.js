@@ -74,18 +74,21 @@ export class Client extends EventEmitter {
   /**
    * The client's token.
    * @type {string}
+   * @readonly
    */
   public token!: string;
 
   /**
    * The ClientUser object. All client-related methods and properties.
    * @type {ClientUser}
+   * @readonly
    */
   public user!: ClientUser;
 
   /**
    * The Room object. All room-related methods and properties.
    * @type {Room}
+   * @readonly
    */
   public room: Room;
 
@@ -382,20 +385,37 @@ export class Room {
   /**
    * The current room that the client is in.
    * @type {string} id -  The room ID.
+   * @readonly
    */
   public id?: string;
 
   /**
    * The current room settings.
    * @type {object[]}
+   * @readonly
    */
   public options!: { key: string; value: any }[];
 
   /**
    * The users that are connected to the room and their mode.
    * @type {object[]}
+   * @readonly
    */
   public players!: { mode: "player" | "spectator"; user: User }[];
+
+  /**
+   * Whether or not the current room is mid-game.
+   * @type {boolean}
+   * @readonly
+   */
+  public gameStarted: boolean = false;
+
+  /**
+   * Host of the room.
+   * @type {User}
+   * @readonly
+   */
+  public host!: User;
 
   /* Methods /
 
@@ -420,6 +440,7 @@ export class Room {
       data: mode,
     });
   }
+
   /**
    * Switch a user's mode.
    * @returns {void}
@@ -435,11 +456,18 @@ export class Room {
   }
 
   /**
+   * Start the room.
+   * @returns {void}
+   */
+  public startRoom(): void {
+    this.ws.send({ id: this.ws.messageID, command: "startroom" });
+  }
+
+  /**
    * Update the room config.
    * @returns {void}
    * @param {{ index: string; value: any }[]} options - The configuration.
    */
-
   public setConfig(options: { index: string; value: any }[]): void {
     this.ws.send({
       id: this.ws.messageID,
@@ -489,4 +517,6 @@ export type ClientEvent =
   | "social_dm"
   | "social_invite"
   | "social_presence"
-  | "start_multiplayer";
+  | "room_start"
+  | "room_end"
+  | "host_switch";
