@@ -12,6 +12,7 @@ client.on("ready", () => {
 client.on("social_invite", (data) => {
   const c = new Client();
   var host = "";
+  var to;
 
   c.on("ready", () => {
     c.joinRoom(data.room);
