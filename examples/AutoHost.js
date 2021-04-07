@@ -17,7 +17,7 @@ client.on("social_invite", (data) => {
     c.joinRoom(data.room);
   });
 
-  c.on("join", () => {
+  c.on("options_update", () => {
     host = c.room.host.id;
   });
 
@@ -28,8 +28,13 @@ client.on("social_invite", (data) => {
   });
 
   c.on("message", (message) => {
-    if (message.content.toLowerCase() === "!leave" && message.user.id === host)
-      c.room.leaveRoom();
+    if (
+      message.content.toLowerCase() === "!leave" &&
+      message.user.id === host
+    ) {
+      c.leaveRoom();
+      c.destroy();
+    }
   });
 
   c.on("player_join", () => {

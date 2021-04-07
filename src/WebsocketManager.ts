@@ -65,7 +65,7 @@ export default class WebsocketManager {
       })
     ).json();
 
-    this.client.user = new ClientUser(this, user.user._id);
+    this.client.user = new ClientUser(user.user._id, this);
 
     this.socket = new WebSocket(
       endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon"
@@ -283,7 +283,7 @@ export default class WebsocketManager {
       case "chat":
         const message: EventMessage = {
           content: packet.data.data.content,
-          user: await new User().getUser(packet.data.data.user._id),
+          user: await new User().getUser(packet.data.data.user._id, this),
           systemMessage: packet.data.data.system,
         };
         ws.client.emit("message", message);
@@ -296,11 +296,17 @@ export default class WebsocketManager {
         for (var i = 0; i < packet.data.data.players.length; i++) {
           ws.client.room.players.push({
             mode: packet.data.data.players[i].bracket,
-            user: await new User().getUser(packet.data.data.players[i]._id),
+            user: await new User().getUser(
+              packet.data.data.players[i]._id,
+              this
+            ),
           });
         }
 
-        ws.client.room.host = await new User().getUser(packet.data.data.owner);
+        ws.client.room.host = await new User().getUser(
+          packet.data.data.owner,
+          this
+        );
 
         ws.client.room.gameStarted = packet.data.data.game.state === "ingame";
 
@@ -325,14 +331,14 @@ export default class WebsocketManager {
         );
         break;
       case "gmupdate.host":
-        var newHost = await new User().getUser(packet.data.data);
+        var newHost = await new User().getUser(packet.data.data, this);
 
         ws.client.room.host = newHost;
 
         ws.client.emit("host_switch", newHost);
         break;
       case "gmupdate.join":
-        var userJoin = await new User().getUser(packet.data.data._id);
+        var userJoin = await new User().getUser(packet.data.data._id, this);
 
         ws.client.room.players.push({
           mode: packet.data.data.bracket,
@@ -342,7 +348,7 @@ export default class WebsocketManager {
         ws.client.emit("player_join", userJoin);
         break;
       case "gmupdate.leave":
-        var userLeave = await new User().getUser(packet.data.data);
+        var userLeave = await new User().getUser(packet.data.data, this);
 
         ws.client.room.players.splice(
           ws.client.room.players.indexOf(
@@ -359,7 +365,7 @@ export default class WebsocketManager {
           content: packet.data.data.data.content,
           user: packet.data.data.data.system
             ? undefined
-            : await new User().getUser(packet.data.data.data.user),
+            : await new User().getUser(packet.data.data.data.user, this),
           system: packet.data.data.data.system,
           timestamp: packet.data.data.ts,
         };
@@ -368,7 +374,7 @@ export default class WebsocketManager {
       case "social.invite":
         const invite: EventInvite = {
           room: packet.data.data.roomid,
-          author: await new User().getUser(packet.data.data.sender),
+          author: await new User().getUser(packet.data.data.sender, this),
         };
         ws.client.emit("social_invite", invite);
         break;

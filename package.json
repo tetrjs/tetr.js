@@ -45,7 +45,7 @@
     "build": "tsc",
     "test": "node testing.js",
     "dev": "npm run build && npm test",
-    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --excludeExternals --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
+    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
     "publish": "npm run build && npm run docs"
   }
 }

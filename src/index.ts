@@ -26,43 +26,7 @@ SOFTWARE.
 
 import WebsocketManager from "./WebsocketManager";
 import fetch from "node-fetch";
-
-class EventEmitter {
-  private events: EventEmitterEvent[] = [];
-
-  /**
-   * Emitted when an event occurs.
-   * @returns {void}
-   * @param {ClientEvent} event - The event to set it's function for.
-   * @param {Function} func - The function to call when emitted.
-   */
-  public on(event: ClientEvent, func: Function): void {
-    this.events.push({
-      event,
-      func,
-    });
-  }
-
-  /**
-   * Manually emit an event.
-   * @returns {void}
-   * @param {ClientEvent} event - The event to set it's function for.
-   * @param {any} args - The function to call when emitted.
-   */
-  public emit(event: ClientEvent, args?: any): void {
-    const array = this.events.filter((x) => x.event == event);
-
-    array.forEach((element) => {
-      if (args) element.func(args);
-      else element.func();
-    });
-  }
-}
-
-interface EventEmitterEvent {
-  event: string;
-  func: Function;
-}
+import EventEmitter from "events";
 
 /**
  * The main Client class.
@@ -166,24 +130,39 @@ export class User {
   /**
    * @constructor
    * @param {?string} id
+   * @param {?WebsocketManager} ws
    */
-  public constructor(id?: string) {
-    if (id) this.getUser(id);
+  public constructor(id?: string, ws?: WebsocketManager) {
+    if (id && ws) this.getUser(id, ws);
   }
 
   /* Methods */
+
+  /**
+   * Send a direct message to a user.
+   * @returns {void}
+   * @param {string} message - The message content.
+   */
+  public message(message: string): void {
+    this.ws.send({
+      command: "social.dm",
+      data: { recipient: this.id, msg: message },
+    });
+  }
 
   /**
    * Fetch a user and fill the User object.
    * @param {string} id - User ID.
    * @returns {Promise<User>}
    */
-  public async getUser(id: string): Promise<User> {
+  public async getUser(id: string, ws: WebsocketManager): Promise<User> {
     const userData = await (
       await fetch(`https://ch.tetr.io/api/users/${id}`)
     ).json();
 
     if (!userData.success) throw userData.error;
+
+    this.ws = ws;
 
     const user = userData.data.user;
 
@@ -204,6 +183,8 @@ export class User {
   }
 
   /* Properties */
+
+  private ws!: WebsocketManager;
 
   /**
    * The user's ID.
@@ -305,31 +286,23 @@ export class User {
  * @extends {User}
  */
 export class ClientUser extends User {
+  /* Properties */
+  private wsM!: WebsocketManager;
+
   /* Constructor */
 
   /**
    * @constructor
-   * @param {WebsocketManager} ws - WebSocket Manager
    * @param {string} id - Client user ID.
+   * @param {WebsocketManager} ws - WebSocket Manager
    */
-  public constructor(private ws: WebsocketManager, public id: string) {
-    super(id);
+  public constructor(public id: string, ws: WebsocketManager) {
+    super(id, ws);
+
+    this.wsM = ws;
   }
 
   /* Methods */
-
-  /**
-   * Send a direct message to a user.
-   * @returns {void}
-   * @param {User} user - The user to send the message to.
-   * @param {string} message - The message content.
-   */
-  public message(user: User, message: string): void {
-    this.ws.send({
-      command: "social.dm",
-      data: { recipient: user.id, msg: message },
-    });
-  }
 
   /**
    * Set the client's presence.
@@ -360,7 +333,7 @@ export class ClientUser extends User {
       | "tl_mn_complete"
       | string;
   }): void {
-    this.ws.send({ command: "social.presence", data: options });
+    this.wsM.send({ command: "social.presence", data: options });
   }
 
   /**
@@ -369,7 +342,7 @@ export class ClientUser extends User {
    * @param {User} user - The user to invite.
    */
   public invite(user: User): void {
-    this.ws.send({ command: "social.invite", data: user.id });
+    this.wsM.send({ command: "social.invite", data: user.id });
   }
 }
 
