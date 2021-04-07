@@ -39,6 +39,7 @@ export default class WebsocketManager {
   private heartbeatTO?: NodeJS.Timeout;
 
   public messageID: number = 1;
+  private serverID: number = 0;
 
   public constructor(private client: Client) {}
 
@@ -116,7 +117,11 @@ export default class WebsocketManager {
   heartbeat(ms: number): NodeJS.Timeout {
     return setTimeout(() => {
       if (this.socket.OPEN) {
-        this.socket.send(Buffer.from([0xb0, 0x0b]));
+        try {
+          this.socket.send(Buffer.from([0xb0, 0x0b]));
+        } catch {
+          this.heartbeat(200);
+        }
       } else return this.heartbeat(200);
     }, ms);
   }
@@ -193,6 +198,10 @@ export default class WebsocketManager {
     }
 
     if (!packet.data) return;
+
+    if (packet.data.id && packet.data.id <= this.serverID) return;
+
+    if (packet.data.id) this.serverID = packet.data.id;
 
     switch (packet.data.command) {
       case "hello":
@@ -284,7 +293,7 @@ export default class WebsocketManager {
 
         ws.client.room.host = await new User().getUser(packet.data.data.owner);
 
-        ws.client.room.gameStarted = packet.data.data.game.status === "ingame";
+        ws.client.room.gameStarted = packet.data.data.game.state === "ingame";
 
         ws.client.emit("options_update", packet.data.data.game.options);
         break;
