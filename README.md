@@ -42,6 +42,8 @@ client.on("ready", () => {
 client.login("YOUR TOKEN HERE");
 ```
 
+Find more examples [here](https://github.com/Proximitynow19/TETR.JS/tree/master/examples)
+
 ## Technologies
 
 - [TypeScript](https://www.typescriptlang.org/)
