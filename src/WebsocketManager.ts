@@ -58,9 +58,18 @@ export default class WebsocketManager {
     if (user.user.role !== "bot")
       throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
 
+    const endpoint = await (
+      await fetch("https://tetr.io/api/server/ribbon", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${this.client.token}` },
+      })
+    ).json();
+
     this.client.user = new ClientUser(this, user.user._id);
 
-    this.socket = new WebSocket("wss://tetr.io/ribbon");
+    this.socket = new WebSocket(
+      endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon"
+    );
 
     this.socket.onopen = () => {
       this.send({ command: "new" });
