@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 import WebSocket, { ErrorEvent, MessageEvent } from "ws";
-import { Client, ClientUser, User } from ".";
+import { Client, ClientUser, Room, User } from ".";
 import { EventDM, EventInvite, EventMessage } from "./Events";
 import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
@@ -375,6 +375,14 @@ export default class WebsocketManager {
         ws.client.room.gameStarted = false;
 
         ws.client.emit("room_end");
+        break;
+      case "joinroom":
+        ws.client.emit("join");
+        break;
+      case "leaveroom":
+        this.client.room = new Room(this);
+
+        ws.client.emit("leave");
         break;
     }
   }

@@ -147,8 +147,6 @@ export class Client extends EventEmitter {
       command: "leaveroom",
       data: false,
     });
-
-    this.room = new Room(this.ws);
   }
   /**
    * Destroy the client and disconnect from the server.
@@ -519,4 +517,6 @@ export type ClientEvent =
   | "social_presence"
   | "room_start"
   | "room_end"
-  | "host_switch";
+  | "host_switch"
+  | "join"
+  | "leave";
