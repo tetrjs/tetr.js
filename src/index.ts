@@ -176,11 +176,21 @@ export class User {
     const user = userData.data.user;
 
     for (var key in user) {
-      if (!["_id", "league"].includes(key)) {
+      if (!["_id", "league", "botmaster"].includes(key)) {
         // @ts-ignore
         this[key] = user[key];
 
         if (key === "username") this.username = user.username.toUpperCase();
+      }
+
+      if (key === "botmaster") {
+        this.botmaster = [];
+
+        var mastUsers = user.botmaster.split(", ");
+
+        for (var i = 0; i < mastUsers.length; i++) {
+          this.botmaster.push(await new User().getUser(mastUsers[i], this.ws));
+        }
       }
 
       if (key === "_id") {
@@ -219,11 +229,11 @@ export class User {
 
   /**
    * The bot's owner. (If Applicable)
-   * @type {?string}
+   * @type {?User[]}
    * @readonly
    */
 
-  public botmaster?: string;
+  public botmaster?: User[];
 
   /**
    * The user's badges.
