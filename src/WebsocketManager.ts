@@ -58,6 +58,17 @@ export default class WebsocketManager {
     if (user.user.role !== "bot")
       throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
 
+    if (this.client.privacyOptions) {
+      await fetch("https://tetr.io/api/users/setPreferences", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.client.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.client.privacyOptions),
+      });
+    }
+
     const endpoint = await (
       await fetch("https://tetr.io/api/server/ribbon", {
         method: "GET",
@@ -279,6 +290,14 @@ export default class WebsocketManager {
       case "error":
         throw packet.data.data;
       case "kick":
+        if (
+          packet.data.data.reason ===
+          "you were kicked from the room by its owner"
+        ) {
+          ws.client.emit("kick");
+          return;
+        }
+
         throw packet.data.data.reason;
       case "chat":
         const message: EventMessage = {

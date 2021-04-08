@@ -27,6 +27,29 @@ SOFTWARE.
 import WebsocketManager from "./WebsocketManager";
 import fetch from "node-fetch";
 import EventEmitter from "events";
+import { EventDM, EventInvite, EventMessage } from "./Events";
+
+export declare interface Client {
+  on(event: "ready", listener: () => void): this;
+  on(event: "message", listener: (message: EventMessage) => void): this;
+  on(
+    event: "options_update",
+    listener: (options: { key: string; value: any }[]) => void
+  ): this;
+  on(
+    event: "switch_mode",
+    listener: (player: { mode: "player" | "spectator"; user: User }) => void
+  ): this;
+  on(event: "host_switch", listener: (newHost: User) => void): this;
+  on(event: "player_join", listener: (user: User) => void): this;
+  on(event: "player_leave", listener: (user: User) => void): this;
+  on(event: "social_dm", listener: (message: EventDM) => void): this;
+  on(event: "social_invite", listener: (invite: EventInvite) => void): this;
+  on(event: "room_start", listener: () => void): this;
+  on(event: "room_end", listener: () => void): this;
+  on(event: "join", listener: () => void): this;
+  on(event: "leave", listener: () => void): this;
+}
 
 /**
  * The main Client class.
@@ -65,7 +88,8 @@ export class Client extends EventEmitter {
       das: "1",
       sdf: "5",
       safelock: true,
-    }
+    },
+    public privacyOptions?: privacyOptions
   ) {
     super();
 
@@ -469,10 +493,10 @@ export class Room {
 
 /**
  * The handlings options that the client uses when connecting to the server.
- * @param {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
- * @param {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
- * @param {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
- * @param {boolean} safelock - Represents the "prevent accidental hard drops" setting.
+ * @prop {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
+ * @prop {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
+ * @prop {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
+ * @prop {boolean} safelock - Represents the "prevent accidental hard drops" setting.
  */
 export interface Handling {
   /**
@@ -497,18 +521,15 @@ export interface Handling {
   safelock: boolean;
 }
 
-export type ClientEvent =
-  | "ready"
-  | "message"
-  | "options_update"
-  | "switch_mode"
-  | "player_join"
-  | "player_leave"
-  | "social_dm"
-  | "social_invite"
-  | "social_presence"
-  | "room_start"
-  | "room_end"
-  | "host_switch"
-  | "join"
-  | "leave";
+export interface privacyOptions {
+  privacy_dm: "everyone" | "friends" | "nobody";
+  privacy_invite: "everyone" | "friends" | "nobody";
+  privatemode: "public" | "private";
+  privacy_showcountry: boolean;
+  privacy_showgametime: boolean;
+  privacy_showplayed: boolean;
+  privacy_showwon: boolean;
+  privacy_status_deep: "everyone" | "friends" | "nobody";
+  privacy_status_exact: "everyone" | "friends" | "nobody";
+  privacy_status_shallow: "everyone" | "friends" | "nobody";
+}
