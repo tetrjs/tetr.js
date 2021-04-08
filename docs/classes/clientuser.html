@@ -120,7 +120,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="clientuser.html#getuser" class="tsd-kind-icon">get<wbr>User</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="clientuser.html#invite" class="tsd-kind-icon">invite</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="clientuser.html#message" class="tsd-kind-icon">message</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="clientuser.html#sethandling" class="tsd-kind-icon">set<wbr>Handling</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="clientuser.html#setpresence" class="tsd-kind-icon">set<wbr>Presence</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="clientuser.html#setprivacy" class="tsd-kind-icon">set<wbr>Privacy</a></li>
 							</ul>
 						</section>
 					</div>
@@ -132,14 +134,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Client<wbr>User<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ws<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">default</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="clientuser.html" class="tsd-signature-type" data-tsd-kind="Class">ClientUser</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Client<wbr>User<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ws<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">default</span>, c<span class="tsd-signature-symbol">: </span><a href="client.html" class="tsd-signature-type" data-tsd-kind="Class">Client</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="clientuser.html" class="tsd-signature-type" data-tsd-kind="Class">ClientUser</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="user.html">User</a>.<a href="user.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L299">src/index.ts:299</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L326">src/index.ts:326</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -156,6 +158,9 @@
 										<p>WebSocket Manager</p>
 									</div>
 								</li>
+								<li>
+									<h5>c: <a href="client.html" class="tsd-signature-type" data-tsd-kind="Class">Client</a></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="clientuser.html" class="tsd-signature-type" data-tsd-kind="Class">ClientUser</a></h4>
 						</li>
@@ -171,7 +176,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#badges">badges</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L233">src/index.ts:233</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L259">src/index.ts:259</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -187,11 +192,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="botmaster" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> botmaster</h3>
-					<div class="tsd-signature tsd-kind-icon">botmaster<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">botmaster<span class="tsd-signature-symbol">:</span> <a href="user.html" class="tsd-signature-type" data-tsd-kind="Class">User</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#botmaster">botmaster</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L226">src/index.ts:226</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L252">src/index.ts:252</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -211,7 +216,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#country">country</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L268">src/index.ts:268</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L294">src/index.ts:294</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -231,7 +236,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#gamesplayed">gamesplayed</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L247">src/index.ts:247</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L273">src/index.ts:273</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -251,7 +256,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#gameswon">gameswon</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L254">src/index.ts:254</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L280">src/index.ts:280</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -271,7 +276,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#gametime">gametime</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L261">src/index.ts:261</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L287">src/index.ts:287</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -304,7 +309,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#role">role</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L218">src/index.ts:218</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L244">src/index.ts:244</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -324,7 +329,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#supporter">supporter</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L276">src/index.ts:276</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L302">src/index.ts:302</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -344,7 +349,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#supportertier">supportertier</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L283">src/index.ts:283</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L309">src/index.ts:309</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -364,7 +369,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#username">username</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L210">src/index.ts:210</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L236">src/index.ts:236</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -384,7 +389,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#verified">verified</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L290">src/index.ts:290</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L316">src/index.ts:316</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -404,7 +409,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="user.html">User</a>.<a href="user.html#xp">xp</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L240">src/index.ts:240</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L266">src/index.ts:266</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -431,7 +436,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="user.html">User</a>.<a href="user.html#getuser">getUser</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L167">src/index.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L183">src/index.ts:183</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -465,7 +470,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L353">src/index.ts:353</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L417">src/index.ts:417</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -497,7 +502,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="user.html">User</a>.<a href="user.html#message">message</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L155">src/index.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L171">src/index.ts:171</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -519,6 +524,37 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="sethandling" class="tsd-anchor"></a>
+					<h3>set<wbr>Handling</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Handling<span class="tsd-signature-symbol">(</span>handling<span class="tsd-signature-symbol">: </span><a href="../interfaces/handling.html" class="tsd-signature-type" data-tsd-kind="Interface">Handling</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L349">src/index.ts:349</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the client user&#39;s handling settings.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>handling: <a href="../interfaces/handling.html" class="tsd-signature-type" data-tsd-kind="Interface">Handling</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The handling options you want to set.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="setpresence" class="tsd-anchor"></a>
 					<h3>set<wbr>Presence</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -528,7 +564,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/8f16f98/src/index.ts#L322">src/index.ts:322</a></li>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L386">src/index.ts:386</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -551,6 +587,37 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setprivacy" class="tsd-anchor"></a>
+					<h3>set<wbr>Privacy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Privacy<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/privacyoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">privacyOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Proximitynow19/tetr.js/blob/f9166c5/src/index.ts#L369">src/index.ts:369</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the client user&#39;s privacy settings.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../interfaces/privacyoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">privacyOptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The privacy options you want to set.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -626,7 +693,13 @@
 								<a href="clientuser.html#message" class="tsd-kind-icon">message</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="clientuser.html#sethandling" class="tsd-kind-icon">set<wbr>Handling</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="clientuser.html#setpresence" class="tsd-kind-icon">set<wbr>Presence</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="clientuser.html#setprivacy" class="tsd-kind-icon">set<wbr>Privacy</a>
 							</li>
 						</ul>
 					</li>
@@ -641,8 +714,8 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/handling.html" class="tsd-kind-icon">Handling</a>
 					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="../modules.html#clientevent" class="tsd-kind-icon">Client<wbr>Event</a>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/privacyoptions.html" class="tsd-kind-icon">privacy<wbr>Options</a>
 					</li>
 				</ul>
 			</nav>

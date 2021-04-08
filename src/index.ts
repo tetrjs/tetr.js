@@ -82,15 +82,7 @@ export class Client extends EventEmitter {
   /**
    * @param {Handling} handling - The handling options that the client uses when connecting to the server.
    */
-  public constructor(
-    public handling: Handling = {
-      arr: "1",
-      das: "1",
-      sdf: "5",
-      safelock: true,
-    },
-    public privacyOptions?: privacyOptions
-  ) {
+  public constructor() {
     super();
 
     this.ws = new WebsocketManager(this);
@@ -331,6 +323,7 @@ export class User {
 export class ClientUser extends User {
   /* Properties */
   private wsM!: WebsocketManager;
+  private client!: Client;
 
   /* Constructor */
 
@@ -339,13 +332,50 @@ export class ClientUser extends User {
    * @param {string} id - Client user ID.
    * @param {WebsocketManager} ws - WebSocket Manager
    */
-  public constructor(public id: string, ws: WebsocketManager) {
+  public constructor(public id: string, ws: WebsocketManager, c: Client) {
     super(id, ws);
 
     this.wsM = ws;
+    this.client = c;
   }
 
   /* Methods */
+
+  /**
+   * Set the client user's handling settings.
+   * @returns {void}
+   * @param {Handling} handling - The handling options you want to set.
+   */
+  public setHandling(handling: Handling): void {
+    this.wsM.send({
+      id: this.wsM.messageID,
+      command: "sethandling",
+      data: {
+        arr: handling.arr,
+        das: handling.das,
+        dcd: 0,
+        sdf: handling.sdf,
+        safelock: handling.safelock,
+        cancel: false,
+      },
+    });
+  }
+
+  /**
+   * Set the client user's privacy settings.
+   * @returns {void}
+   * @param {privacyOptions} options - The privacy options you want to set.
+   */
+  public async setPrivacy(options: privacyOptions): Promise<void> {
+    await fetch("https://tetr.io/api/users/setPreferences", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.client.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options),
+    });
+  }
 
   /**
    * Set the client's presence.
