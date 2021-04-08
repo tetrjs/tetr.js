@@ -522,11 +522,7 @@ export class Room {
 }
 
 /**
- * The handlings options that the client uses when connecting to the server.
- * @prop {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
- * @prop {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
- * @prop {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
- * @prop {boolean} safelock - Represents the "prevent accidental hard drops" setting.
+ * The handlings options that the client uses to change handling.
  */
 export interface Handling {
   /**
@@ -551,6 +547,9 @@ export interface Handling {
   safelock: boolean;
 }
 
+/**
+ * The privacy options that the client uses when changing their privacy settings.
+ */
 export interface privacyOptions {
   privacy_dm: "everyone" | "friends" | "nobody";
   privacy_invite: "everyone" | "friends" | "nobody";
