@@ -86,6 +86,14 @@ export class Client extends EventEmitter {
   }
 
   /**
+   * Create a new custom room.
+   * @param type
+   */
+  public createRoom(type: "private" | "public") {
+    this.ws.send({ id: this.ws.messageID, command: "createroom", data: type });
+  }
+
+  /**
    * Get the client to join a room.
    * @returns {void}
    * @param {string} room - The room to join.
@@ -112,6 +120,7 @@ export class Client extends EventEmitter {
       data: false,
     });
   }
+
   /**
    * Destroy the client and disconnect from the server.
    * @returns {void}
