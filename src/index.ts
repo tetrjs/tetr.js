@@ -205,7 +205,9 @@ export class User {
         var mastUsers = user.botmaster.split(", ");
 
         for (var i = 0; i < mastUsers.length; i++) {
-          this.botmaster.push(await new User().getUser(mastUsers[i], this.ws));
+          this.botmaster.push(
+            await new User().getUser(mastUsers[i].toLowerCase(), this.ws)
+          );
         }
       }
 
