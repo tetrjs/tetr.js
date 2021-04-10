@@ -1,6 +1,6 @@
 {
   "name": "tetr.js",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "An API Wrapper For TETR.IO",
   "main": "dist/index.js",
   "repository": {
@@ -26,6 +26,7 @@
   },
   "homepage": "https://tetr.js.org",
   "dependencies": {
+    "events": "^3.3.0",
     "msgpack-lite": "^0.1.26",
     "node-fetch": "^2.6.1",
     "ws": "^7.4.4"

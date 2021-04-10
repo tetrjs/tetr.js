@@ -26,7 +26,7 @@ SOFTWARE.
 
 import WebsocketManager from "./WebsocketManager";
 import fetch from "node-fetch";
-import EventEmitter from "node:events";
+import EventEmitter from "events";
 import { EventDM, EventInvite, EventMessage } from "./Events";
 
 export declare interface Client {
