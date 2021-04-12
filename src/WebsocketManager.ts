@@ -26,7 +26,7 @@ SOFTWARE.
 
 import WebSocket, { ErrorEvent, MessageEvent } from "ws";
 import { Client, ClientUser, Room, User } from ".";
-import { EventDM, EventInvite, EventMessage } from "./Events";
+import { EventDM, EventInvite, EventMessage, RoomEndPlayer } from "./Events";
 import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
 
@@ -402,7 +402,17 @@ export default class WebsocketManager {
       case "endmulti":
         ws.client.room.gameStarted = false;
 
-        ws.client.emit("room_end");
+        const gameLeaderboard: RoomEndPlayer[] = packet.data.data.leaderboard.map(
+          async (playerRaw: any) => {
+            return {
+              user: await new User().getUser(playerRaw.user._id, this),
+              wins: playerRaw.wins,
+              inputs: playerRaw.inputs,
+              piecesPlaced: playerRaw.piecesplaced,
+            };
+          }
+        );
+        ws.client.emit("room_end", gameLeaderboard);
         break;
       case "joinroom":
         ws.client.emit("join");
