@@ -26,42 +26,29 @@ SOFTWARE.
 
 import WebsocketManager from "./WebsocketManager";
 import fetch from "node-fetch";
+import EventEmitter from "events";
+import { EventDM, EventInvite, EventMessage } from "./Events";
 
-class EventEmitter {
-  private events: EventEmitterEvent[] = [];
-
-  /**
-   * Emitted when an event occurs.
-   * @returns {void}
-   * @param {ClientEvent} event - The event to set it's function for.
-   * @param {Function} func - The function to call when emitted.
-   */
-  public on(event: ClientEvent, func: Function): void {
-    this.events.push({
-      event,
-      func,
-    });
-  }
-
-  /**
-   * Manually emit an event.
-   * @returns {void}
-   * @param {ClientEvent} event - The event to set it's function for.
-   * @param {any} args - The function to call when emitted.
-   */
-  public emit(event: ClientEvent, args?: any): void {
-    const array = this.events.filter((x) => x.event == event);
-
-    array.forEach((element) => {
-      if (args) element.func(args);
-      else element.func();
-    });
-  }
-}
-
-interface EventEmitterEvent {
-  event: string;
-  func: Function;
+export declare interface Client {
+  on(event: "ready", listener: () => void): this;
+  on(event: "message", listener: (message: EventMessage) => void): this;
+  on(
+    event: "options_update",
+    listener: (options: { key: string; value: any }[]) => void
+  ): this;
+  on(
+    event: "switch_mode",
+    listener: (player: { mode: "player" | "spectator"; user: User }) => void
+  ): this;
+  on(event: "host_switch", listener: (newHost: User) => void): this;
+  on(event: "player_join", listener: (user: User) => void): this;
+  on(event: "player_leave", listener: (user: User) => void): this;
+  on(event: "social_dm", listener: (message: EventDM) => void): this;
+  on(event: "social_invite", listener: (invite: EventInvite) => void): this;
+  on(event: "room_start", listener: () => void): this;
+  on(event: "room_end", listener: () => void): this;
+  on(event: "join", listener: () => void): this;
+  on(event: "leave", listener: () => void): this;
 }
 
 /**
@@ -95,14 +82,7 @@ export class Client extends EventEmitter {
   /**
    * @param {Handling} handling - The handling options that the client uses when connecting to the server.
    */
-  public constructor(
-    public handling: Handling = {
-      arr: "1",
-      das: "1",
-      sdf: "5",
-      safelock: true,
-    }
-  ) {
+  public constructor() {
     super();
 
     this.ws = new WebsocketManager(this);
@@ -119,6 +99,14 @@ export class Client extends EventEmitter {
   public login(token: string): void {
     this.token = token;
     this.ws.connect();
+  }
+
+  /**
+   * Create a new custom room.
+   * @param type
+   */
+  public createRoom(type: "private" | "public") {
+    this.ws.send({ id: this.ws.messageID, command: "createroom", data: type });
   }
 
   /**
@@ -148,6 +136,7 @@ export class Client extends EventEmitter {
       data: false,
     });
   }
+
   /**
    * Destroy the client and disconnect from the server.
    * @returns {void}
@@ -166,33 +155,60 @@ export class User {
   /**
    * @constructor
    * @param {?string} id
+   * @param {?WebsocketManager} ws
    */
-  public constructor(id?: string) {
-    if (id) this.getUser(id);
+  public constructor(id?: string, ws?: WebsocketManager) {
+    if (id && ws) this.getUser(id, ws);
   }
 
   /* Methods */
+
+  /**
+   * Send a direct message to a user.
+   * @returns {void}
+   * @param {string} message - The message content.
+   */
+  public message(message: string): void {
+    this.ws.send({
+      command: "social.dm",
+      data: { recipient: this.id, msg: message },
+    });
+  }
 
   /**
    * Fetch a user and fill the User object.
    * @param {string} id - User ID.
    * @returns {Promise<User>}
    */
-  public async getUser(id: string): Promise<User> {
+  public async getUser(id: string, ws: WebsocketManager): Promise<User> {
     const userData = await (
       await fetch(`https://ch.tetr.io/api/users/${id}`)
     ).json();
 
     if (!userData.success) throw userData.error;
 
+    this.ws = ws;
+
     const user = userData.data.user;
 
     for (var key in user) {
-      if (!["_id", "league"].includes(key)) {
+      if (!["_id", "league", "botmaster"].includes(key)) {
         // @ts-ignore
         this[key] = user[key];
 
         if (key === "username") this.username = user.username.toUpperCase();
+      }
+
+      if (key === "botmaster") {
+        this.botmaster = [];
+
+        var mastUsers = user.botmaster.split(", ");
+
+        for (var i = 0; i < mastUsers.length; i++) {
+          this.botmaster.push(
+            await new User().getUser(mastUsers[i].toLowerCase(), this.ws)
+          );
+        }
       }
 
       if (key === "_id") {
@@ -204,6 +220,8 @@ export class User {
   }
 
   /* Properties */
+
+  private ws!: WebsocketManager;
 
   /**
    * The user's ID.
@@ -229,11 +247,11 @@ export class User {
 
   /**
    * The bot's owner. (If Applicable)
-   * @type {?string}
+   * @type {?User[]}
    * @readonly
    */
 
-  public botmaster?: string;
+  public botmaster?: User[];
 
   /**
    * The user's badges.
@@ -305,29 +323,59 @@ export class User {
  * @extends {User}
  */
 export class ClientUser extends User {
+  /* Properties */
+  private wsM!: WebsocketManager;
+  private client!: Client;
+
   /* Constructor */
 
   /**
    * @constructor
-   * @param {WebsocketManager} ws - WebSocket Manager
    * @param {string} id - Client user ID.
+   * @param {WebsocketManager} ws - WebSocket Manager
    */
-  public constructor(private ws: WebsocketManager, public id: string) {
-    super(id);
+  public constructor(public id: string, ws: WebsocketManager, c: Client) {
+    super(id, ws);
+
+    this.wsM = ws;
+    this.client = c;
   }
 
   /* Methods */
 
   /**
-   * Send a direct message to a user.
+   * Set the client user's handling settings.
    * @returns {void}
-   * @param {User} user - The user to send the message to.
-   * @param {string} message - The message content.
+   * @param {Handling} handling - The handling options you want to set.
    */
-  public message(user: User, message: string): void {
-    this.ws.send({
-      command: "social.dm",
-      data: { recipient: user.id, msg: message },
+  public setHandling(handling: Handling): void {
+    this.wsM.send({
+      id: this.wsM.messageID,
+      command: "sethandling",
+      data: {
+        arr: handling.arr,
+        das: handling.das,
+        dcd: 0,
+        sdf: handling.sdf,
+        safelock: handling.safelock,
+        cancel: false,
+      },
+    });
+  }
+
+  /**
+   * Set the client user's privacy settings.
+   * @returns {void}
+   * @param {privacyOptions} options - The privacy options you want to set.
+   */
+  public async setPrivacy(options: privacyOptions): Promise<void> {
+    await fetch("https://tetr.io/api/users/setPreferences", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.client.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options),
     });
   }
 
@@ -360,7 +408,7 @@ export class ClientUser extends User {
       | "tl_mn_complete"
       | string;
   }): void {
-    this.ws.send({ command: "social.presence", data: options });
+    this.wsM.send({ command: "social.presence", data: options });
   }
 
   /**
@@ -369,7 +417,7 @@ export class ClientUser extends User {
    * @param {User} user - The user to invite.
    */
   public invite(user: User): void {
-    this.ws.send({ command: "social.invite", data: user.id });
+    this.wsM.send({ command: "social.invite", data: user.id });
   }
 }
 
@@ -476,11 +524,7 @@ export class Room {
 }
 
 /**
- * The handlings options that the client uses when connecting to the server.
- * @param {string} arr - A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
- * @param {string} das - A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
- * @param {string} sdf - An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
- * @param {boolean} safelock - Represents the "prevent accidental hard drops" setting.
+ * The handlings options that the client uses to change handling.
  */
 export interface Handling {
   /**
@@ -505,18 +549,18 @@ export interface Handling {
   safelock: boolean;
 }
 
-export type ClientEvent =
-  | "ready"
-  | "message"
-  | "options_update"
-  | "switch_mode"
-  | "player_join"
-  | "player_leave"
-  | "social_dm"
-  | "social_invite"
-  | "social_presence"
-  | "room_start"
-  | "room_end"
-  | "host_switch"
-  | "join"
-  | "leave";
+/**
+ * The privacy options that the client uses when changing their privacy settings.
+ */
+export interface privacyOptions {
+  privacy_dm: "everyone" | "friends" | "nobody";
+  privacy_invite: "everyone" | "friends" | "nobody";
+  privatemode: "public" | "private";
+  privacy_showcountry: boolean;
+  privacy_showgametime: boolean;
+  privacy_showplayed: boolean;
+  privacy_showwon: boolean;
+  privacy_status_deep: "everyone" | "friends" | "nobody";
+  privacy_status_exact: "everyone" | "friends" | "nobody";
+  privacy_status_shallow: "everyone" | "friends" | "nobody";
+}
