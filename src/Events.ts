@@ -43,3 +43,10 @@ export interface EventInvite {
   room: string;
   author: User;
 }
+
+export interface RoomEndPlayer {
+  user: User;
+  wins: number;
+  inputs: number;
+  piecesPlaced: number;
+}
