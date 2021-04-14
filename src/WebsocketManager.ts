@@ -201,6 +201,9 @@ export default class WebsocketManager {
           ws.heartbeat(5000);
 
         return;
+      case "Buffer":
+        this.receive({ data: Buffer.from(packet.data.data) }, this);
+        return;
       default:
         packet.data = msgpack.decode(e.data as Buffer);
         packet.type = undefined;
@@ -211,6 +214,8 @@ export default class WebsocketManager {
     if (packet.data.id && packet.data.id <= this.serverID) return;
 
     if (packet.data.id) this.serverID = packet.data.id;
+
+    console.log(packet.data.command);
 
     switch (packet.data.command) {
       case "hello":
@@ -300,6 +305,9 @@ export default class WebsocketManager {
           systemMessage: packet.data.data.system,
         };
         ws.client.emit("message", message);
+        break;
+      case "replayboardstate":
+        console.log(packet.data.data);
         break;
       case "gmupdate":
         ws.client.room.options = packet.data.data.game.options;
@@ -432,6 +440,6 @@ export default class WebsocketManager {
 }
 
 interface Packet {
-  type?: Number;
+  type?: Number | string;
   data: any;
 }
