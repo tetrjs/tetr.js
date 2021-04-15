@@ -306,8 +306,14 @@ export default class WebsocketManager {
         };
         ws.client.emit("message", message);
         break;
+      case "replay":
+        ws.client.emit("replay", packet.data);
+        break;
       case "replayboardstate":
-        console.log(packet.data.data);
+        ws.client.emit("replayboardstate", packet.data);
+        break;
+      case "refereeboard":
+        ws.client.emit("refereeboard", packet.data);
         break;
       case "gmupdate":
         ws.client.room.options = packet.data.data.game.options;
@@ -402,9 +408,14 @@ export default class WebsocketManager {
       case "social.presence":
         ws.client.emit("social_presence", packet.data.data);
         break;
+      case "readymulti":
+        ws.client.emit("readymulti", packet.data);
+        break;
       case "startmulti":
         ws.client.room.gameStarted = true;
-
+        setInterval(() => {
+          ws.send({ command: "replay", data: { frames: [] } });
+        }, 500);
         ws.client.emit("room_start");
         break;
       case "endmulti":
