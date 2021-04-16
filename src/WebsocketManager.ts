@@ -409,13 +409,110 @@ export default class WebsocketManager {
         ws.client.emit("social_presence", packet.data.data);
         break;
       case "readymulti":
+        ws.client.room.readymulti = packet.data.data;
         ws.client.emit("readymulti", packet.data);
         break;
       case "startmulti":
         ws.client.room.gameStarted = true;
-        setInterval(() => {
-          ws.send({ command: "replay", data: { frames: [] } });
-        }, 500);
+        const readymulti = ws.client.room.readymulti;
+        const clientOpts = readymulti.contexts.find(
+          (c) => c.user._id == this.client.user.id
+        ).opts;
+        ws.send({
+          command: "replay",
+          data: {
+            gameID: readymulti.gameid,
+            frames: [
+              {
+                frame: 0,
+                type: "full",
+                data: {
+                  successful: false,
+                  gameoverreason: null,
+                  replay: {},
+                  source: {},
+                  options: {
+                    ...readymulti.options,
+                    ...clientOpts,
+                  },
+                  stats: {
+                    seed: readymulti.options.seed,
+                    lines: 0,
+                    level_lines: 0,
+                    level_lines_needed: 1,
+                    inputs: 0,
+                    time: {
+                      start: 0,
+                      zero: true,
+                      locked: false,
+                      prev: 0,
+                      frameoffset: 0,
+                    },
+                    score: 0,
+                    zenlevel: 1,
+                    zenprogress: 0,
+                    level: 1,
+                    combo: 0,
+                    currentcombopower: 0,
+                    topcombo: 0,
+                    btb: 0,
+                    topbtb: 0,
+                    tspins: 0,
+                    piecesplaced: 0,
+                    clears: {
+                      singles: 0,
+                      doubles: 0,
+                      triples: 0,
+                      quads: 0,
+                      realtspins: 0,
+                      minitspins: 0,
+                      minitspinsingles: 0,
+                      tspinsingles: 0,
+                      minitspindoubles: 0,
+                      tspindoubles: 0,
+                      tspintriples: 0,
+                      tspinquads: 0,
+                      allclear: 0,
+                    },
+                    garbage: { sent: 0, received: 0, attack: 0, cleared: 0 },
+                    kills: 0,
+                    finesse: { combo: 0, faults: 0, perfectpieces: 0 },
+                  },
+                  targets: [],
+                  fire: 0,
+                  game: {
+                    board: [],
+                    bag: ["s", "i", "j", "z", "t", "o", "l"],
+                    hold: { piece: null, locked: false },
+                    g: 0.02,
+                    controlling: {
+                      ldas: 0,
+                      ldasiter: 0,
+                      lshift: false,
+                      rdas: 0,
+                      rdasiter: 0,
+                      rshift: false,
+                      lastshift: 0,
+                      softdrop: false,
+                    },
+                    handling: {
+                      arr: 0,
+                      das: 1,
+                      dcd: 0,
+                      sdf: 40,
+                      safelock: true,
+                      cancel: false,
+                    },
+                    playing: true,
+                  },
+                  killer: { name: null, type: "sizzle" },
+                  assumptions: {},
+                  aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
+                },
+              },
+            ],
+          },
+        });
         ws.client.emit("room_start");
         break;
       case "endmulti":

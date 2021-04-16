@@ -422,6 +422,7 @@ export class ClientUser extends User {
 }
 
 export class Room {
+  readymulti: any; //TEMPORARY
   /* Constructor */
 
   public constructor(private ws: WebsocketManager) {}
