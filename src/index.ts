@@ -79,9 +79,6 @@ export class Client extends EventEmitter {
    */
   public room: Room;
 
-  /**
-   * @param {Handling} handling - The handling options that the client uses when connecting to the server.
-   */
   public constructor() {
     super();
 
@@ -327,6 +324,12 @@ export class ClientUser extends User {
   private wsM!: WebsocketManager;
   private client!: Client;
 
+  /**
+   * The client's handling settings
+   * @type {Handling}
+   */
+  public handling!: Handling;
+
   /* Constructor */
 
   /**
@@ -349,6 +352,8 @@ export class ClientUser extends User {
    * @param {Handling} handling - The handling options you want to set.
    */
   public setHandling(handling: Handling): void {
+    this.handling = handling;
+
     this.wsM.send({
       id: this.wsM.messageID,
       command: "sethandling",
@@ -464,7 +469,80 @@ export class Room {
    */
   public host!: User;
 
-  /* Methods /
+  /* Methods */
+
+  //   private minotypes = ["z", "l", "o", "s", "i", "j", "t"];
+
+  // public find(e: number) {
+  //   let t = e % 2147483647;
+  //   return (
+  //     t <= 0 && (t += 2147483646),
+  //     {
+  //       next: function () {
+  //         return (t = (16807 * t) % 2147483647);
+  //       },
+  //       nextFloat: function () {
+  //         return (this.next() - 1) / 2147483646;
+  //       },
+  //       shuffleArray: function (e: number[]) {
+  //         let t,
+  //           a = e.length;
+  //         if (0 == a) return e;
+  //         for (; --a; )
+  //           (t = Math.floor(this.nextFloat() * (a + 1))),
+  //             ([e[a], e[t]] = [e[t], e[a]]);
+  //         return e;
+  //       },
+  //       getCurrentSeed: function () {
+  //         return t;
+  //       },
+  //     }
+  //   );
+  // }
+
+  // public test(input: any) {
+  //   const values = input;
+  //   function a() {
+  //     let e = [];
+  //     switch (values.bagtype) {
+  //       case "total mayhem":
+  //         for (let a = 0; a < 7; a++)
+  //           e.push(
+  //             this.minotypes[Math.floor(values.rng.nextFloat() * this.minotypes.length)]
+  //           );
+  //         break;
+  //       case "classic":
+  //         for (let a = 0; a < 7; a++) {
+  //           let a = Math.floor(values.rng.nextFloat() * (minotypes.length + 1));
+  //           (a === values.lastGenerated || a >= minotypes.length) &&
+  //             (a = Math.floor(values.rng.nextFloat() * minotypes.length)),
+  //             (values.lastGenerated = a),
+  //             e.push(minotypes[a]);
+  //         }
+  //         break;
+  //       case "pairs":
+  //         const a = [...minotypes];
+  //         values.rng.shuffleArray(a),
+  //           (e = [a[0], a[0], a[0], a[1], a[1], a[1]]),
+  //           values.rng.shuffleArray(e);
+  //         break;
+  //       case "14-bag":
+  //         (e = [...this.minotypes, ...this.minotypes]), values.rng.shuffleArray(e);
+  //         break;
+  //       case "7-bag":
+  //       default:
+  //         (e = [...this.minotypes]), values.rng.shuffleArray(e);
+  //     }
+  //     values.bag.push(...e);
+  //   }
+  //   return {
+  //     PopulateBag: a,
+  //     PullFromBag: function () {
+  //       for (; values.bag.length < 7; ) a();
+  //       return values.bag.shift();
+  //     },
+  //   };
+  // }
 
   /**
    * Send a message to the room.

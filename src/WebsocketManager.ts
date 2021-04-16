@@ -229,6 +229,13 @@ export default class WebsocketManager {
 
           if (!id || !id[1]) throw "Unable to fetch commit ID.";
 
+          ws.client.user.handling = {
+            arr: "1",
+            das: "1",
+            sdf: "5",
+            safelock: true,
+          };
+
           ws.send({
             id: ws.messageID,
             command: "authorize",
@@ -413,11 +420,17 @@ export default class WebsocketManager {
         ws.client.emit("readymulti", packet.data);
         break;
       case "startmulti":
+        const currentFrame = 0;
         ws.client.room.gameStarted = true;
         const readymulti = ws.client.room.readymulti;
         const clientOpts = readymulti.contexts.find(
-          (c) => c.user._id == this.client.user.id
+          (c: any) => c.user._id == this.client.user.id
         ).opts;
+        // const bag = test({
+        //   bag: [],
+        //   rng: new find(readymulti.options.seed),
+        //   bagtype: readymulti.bagtype,
+        // });
         ws.send({
           command: "replay",
           data: {
@@ -482,7 +495,7 @@ export default class WebsocketManager {
                   fire: 0,
                   game: {
                     board: [],
-                    bag: ["s", "i", "j", "z", "t", "o", "l"],
+                    bag: bag.PopulateBag,
                     hold: { piece: null, locked: false },
                     g: 0.02,
                     controlling: {
@@ -510,10 +523,22 @@ export default class WebsocketManager {
                   aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
                 },
               },
+              { frame: 0, type: "start", data: {} },
+              {
+                frame: 0,
+                type: "targets",
+                data: {
+                  id: "diyusi",
+                  frame: 0,
+                  type: "targets",
+                  data: [readymulti.contexts.map((e: any) => e.user._id)],
+                },
+              },
             ],
+            provisioned: currentFrame,
           },
         });
-        ws.client.emit("room_start");
+        ws.client.emit("room_start", bag);
         break;
       case "endmulti":
         ws.client.room.gameStarted = false;
