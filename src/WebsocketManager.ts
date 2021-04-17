@@ -29,6 +29,7 @@ import { Client, ClientUser, Room, User } from ".";
 import { EventDM, EventInvite, EventMessage, RoomEndPlayer } from "./Events";
 import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
+import { bagFunctions, find } from "./GameplayManager";
 
 export default class WebsocketManager {
   private socket!: WebSocket;
@@ -420,21 +421,31 @@ export default class WebsocketManager {
         ws.client.emit("readymulti", packet.data);
         break;
       case "startmulti":
-        const currentFrame = 0;
+        const currentFrame = 13;
         ws.client.room.gameStarted = true;
-        const readymulti = ws.client.room.readymulti;
+        const readymulti: any = ws.client.room.readymulti;
         const clientOpts = readymulti.contexts.find(
           (c: any) => c.user._id == this.client.user.id
         ).opts;
-        // const bag = test({
-        //   bag: [],
-        //   rng: new find(readymulti.options.seed),
-        //   bagtype: readymulti.bagtype,
-        // });
-        ws.send({
+        const bag = bagFunctions({
+          bag: [],
+          rng: find(readymulti.options.seed),
+          bagtype: readymulti.bagtype,
+        });
+        const row: null[] = [];
+        const board: null[][] = [];
+        for (let i = 0; i < 10; i++) {
+          row[i] = null;
+        }
+        for (let i = 0; i < 40; i++) {
+          board[i] = row;
+        }
+        let provisioned = 10;
+        const firstPacket = {
+          id: ws.messageID,
           command: "replay",
           data: {
-            gameID: readymulti.gameid,
+            listenID: readymulti.gameID,
             frames: [
               {
                 frame: 0,
@@ -445,8 +456,11 @@ export default class WebsocketManager {
                   replay: {},
                   source: {},
                   options: {
+                    version: 15,
                     ...readymulti.options,
                     ...clientOpts,
+                    username: this.client.user.username.toLowerCase(),
+                    physical: true,
                   },
                   stats: {
                     seed: readymulti.options.seed,
@@ -494,8 +508,8 @@ export default class WebsocketManager {
                   targets: [],
                   fire: 0,
                   game: {
-                    board: [],
-                    bag: bag.PopulateBag,
+                    board,
+                    bag: bag.PopulateBag(),
                     hold: { piece: null, locked: false },
                     g: 0.02,
                     controlling: {
@@ -531,13 +545,31 @@ export default class WebsocketManager {
                   id: "diyusi",
                   frame: 0,
                   type: "targets",
-                  data: [readymulti.contexts.map((e: any) => e.user._id)],
+                  data: readymulti.contexts
+                    .filter((e: any) => e.user._id != this.client.user.id)
+                    .map((e: any) => e.listenID),
                 },
               },
             ],
-            provisioned: currentFrame,
+            provisioned,
           },
-        });
+        };
+        setTimeout(() => {
+          ws.send(firstPacket);
+
+          setInterval(() => {
+            ws.send({
+              command: "replay",
+              data: {
+                listenID: readymulti.gameID,
+                frames: [],
+                provisioned,
+              },
+              id: ws.messageID,
+            });
+            provisioned + 30;
+          }, 500);
+        }, 10000);
         ws.client.emit("room_start", bag);
         break;
       case "endmulti":
