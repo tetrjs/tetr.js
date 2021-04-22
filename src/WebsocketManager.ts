@@ -324,6 +324,8 @@ export default class WebsocketManager {
         ws.client.emit("refereeboard", packet.data);
         break;
       case "gmupdate":
+        var joinEvent = !ws.client.room;
+
         ws.client.room.options = packet.data.data.game.options;
 
         ws.client.room.players = [];
@@ -345,7 +347,12 @@ export default class WebsocketManager {
 
         ws.client.room.gameStarted = packet.data.data.game.state === "ingame";
 
-        ws.client.emit("options_update", packet.data.data.game.options);
+        if (joinEvent) {
+          ws.client.emit("join");
+        } else {
+          ws.client.emit("options_update", packet.data.data.game.options);
+        }
+
         break;
       case "gmupdate.bracket":
         if (
@@ -556,8 +563,6 @@ export default class WebsocketManager {
         );
         ws.client.emit("room_end", gameLeaderboard);
         break;
-      case "joinroom":
-        ws.client.emit("join");
         break;
       case "leaveroom":
         this.client.room = new Room(this);
