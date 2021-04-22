@@ -324,7 +324,7 @@ export default class WebsocketManager {
         ws.client.emit("refereeboard", packet.data);
         break;
       case "gmupdate":
-        var joinEvent = !ws.client.room;
+        var joinEvent = !ws.client.room.host;
 
         ws.client.room.options = packet.data.data.game.options;
 
