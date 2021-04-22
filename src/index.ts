@@ -116,7 +116,11 @@ export class Client extends EventEmitter {
       this.leaveRoom();
     }
 
-    this.ws.send({ id: this.ws.messageID, command: "joinroom", data: room });
+    this.ws.send({
+      id: this.ws.messageID,
+      command: "joinroom",
+      data: (room.split("#")[1] || room).toUpperCase(),
+    });
 
     this.room.id = room;
   }
