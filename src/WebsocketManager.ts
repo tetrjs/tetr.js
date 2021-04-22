@@ -215,7 +215,7 @@ export default class WebsocketManager {
 
     if (packet.data.id) this.serverID = packet.data.id;
 
-    console.log(packet.data.command);
+    // console.log(packet.data.command);
 
     switch (packet.data.command) {
       case "hello":
@@ -419,127 +419,127 @@ export default class WebsocketManager {
         ws.client.room.readymulti = packet.data.data;
         ws.client.emit("readymulti", packet.data);
         break;
-      case "startmulti":
-        const currentFrame = 0;
-        ws.client.room.gameStarted = true;
-        const readymulti = ws.client.room.readymulti;
-        const clientOpts = readymulti.contexts.find(
-          (c: any) => c.user._id == this.client.user.id
-        ).opts;
-        // const bag = test({
-        //   bag: [],
-        //   rng: new find(readymulti.options.seed),
-        //   bagtype: readymulti.bagtype,
-        // });
-        ws.send({
-          command: "replay",
-          data: {
-            gameID: readymulti.gameid,
-            frames: [
-              {
-                frame: 0,
-                type: "full",
-                data: {
-                  successful: false,
-                  gameoverreason: null,
-                  replay: {},
-                  source: {},
-                  options: {
-                    ...readymulti.options,
-                    ...clientOpts,
-                  },
-                  stats: {
-                    seed: readymulti.options.seed,
-                    lines: 0,
-                    level_lines: 0,
-                    level_lines_needed: 1,
-                    inputs: 0,
-                    time: {
-                      start: 0,
-                      zero: true,
-                      locked: false,
-                      prev: 0,
-                      frameoffset: 0,
-                    },
-                    score: 0,
-                    zenlevel: 1,
-                    zenprogress: 0,
-                    level: 1,
-                    combo: 0,
-                    currentcombopower: 0,
-                    topcombo: 0,
-                    btb: 0,
-                    topbtb: 0,
-                    tspins: 0,
-                    piecesplaced: 0,
-                    clears: {
-                      singles: 0,
-                      doubles: 0,
-                      triples: 0,
-                      quads: 0,
-                      realtspins: 0,
-                      minitspins: 0,
-                      minitspinsingles: 0,
-                      tspinsingles: 0,
-                      minitspindoubles: 0,
-                      tspindoubles: 0,
-                      tspintriples: 0,
-                      tspinquads: 0,
-                      allclear: 0,
-                    },
-                    garbage: { sent: 0, received: 0, attack: 0, cleared: 0 },
-                    kills: 0,
-                    finesse: { combo: 0, faults: 0, perfectpieces: 0 },
-                  },
-                  targets: [],
-                  fire: 0,
-                  game: {
-                    board: [],
-                    bag: bag.PopulateBag,
-                    hold: { piece: null, locked: false },
-                    g: 0.02,
-                    controlling: {
-                      ldas: 0,
-                      ldasiter: 0,
-                      lshift: false,
-                      rdas: 0,
-                      rdasiter: 0,
-                      rshift: false,
-                      lastshift: 0,
-                      softdrop: false,
-                    },
-                    handling: {
-                      arr: 0,
-                      das: 1,
-                      dcd: 0,
-                      sdf: 40,
-                      safelock: true,
-                      cancel: false,
-                    },
-                    playing: true,
-                  },
-                  killer: { name: null, type: "sizzle" },
-                  assumptions: {},
-                  aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
-                },
-              },
-              { frame: 0, type: "start", data: {} },
-              {
-                frame: 0,
-                type: "targets",
-                data: {
-                  id: "diyusi",
-                  frame: 0,
-                  type: "targets",
-                  data: [readymulti.contexts.map((e: any) => e.user._id)],
-                },
-              },
-            ],
-            provisioned: currentFrame,
-          },
-        });
-        ws.client.emit("room_start", bag);
-        break;
+      // case "startmulti":
+      //   const currentFrame = 0;
+      //   ws.client.room.gameStarted = true;
+      //   const readymulti = ws.client.room.readymulti;
+      //   const clientOpts = readymulti.contexts.find(
+      //     (c: any) => c.user._id == this.client.user.id
+      //   ).opts;
+      // const bag = test({
+      //   bag: [],
+      //   rng: new find(readymulti.options.seed),
+      //   bagtype: readymulti.bagtype,
+      // });
+      // ws.send({
+      //   command: "replay",
+      //   data: {
+      //     gameID: readymulti.gameid,
+      //     frames: [
+      //       {
+      //         frame: 0,
+      //         type: "full",
+      //         data: {
+      //           successful: false,
+      //           gameoverreason: null,
+      //           replay: {},
+      //           source: {},
+      //           options: {
+      //             ...readymulti.options,
+      //             ...clientOpts,
+      //           },
+      //           stats: {
+      //             seed: readymulti.options.seed,
+      //             lines: 0,
+      //             level_lines: 0,
+      //             level_lines_needed: 1,
+      //             inputs: 0,
+      //             time: {
+      //               start: 0,
+      //               zero: true,
+      //               locked: false,
+      //               prev: 0,
+      //               frameoffset: 0,
+      //             },
+      //             score: 0,
+      //             zenlevel: 1,
+      //             zenprogress: 0,
+      //             level: 1,
+      //             combo: 0,
+      //             currentcombopower: 0,
+      //             topcombo: 0,
+      //             btb: 0,
+      //             topbtb: 0,
+      //             tspins: 0,
+      //             piecesplaced: 0,
+      //             clears: {
+      //               singles: 0,
+      //               doubles: 0,
+      //               triples: 0,
+      //               quads: 0,
+      //               realtspins: 0,
+      //               minitspins: 0,
+      //               minitspinsingles: 0,
+      //               tspinsingles: 0,
+      //               minitspindoubles: 0,
+      //               tspindoubles: 0,
+      //               tspintriples: 0,
+      //               tspinquads: 0,
+      //               allclear: 0,
+      //             },
+      //             garbage: { sent: 0, received: 0, attack: 0, cleared: 0 },
+      //             kills: 0,
+      //             finesse: { combo: 0, faults: 0, perfectpieces: 0 },
+      //           },
+      //           targets: [],
+      //           fire: 0,
+      //           game: {
+      //             board: [],
+      //             bag: bag.PopulateBag,
+      //             hold: { piece: null, locked: false },
+      //             g: 0.02,
+      //             controlling: {
+      //               ldas: 0,
+      //               ldasiter: 0,
+      //               lshift: false,
+      //               rdas: 0,
+      //               rdasiter: 0,
+      //               rshift: false,
+      //               lastshift: 0,
+      //               softdrop: false,
+      //             },
+      //             handling: {
+      //               arr: 0,
+      //               das: 1,
+      //               dcd: 0,
+      //               sdf: 40,
+      //               safelock: true,
+      //               cancel: false,
+      //             },
+      //             playing: true,
+      //           },
+      //           killer: { name: null, type: "sizzle" },
+      //           assumptions: {},
+      //           aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
+      //         },
+      //       },
+      //       { frame: 0, type: "start", data: {} },
+      //       {
+      //         frame: 0,
+      //         type: "targets",
+      //         data: {
+      //           id: "diyusi",
+      //           frame: 0,
+      //           type: "targets",
+      //           data: [readymulti.contexts.map((e: any) => e.user._id)],
+      //         },
+      //       },
+      //     ],
+      //     provisioned: currentFrame,
+      //   },
+      // });
+      // ws.client.emit("room_start", bag);
+      // break;
       case "endmulti":
         ws.client.room.gameStarted = false;
 

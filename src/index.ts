@@ -120,6 +120,7 @@ export class Client extends EventEmitter {
 
     this.room.id = room;
   }
+
   /**
    * Get the client to the leave the current room.
    * @returns {void}
@@ -551,6 +552,19 @@ export class Room {
    */
   public message(msg: string): void {
     this.ws.send({ id: this.ws.messageID, command: "chat", data: msg });
+  }
+
+  /**
+   * Transfers host privledges to another user in the lobby.
+   * @returns {void}
+   * @param {string} user - The User ID.
+   */
+  public setHost(user: string): void {
+    this.ws.send({
+      id: this.ws.messageID,
+      command: "transferownership",
+      data: user,
+    });
   }
 
   /**
