@@ -29,6 +29,7 @@ import { Client, ClientUser, Room, User } from ".";
 import { EventDM, EventInvite, EventMessage, RoomEndPlayer } from "./Events";
 import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
+import { bagFunctions, find } from "./GameplayManager";
 
 export default class WebsocketManager {
   private socket!: WebSocket;
