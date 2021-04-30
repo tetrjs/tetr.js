@@ -345,6 +345,8 @@ export default class WebsocketManager {
           this
         );
 
+        ws.client.room.id = packet.data.data.id;
+
         ws.client.room.gameStarted = packet.data.data.game.state === "ingame";
 
         if (joinEvent) {
