@@ -27,7 +27,7 @@ SOFTWARE.
 import WebsocketManager from "./WebsocketManager";
 import fetch from "node-fetch";
 import EventEmitter from "events";
-import { EventDM, EventInvite, EventMessage } from "./Events";
+import { EventDM, EventInvite, EventMessage, RoomEndPlayer } from "./Events";
 
 export declare interface Client {
   on(event: "ready", listener: () => void): this;
@@ -46,7 +46,7 @@ export declare interface Client {
   on(event: "social_dm", listener: (message: EventDM) => void): this;
   on(event: "social_invite", listener: (invite: EventInvite) => void): this;
   on(event: "room_start", listener: () => void): this;
-  on(event: "room_end", listener: () => void): this;
+  on(event: "room_end", listener: (leaderboard: RoomEndPlayer[]) => void): this;
   on(event: "join", listener: () => void): this;
   on(event: "leave", listener: () => void): this;
 }
