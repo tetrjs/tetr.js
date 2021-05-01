@@ -553,18 +553,21 @@ export default class WebsocketManager {
       case "endmulti":
         ws.client.room.gameStarted = false;
 
-        const gameLeaderboard: RoomEndPlayer[] = packet.data.data.leaderboard.map(
-          async (playerRaw: any) => {
-            return {
-              user: await new User().getUser(playerRaw.user._id, this),
-              wins: playerRaw.wins,
-              inputs: playerRaw.inputs,
-              piecesPlaced: playerRaw.piecesplaced,
-            };
-          }
-        );
+        const gameLeaderboard: RoomEndPlayer[] = [];
+
+        for (var i = 0; i < packet.data.data.leaderboard.length; i++) {
+          gameLeaderboard.push({
+            user: await new User().getUser(
+              packet.data.data.leaderboard[i].user._id,
+              this
+            ),
+            wins: packet.data.data.leaderboard[i].wins,
+            inputs: packet.data.data.leaderboard[i].inputs,
+            piecesPlaced: packet.data.data.leaderboard[i].piecesplaced,
+          });
+        }
+
         ws.client.emit("room_end", gameLeaderboard);
-        break;
         break;
       case "leaveroom":
         this.client.room = new Room(this);
