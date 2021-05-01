@@ -475,6 +475,15 @@ export class Room {
   public host!: User;
 
   /**
+   * Kicks a user from the room.
+   * @returns {void}
+   * @param {User} user - The user you want to kick from the room.
+   */
+  public kick(user: User): void {
+    this.ws.send({ id: this.ws.messageID, command: "kick", data: user.id });
+  }
+
+  /**
    * Send a message to the room.
    * @returns {void}
    * @param {string} msg - The message content.
