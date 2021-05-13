@@ -27,7 +27,13 @@ SOFTWARE.
 import WebsocketManager from "./WebsocketManager";
 import fetch from "node-fetch";
 import EventEmitter from "events";
-import { EventDM, EventInvite, EventMessage, RoomEndPlayer } from "./Events";
+import {
+  EventDM,
+  EventInvite,
+  EventMessage,
+  EventReadyMulti,
+  RoomEndPlayer,
+} from "./Events";
 
 export declare interface Client {
   on(event: "ready", listener: () => void): this;
@@ -45,6 +51,7 @@ export declare interface Client {
   on(event: "player_leave", listener: (user: User) => void): this;
   on(event: "social_dm", listener: (message: EventDM) => void): this;
   on(event: "social_invite", listener: (invite: EventInvite) => void): this;
+  on(event: "room_ready", listener: (data: EventReadyMulti) => void): this;
   on(event: "room_start", listener: () => void): this;
   on(event: "room_end", listener: (leaderboard: RoomEndPlayer[]) => void): this;
   on(event: "join", listener: () => void): this;
@@ -365,10 +372,10 @@ export class ClientUser extends User {
       data: {
         arr: handling.arr,
         das: handling.das,
-        dcd: 0,
         sdf: handling.sdf,
         safelock: handling.safelock,
-        cancel: false,
+        cancel: handling.cancel,
+        dcd: handling.dcd,
       },
     });
   }
@@ -432,7 +439,6 @@ export class ClientUser extends User {
 }
 
 export class Room {
-  readymulti: any; //TEMPORARY
   /* Constructor */
 
   public constructor(private ws: WebsocketManager) {}
@@ -559,25 +565,35 @@ export class Room {
  */
 export interface Handling {
   /**
-   * A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.
-   * @type {string}
+   * A float value in the range [0, 5]. Represents automatic repeat rate.
+   * @type {number}
    */
-  arr: string;
+  arr: number;
   /**
-   * A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.
-   * @type {string}
+   * A float value in the range [1, 8]. Represents delayed auto-shift.
+   * @type {number}
    */
-  das: string;
+  das: number;
   /**
-   * An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.
-   * @type {string}
+   * An integer value in the range [5, 41]. Represents soft-drop factor, where 41 represents infinity.
+   * @type {number}
    */
-  sdf: string;
+  sdf: number;
   /**
    * Represents the "prevent accidental hard drops" setting.
    * @type {boolean}
    */
   safelock: boolean;
+  /**
+   * Represents the "cancel DAS when changing directions" setting.
+   * @type {boolean}
+   */
+  cancel: boolean;
+  /**
+   * A float value in the range [0, 20]. Represents DAS cut delay.
+   * @type {number}
+   */
+  dcd: number;
 }
 
 /**

@@ -231,10 +231,12 @@ export default class WebsocketManager {
           if (!id || !id[1]) throw "Unable to fetch commit ID.";
 
           ws.client.user.handling = {
-            arr: "1",
-            das: "1",
-            sdf: "5",
+            arr: 0,
+            das: 6,
+            sdf: 5,
             safelock: true,
+            cancel: false,
+            dcd: 0,
           };
 
           ws.send({
@@ -243,10 +245,12 @@ export default class WebsocketManager {
             data: {
               token: ws.client.token,
               handling: {
-                arr: "1",
-                das: "1",
-                sdf: "5",
+                arr: 0,
+                das: 6,
+                sdf: 5,
                 safelock: true,
+                cancel: false,
+                dcd: 0,
               },
               signature: {
                 commit: {
@@ -427,8 +431,7 @@ export default class WebsocketManager {
         break;
       case "readymulti":
         ws.client.room.gameStarted = true;
-        ws.client.room.readymulti = packet.data.data;
-        ws.client.emit("readymulti", packet.data);
+        ws.client.emit("room_ready", packet.data);
         break;
       case "startmulti":
         //   const currentFrame = 0;
@@ -549,7 +552,7 @@ export default class WebsocketManager {
         //     provisioned: currentFrame,
         //   },
         // });
-        // ws.client.emit("room_start", bag);
+        ws.client.emit("room_start");
         break;
       case "endmulti":
         ws.client.room.gameStarted = false;

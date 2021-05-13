@@ -89,7 +89,9 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handling.html#arr" class="tsd-kind-icon">arr</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handling.html#cancel" class="tsd-kind-icon">cancel</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handling.html#das" class="tsd-kind-icon">das</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handling.html#dcd" class="tsd-kind-icon">dcd</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handling.html#safelock" class="tsd-kind-icon">safelock</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="handling.html#sdf" class="tsd-kind-icon">sdf</a></li>
 							</ul>
@@ -102,30 +104,60 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="arr" class="tsd-anchor"></a>
 					<h3>arr</h3>
-					<div class="tsd-signature tsd-kind-icon">arr<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">arr<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6a03ea6/src/index.ts#L565">src/index.ts:565</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6dd2341/src/index.ts#L571">src/index.ts:571</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A float value in the range [1, 5] represented as a string. Represents automatic repeat rate.</p>
+							<p>A float value in the range [0, 5]. Represents automatic repeat rate.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="cancel" class="tsd-anchor"></a>
+					<h3>cancel</h3>
+					<div class="tsd-signature tsd-kind-icon">cancel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6dd2341/src/index.ts#L591">src/index.ts:591</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Represents the &quot;cancel DAS when changing directions&quot; setting.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="das" class="tsd-anchor"></a>
 					<h3>das</h3>
-					<div class="tsd-signature tsd-kind-icon">das<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">das<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6a03ea6/src/index.ts#L570">src/index.ts:570</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6dd2341/src/index.ts#L576">src/index.ts:576</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A float value in the range [1, 8] represented as a string. Represents delayed auto-shift.</p>
+							<p>A float value in the range [1, 8]. Represents delayed auto-shift.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="dcd" class="tsd-anchor"></a>
+					<h3>dcd</h3>
+					<div class="tsd-signature tsd-kind-icon">dcd<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6dd2341/src/index.ts#L596">src/index.ts:596</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A float value in the range [0, 20]. Represents DAS cut delay.</p>
 						</div>
 					</div>
 				</section>
@@ -135,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">safelock<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6a03ea6/src/index.ts#L580">src/index.ts:580</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6dd2341/src/index.ts#L586">src/index.ts:586</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -147,15 +179,15 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="sdf" class="tsd-anchor"></a>
 					<h3>sdf</h3>
-					<div class="tsd-signature tsd-kind-icon">sdf<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">sdf<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6a03ea6/src/index.ts#L575">src/index.ts:575</a></li>
+							<li>Defined in <a href="https://github.com/Proximitynow19/TETR.JS/blob/6dd2341/src/index.ts#L581">src/index.ts:581</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>An integer value in the range [5, 41] represented as a string. Represents soft-drop factor, where 41 represents infinity.</p>
+							<p>An integer value in the range [5, 41]. Represents soft-drop factor, where 41 represents infinity.</p>
 						</div>
 					</div>
 				</section>
@@ -192,7 +224,13 @@
 								<a href="handling.html#arr" class="tsd-kind-icon">arr</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="handling.html#cancel" class="tsd-kind-icon">cancel</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="handling.html#das" class="tsd-kind-icon">das</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="handling.html#dcd" class="tsd-kind-icon">dcd</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="handling.html#safelock" class="tsd-kind-icon">safelock</a>

@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 import { User } from ".";
+import { Handling } from "./index";
 
 export interface EventMessage {
   content: string;
@@ -49,4 +50,18 @@ export interface RoomEndPlayer {
   wins: number;
   inputs: number;
   piecesPlaced: number;
+}
+
+export interface EventReadyMulti {
+  options: any;
+  contexts: {
+    listenID: string;
+    user: { _id: string; username: string };
+    handling: Handling;
+    opts: { fulloffset: number; fullinterval: number };
+    alive: boolean;
+  }[];
+  first: boolean;
+  gameID: string;
+  started: boolean;
 }
