@@ -147,6 +147,15 @@ export class Client extends EventEmitter {
   }
 
   /**
+   * Sends a payload through the websocket.
+   * @returns {void}
+   * @param {any} payload - The payload to send.
+   */
+  public send(payload: any): void {
+    this.ws.send({ ...payload, id: this.ws.messageID });
+  }
+
+  /**
    * Destroy the client and disconnect from the server.
    * @returns {void}
    */
