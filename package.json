@@ -31,7 +31,7 @@
     "events": "^3.3.0",
     "msgpack-lite": "^0.1.26",
     "node-fetch": "^2.6.1",
-    "ws": "^7.4.5"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@types/msgpack-lite": "^0.1.7",
