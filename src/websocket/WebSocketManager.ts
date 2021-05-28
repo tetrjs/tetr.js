@@ -3,35 +3,29 @@ import Client from "../client/Client";
 import msgpack from "msgpack-lite";
 import fs from "fs";
 
-export default class WebSocketManager extends WebSocket {
+export default class WebSocketManager {
   /**
    * The WebSocketManager Class
    * @param {string} endpoint - The endpoint of the server to connect to
    * @param {Client} client - The Client Class
    */
   constructor(endpoint: string, client: Client) {
-    super(endpoint);
+    this.socket = new WebSocket(endpoint);
 
     this.client = client;
 
-    this.onopen = () => {
+    this.socket.onopen = () => {
       this.send_packet({ command: "new" });
 
       this.heartbeat(5000);
     };
 
-    this.onmessage = (e) => {
+    this.socket.onmessage = (e) => {
       this.receive_packet(e.data as Buffer);
     };
   }
 
   // Variables
-
-  /**
-   * The Client
-   * @type {Client}
-   */
-  public client!: Client;
 
   /**
    * WebSocket messages
@@ -46,6 +40,19 @@ export default class WebSocketManager extends WebSocket {
         require(`${__dirname}/messages/${k}`),
       ])
   );
+
+  /**
+   * The Client
+   * @type {Client}
+   */
+  public client!: Client;
+
+  /**
+   * The socket connection to the server
+   * @type {WebSocket}
+   * @readonly
+   */
+  public socket!: WebSocket;
 
   /**
    * The current ServerId
@@ -97,12 +104,12 @@ export default class WebSocketManager extends WebSocket {
    * @returns {void}
    */
   public send_packet(data: any): void {
-    // console.log(data);
+    console.log("Client:", data);
 
     const packet = msgpack.encode(data);
 
-    if (this.readyState === this.OPEN) {
-      this.send(packet);
+    if (this.socket.readyState === this.socket.OPEN) {
+      this.socket.send(packet);
     } else {
       this.queue.push(packet);
     }
@@ -158,7 +165,7 @@ export default class WebSocketManager extends WebSocket {
 
         return;
       case 0xb0:
-        // console.log("Pong");
+        console.log("Server:", "Pong");
 
         return this.heartbeat(5000);
       default:
@@ -170,7 +177,7 @@ export default class WebSocketManager extends WebSocket {
 
     if (packet.data.id) this.serverId = packet.data.id;
 
-    console.log(packet);
+    console.log("Server:", packet);
 
     const message = this.messages.get(packet.data.command);
 
@@ -188,11 +195,11 @@ export default class WebSocketManager extends WebSocket {
     if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
 
     this.heartbeatTO = setTimeout(() => {
-      if (this.readyState === this.OPEN) {
-        // console.log("Ping");
+      if (this.socket.readyState === this.socket.OPEN) {
+        console.log("Client:", "Ping");
 
         try {
-          this.send(Buffer.from([0xb0, 0x0b]));
+          this.socket.send(Buffer.from([0xb0, 0x0b]));
         } catch {
           this.heartbeat(200);
         }
@@ -210,27 +217,33 @@ export default class WebSocketManager extends WebSocket {
   public migrate(endpoint: string): void {
     if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
 
-    // this.onopen;
+    this.socket.close();
 
-    this.url = endpoint;
+    this.socket = new WebSocket(endpoint);
 
-    for (var i = 0; this.queue.length; i++) {
-      this.send_packet(this.queue[i]);
+    this.socket.onopen = () => {
+      this.send_packet({
+        command: "resume",
+        socketid: this.socketId,
+        resumetoken: this.resumeId,
+      });
 
-      this.queue.splice(i, 1);
-    }
+      this.send_packet({
+        command: "hello",
+        packets: this.history,
+      });
 
-    this.send_packet({
-      command: "resume",
-      socketid: this.socketId,
-      resumetoken: this.resumeId,
-    });
+      for (var i = 0; this.queue.length; i++) {
+        this.send_packet(this.queue[i]);
 
-    this.send_packet({
-      command: "hello",
-      packets: this.history,
-    });
+        this.queue.splice(i, 1);
+      }
 
-    this.heartbeat(5000);
+      this.heartbeat(5000);
+    };
+
+    this.socket.onmessage = (e) => {
+      this.receive_packet(e.data as Buffer);
+    };
   }
 }

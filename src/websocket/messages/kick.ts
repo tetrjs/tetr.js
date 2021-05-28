@@ -1,5 +1,10 @@
 import WebSocketManager from "../WebSocketManager";
+import chalk from "chalk";
 
 export = function (packet: any, ws: WebSocketManager): void {
-  throw packet.data.reason;
+  console.error(`${chalk.red.bold("[FATAL]:")} ${packet.data.reason}`);
+
+  ws.client.disconnect();
+
+  process.exit();
 };

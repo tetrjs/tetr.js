@@ -28,6 +28,7 @@
   "dependencies": {
     "@types/node": "^15.0.3",
     "@types/ws": "^7.4.4",
+    "chalk": "^4.1.1",
     "events": "^3.3.0",
     "msgpack-lite": "^0.1.26",
     "node-fetch": "^2.6.1",

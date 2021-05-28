@@ -23,9 +23,9 @@ export default class Room extends EventEmitter {
   ) {
     super();
 
-    this.patch(options, players, owner, id, state);
-
     this.client = client;
+
+    this.patch(options, players, owner, id, state);
   }
 
   // Variables
@@ -97,11 +97,11 @@ export default class Room extends EventEmitter {
     for (var i = 0; i < players.length; i++) {
       this.players.push({
         mode: players[i].bracket,
-        user: (await this.client.users.fetch(players[i]._id, true)) as User,
+        user: (await this.client.users?.fetch(players[i]._id, true)) as User,
       });
     }
 
-    this.owner = (await this.client.users.fetch(owner)) as User;
+    this.owner = (await this.client.users?.fetch(owner)) as User;
 
     this.id = id;
 
@@ -114,7 +114,7 @@ export default class Room extends EventEmitter {
    * @returns {void}
    */
   public send(content: string): void {
-    this.client.ws.send_packet({
+    this.client.ws?.send_packet({
       id: this.client.ws.clientId,
       command: "chat",
       data: content,

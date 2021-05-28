@@ -35,8 +35,34 @@ export default class ClientUser extends User {
   // Functions
 
   /**
+   * Joins a room
+   * @param {string} - room
+   * @returns {void}
+   */
+  public join(room: string): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "joinroom",
+      data: room,
+    });
+  }
+
+  /**
+   * Leaves a room
+   * @returns {void}
+   */
+  public leave(): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "leaveroom",
+      data: false,
+    });
+  }
+
+  /**
    * Sets the ClientUser's presence
-   * @type {Object}
+   * @param {Object} - data
+   * @returns {void}
    */
   public setPresence(data: {
     status: "online" | "away" | "busy" | "offline";
@@ -57,6 +83,6 @@ export default class ClientUser extends User {
       | "tl_end"
       | "tl_mm_complete";
   }): void {
-    this.client.ws.send_packet({ command: "social.presence", data });
+    this.client.ws?.send_packet({ command: "social.presence", data });
   }
 }

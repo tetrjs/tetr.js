@@ -20,7 +20,7 @@ export default class Client extends EventEmitter {
    * @type {WebSocketManager}
    * @readonly
    */
-  public ws!: WebSocketManager;
+  public ws?: WebSocketManager;
 
   /**
    * The client's token
@@ -34,22 +34,45 @@ export default class Client extends EventEmitter {
    * @type {ClientUser}
    * @readonly
    */
-  public user!: ClientUser;
+  public user?: ClientUser;
 
   /**
    * The UserManager
    * @type {UserManager}
    * @readonly
    */
-  public users: UserManager = new UserManager();
+  public users?: UserManager = new UserManager();
+
+  /**
+   * The amount of currently online players
+   * @type {number}
+   * @readonly
+   */
+  public players: number = 0;
 
   // Functions
 
   /**
+   * Used to disconnect the connection with the server
+   * @returns {void}
+   */
+  public disconnect(): void {
+    this.ws?.send_packet({ command: "die" });
+
+    this.ws?.socket.close();
+
+    this.players = 0;
+
+    this.user = undefined;
+    this.users = undefined;
+  }
+
+  /**
    * Login to the client's account
    * @param {string} token - The client's token
+   * @returns {Promise<void>}
    */
-  public async login(token: string) {
+  public async login(token: string): Promise<void> {
     this.token = token;
 
     const client = await (
@@ -67,7 +90,7 @@ export default class Client extends EventEmitter {
 
     this.user = new ClientUser(
       {
-        ...(await this.users.fetch(client.user._id)),
+        ...(await this.users?.fetch(client.user._id)),
       },
       this
     );

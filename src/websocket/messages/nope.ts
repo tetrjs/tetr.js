@@ -1,10 +1,6 @@
 import WebSocketManager from "../WebSocketManager";
+import chalk from "chalk";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
-  ws.client.user?.room?.emit(
-    "ready",
-    packet.data.contexts,
-    packet.data.first,
-    packet.data.gameID
-  );
+  console.warn(`${chalk.yellow.bold("[WARNING]:")} ${packet.data.reason}`);
 };

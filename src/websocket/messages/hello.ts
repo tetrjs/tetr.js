@@ -13,21 +13,22 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
 
     if (!id || !id[1]) throw "Unable to fetch commit ID.";
 
-    ws.client.user.handling = {
-      arr: 0,
-      das: 6,
-      sdf: 5,
-      safelock: true,
-      cancel: false,
-      dcd: 0,
-    };
+    if (ws.client.user)
+      ws.client.user.handling = {
+        arr: 0,
+        das: 6,
+        sdf: 5,
+        safelock: true,
+        cancel: false,
+        dcd: 0,
+      };
 
     ws.send_packet({
       id: ws.clientId,
       command: "authorize",
       data: {
         token: ws.client.token,
-        handling: ws.client.user.handling,
+        handling: ws.client.user?.handling,
         signature: {
           commit: {
             id: id[1],
