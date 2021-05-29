@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import { Client } from "..";
+import { Client, Handling } from "..";
 import User from "../user/User";
 
 export default class Room extends EventEmitter {
@@ -49,7 +49,11 @@ export default class Room extends EventEmitter {
    * @type {object}
    * @readonly
    */
-  public players!: { user: User; mode: "spectator" | "player" }[];
+  public players!: {
+    user: User;
+    mode: "spectator" | "player";
+    games: { played: number; wins: number; streak: number };
+  }[];
 
   /**
    * The owner of the Room
@@ -75,37 +79,44 @@ export default class Room extends EventEmitter {
   // Functions
 
   /**
-   * Patches the User data
-   * @param {any[]} options - The Room options
-   * @param {any[]} players - The Players in the Room
-   * @param {string} owner - The owner of the Room
-   * @param {string} id - The ID of the Room
-   * @param {string} state - The current state of the Room
+   * Patches the Room data
+   * @param {any[] | undefined} options - The Room options
+   * @param {any[] | undefined} players - The Players in the Room
+   * @param {string | undefined} owner - The owner of the Room
+   * @param {string | undefined} id - The ID of the Room
+   * @param {string | undefined} state - The current state of the Room
    * @returns {Proimse<void>}
    */
   public async patch(
-    options: any[],
-    players: any[],
-    owner: string,
-    id: string,
-    state: string
+    options?: any[],
+    players?: any[],
+    owner?: string,
+    id?: string,
+    state?: string
   ): Promise<void> {
-    this.options = options;
+    if (options) this.options = options;
 
-    this.players = [];
+    if (players) {
+      this.players = [];
 
-    for (var i = 0; i < players.length; i++) {
-      this.players.push({
-        mode: players[i].bracket,
-        user: (await this.client.users?.fetch(players[i]._id, true)) as User,
-      });
+      for (var i = 0; i < players.length; i++) {
+        this.players.push({
+          mode: players[i].bracket,
+          user: (await this.client.users?.fetch(players[i]._id)) as User,
+          games: {
+            played: players[i].record.games,
+            wins: players[i].record.wins,
+            streak: players[i].record.streak,
+          },
+        });
+      }
     }
 
-    this.owner = (await this.client.users?.fetch(owner)) as User;
+    if (owner) this.owner = (await this.client.users?.fetch(owner)) as User;
 
-    this.id = id;
+    if (id) this.id = id;
 
-    this.inGame = state === "ingame";
+    if (state) this.inGame = state === "ingame";
   }
 
   /**
@@ -120,4 +131,60 @@ export default class Room extends EventEmitter {
       data: content,
     });
   }
+
+  /**
+   * Switches either your or another player's bracket
+   * @param {"player" | "spectator"} bracket - The new bracket to be switched to
+   * @param {User | undefined} player - The target player
+   * @returns {void}
+   */
+  public switchBracket(bracket: "player" | "spectator", player?: User): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: player ? "switchbrackethost" : "switchbracket",
+      data: player ? { uid: player._id, bracket } : bracket,
+    });
+  }
+
+  public updateConfig(changes: { index: string; value: any }[]): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "updateconfig",
+      data: changes,
+    });
+  }
+}
+
+export default interface Room {
+  /**
+   * Emitted whenever a user talks in the Room
+   */
+  on(
+    event: "message",
+    callback: (message: {
+      content: string;
+      author?: User;
+      system: boolean;
+    }) => void
+  ): this;
+
+  /**
+   * Emitted whenever a Room is about to start
+   */
+  on(
+    event: "ready",
+    callback: (
+      contexts: {
+        user: User;
+        handling: Handling;
+        opts: { fulloffset: number; fullinterval: number };
+      }[],
+      firstGame: boolean
+    ) => void
+  ): this;
+
+  /**
+   * Emitted whenever room starts
+   */
+  on(event: "start", callback: () => void): this;
 }

@@ -172,10 +172,13 @@ export default class WebSocketManager {
         packet.data = msgpack.decode(data);
     }
 
-    if (!packet.data || (packet.data.id && packet.data.id <= this.serverId))
-      return;
-
-    if (packet.data.id) this.serverId = packet.data.id;
+    if (packet.type === 0x45 && packet.id > this.serverId) {
+      this.serverId = packet.id;
+    } else if (packet.type === 0xae && packet.data.id > this.serverId) {
+      this.serverId = packet.data.id;
+    } else {
+      if (typeof (packet.id || packet.data.id) === "number") return;
+    }
 
     console.log("Server:", packet);
 

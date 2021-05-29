@@ -1,17 +1,10 @@
 import WebSocketManager from "../WebSocketManager";
-import fetch from "node-fetch";
 import msgpack from "msgpack-lite";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
   if (!ws.socketId && !ws.resumeId) {
     ws.socketId = packet.id;
     ws.resumeId = packet.resume;
-
-    const file = await fetch("https://tetr.io/js/tetrio.js");
-    const text = await file.text();
-    const id = text.match(/"commit":{"id":"(.{7})"/);
-
-    if (!id || !id[1]) throw "Unable to fetch commit ID.";
 
     if (ws.client.user)
       ws.client.user.handling = {
@@ -31,7 +24,7 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
         handling: ws.client.user?.handling,
         signature: {
           commit: {
-            id: id[1],
+            id: ws.client.commitId,
           },
         },
       },

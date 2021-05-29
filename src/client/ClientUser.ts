@@ -1,29 +1,21 @@
 import Room from "../room/Room";
 import User from "../user/User";
 import Client from "../client/Client";
+import { Handling, Presence } from "..";
 
 export default class ClientUser extends User {
   constructor(data: any, client: Client) {
-    super(data);
-
-    this.client = client;
+    super(data, client);
   }
 
   // Variables
 
   /**
-   * The Client Class
-   * @type {Client}
-   * @readonly
-   */
-  private client!: Client;
-
-  /**
    * The ClientUser's handling
-   * @type {any}
+   * @type {Handling}
    * @readonly
    */
-  public handling!: any;
+  public handling!: Handling;
 
   /**
    * The room the ClientUser is in
@@ -36,7 +28,7 @@ export default class ClientUser extends User {
 
   /**
    * Joins a room
-   * @param {string} - room
+   * @param {string} room - The Room ID to join
    * @returns {void}
    */
   public join(room: string): void {
@@ -61,28 +53,47 @@ export default class ClientUser extends User {
 
   /**
    * Sets the ClientUser's presence
-   * @param {Object} - data
+   * @param {Presence} data - The presence data for the ClientUser
    * @returns {void}
    */
-  public setPresence(data: {
-    status: "online" | "away" | "busy" | "offline";
-    detail:
-      | ""
-      | "menus"
-      | "40l"
-      | "zen"
-      | "custom"
-      | "lobby_end:X-QP"
-      | "lobby_spec:X_QP"
-      | "lobby_ig:X-QP"
-      | "lobby_end:X-PRIV"
-      | "lobby_spec:X_PRIV"
-      | "lobby_ig:X-PRIV"
-      | "tl_mm"
-      | "tl"
-      | "tl_end"
-      | "tl_mm_complete";
-  }): void {
+  public setPresence(data: Presence): void {
     this.client.ws?.send_packet({ command: "social.presence", data });
   }
+}
+
+export default interface ClientUser {
+  /**
+   * Emitted when the ClientUser joins a room
+   */
+  on(event: "join", callback: () => void): this;
+
+  /**
+   * Emitted when the ClientUser leaves a room
+   */
+  on(event: "leave", callback: () => void): this;
+
+  /**
+   * Emitted when the ClientUser receives a message from another User
+   */
+  on(
+    event: "message",
+    callback: (message: {
+      content: string;
+      author: User | undefined;
+      systemMessage: boolean;
+      id: string;
+      ts: string;
+    }) => void
+  ): this;
+
+  /**
+   * Emitted when the ClientUser is invited to a room
+   */
+  on(
+    event: "invite",
+    callback: (data: {
+      author: User;
+      room: { id: string; name: string };
+    }) => void
+  ): this;
 }

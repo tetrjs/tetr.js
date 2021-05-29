@@ -1,8 +1,20 @@
 import User from "./User";
 import fetch from "node-fetch";
+import Client from "../client/Client";
 
 export default class UserManager {
+  constructor(client: Client) {
+    this.client = client;
+  }
+
   // Variables
+
+  /**
+   * The Client Class
+   * @type {Client}
+   * @readonly
+   */
+  private client!: Client;
 
   /**
    * The User cache
@@ -31,7 +43,7 @@ export default class UserManager {
     if (user.success) {
       this.cache.set(user.data.user._id, user.data.user as User);
 
-      return new User(user.data.user);
+      return new User(user.data.user, this.client);
     } else {
       return undefined;
     }

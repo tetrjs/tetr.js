@@ -3,6 +3,8 @@ import UserManager from "../user/UserManager";
 import fetch from "node-fetch";
 import ClientUser from "./ClientUser";
 import EventEmitter from "events";
+import { Worker } from "..";
+import chalk from "chalk";
 
 export default class Client extends EventEmitter {
   /**
@@ -41,7 +43,7 @@ export default class Client extends EventEmitter {
    * @type {UserManager}
    * @readonly
    */
-  public users?: UserManager = new UserManager();
+  public users?: UserManager = new UserManager(this);
 
   /**
    * The amount of currently online players
@@ -49,6 +51,13 @@ export default class Client extends EventEmitter {
    * @readonly
    */
   public players: number = 0;
+
+  /**
+   * The commitId of the latest build of TETR.IO
+   * @type {string}
+   * @readonly
+   */
+  public commitId: string = "";
 
   // Functions
 
@@ -102,9 +111,45 @@ export default class Client extends EventEmitter {
       })
     ).json();
 
-    this.ws = new WebSocketManager(
-      endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon",
-      this
-    );
+    const file = await fetch("https://tetr.io/js/tetrio.js");
+    const text = await file.text();
+    const id = text.match(/"commit":{"id":"(.{7})"/);
+
+    if (!id || !id[1]) {
+      console.error(
+        `${chalk.red.bold("[FATAL]:")} Unable to get current Commit ID.`
+      );
+
+      process.exit();
+    } else {
+      this.commitId = id[1];
+
+      this.ws = new WebSocketManager(
+        endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon",
+        this
+      );
+    }
   }
+}
+
+export default interface Client {
+  /**
+   * Emitted when the Client is online
+   */
+  on(event: "ready", callback: () => void): this;
+
+  /**
+   * Emitted whenever the Client is force to migrate to another server
+   */
+  on(event: "migrate", callback: (worker: Worker) => void): this;
+
+  /**
+   * Emitted whenever the Client successfully migrates to another server
+   */
+  on(event: "migrated", callback: (worker: Worker) => void): this;
+
+  /**
+   * Emitted whenever the amount of online players on TETR.IO changes
+   */
+  on(event: "playerCount", callback: (count: number) => void): this;
 }

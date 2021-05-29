@@ -1,14 +1,27 @@
-export default class User {
+import EventEmitter from "events";
+import Client from "../client/Client";
+
+export default class User extends EventEmitter {
   /**
    * The User Class
    * @param {any} data - The data to be patched
    * @constructor
    */
-  constructor(data: any) {
+  constructor(data: any, client: Client) {
+    super();
+
+    this.client = client;
     this.patch(data);
   }
 
   // Variables
+
+  /**
+   * The Client Class
+   * @type {Client}
+   * @readonly
+   */
+  public client!: Client;
 
   public _id!: string;
   public username!: string;
@@ -135,6 +148,10 @@ export default class User {
     }
   }
 
+  /**
+   * Fetches a User's avatar image
+   * @returns {string}
+   */
   public avatarURL(): string {
     if (this.avatar_revision) {
       return `https://tetr.io/user-content/avatars/${encodeURIComponent(
@@ -143,5 +160,17 @@ export default class User {
     } else {
       return "https://tetr.io/res/avatar.png";
     }
+  }
+
+  /**
+   * Send's a message to this user
+   * @param {string} content - The message to be sent to the User
+   * @returns {void}
+   */
+  public send(content: string): void {
+    this.client.ws?.send_packet({
+      command: "social.dm",
+      data: { recipient: this._id, msg: content },
+    });
   }
 }
