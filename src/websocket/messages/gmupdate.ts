@@ -22,8 +22,6 @@ export = function (packet: any, ws: WebSocketManager): void {
         packet.data.game.state,
         ws.client
       );
-
-      ws.client.emit("join");
     }
   }
 };

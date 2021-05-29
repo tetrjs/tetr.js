@@ -25,7 +25,7 @@ export default class Room extends EventEmitter {
 
     this.client = client;
 
-    this.patch(options, players, owner, id, state);
+    this.patch(options, players, owner, id, state, true);
   }
 
   // Variables
@@ -39,10 +39,10 @@ export default class Room extends EventEmitter {
 
   /**
    * The current Room options
-   * @type {any[]}
+   * @type {Object}
    * @readonly
    */
-  public options!: any[];
+  public options!: Object;
 
   /**
    * The players currently in the Room
@@ -88,11 +88,12 @@ export default class Room extends EventEmitter {
    * @returns {Proimse<void>}
    */
   public async patch(
-    options?: any[],
+    options?: Object,
     players?: any[],
     owner?: string,
     id?: string,
-    state?: string
+    state?: string,
+    newRoom?: boolean
   ): Promise<void> {
     if (options) this.options = options;
 
@@ -117,6 +118,8 @@ export default class Room extends EventEmitter {
     if (id) this.id = id;
 
     if (state) this.inGame = state === "ingame";
+
+    if (newRoom) this.client.ws?.client.user?.emit("join");
   }
 
   /**
