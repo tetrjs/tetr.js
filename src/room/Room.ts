@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import { Client, Config } from "..";
+import { Client, Config, Handling } from "..";
 import User from "../user/User";
 
 export default class Room extends EventEmitter {
@@ -135,4 +135,48 @@ export default class Room extends EventEmitter {
 
     if (newRoom) this.client.user?.emit("join");
   }
+}
+
+export default interface Room {
+  /**
+   * Emitted whenever a user talks in the Room
+   */
+  on(
+    event: "message",
+    callback: (message: {
+      content: string;
+      author?: User;
+      system: boolean;
+    }) => void
+  ): this;
+
+  /**
+   * Emitted whenever a Room is about to start
+   */
+  on(
+    event: "ready",
+    callback: (data: {
+      contexts: {
+        user: User;
+        handling: Handling;
+        opts: { fulloffset: number; fullinterval: number };
+      }[];
+      firstGame: boolean;
+    }) => void
+  ): this;
+
+  /**
+   * Emitted whenever the room settings update
+   */
+  on(event: "settings_update", callback: () => void): this;
+
+  /**
+   * Emitted whenever the room starts
+   */
+  on(event: "start", callback: () => void): this;
+
+  /**
+   * Emitted whenever the room ends
+   */
+  on(event: "end", callback: () => void): this;
 }

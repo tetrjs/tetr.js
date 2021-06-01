@@ -1,6 +1,6 @@
 {
   "name": "tetr.js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An API Wrapper For TETR.IO",
   "main": "dist/index.js",
   "repository": {
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@types/msgpack-lite": "^0.1.7",
     "@types/node-fetch": "^2.5.10",
-    "dotenv": "^9.0.2",
+    "dotenv": "^10.0.0",
     "fs": "^0.0.1-security",
     "typedoc": "^0.20.36",
     "typedoc-plugin-extras": "^1.1.8",

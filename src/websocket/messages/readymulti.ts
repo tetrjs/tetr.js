@@ -3,8 +3,6 @@ import { Handling } from "../..";
 import User from "../../user/User";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
-  ws.client.user?.room?.patch(packet.data.options);
-
   let contexts: {
     user: User;
     handling: Handling;
@@ -18,5 +16,8 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
     }
   }
 
-  ws.client.user?.room?.emit("ready", contexts, packet.data.first);
+  ws.client.user?.room?.emit("ready", {
+    contexts,
+    firstGame: packet.data.first,
+  });
 };
