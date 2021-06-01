@@ -64,6 +64,72 @@ export default class Room extends EventEmitter {
   // Functions
 
   /**
+   * Sends a message in the Room
+   * @param {string} content - The message to send in the room
+   * @returns {void}
+   */
+  public send(content: string): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "chat",
+      data: content,
+    });
+  }
+
+  /**
+   * Switches either your or another player's bracket
+   * @param {"player" | "spectator"} bracket - The new bracket to be switched to
+   * @param {User | undefined} player - The target player
+   * @returns {void}
+   */
+  public switchBracket(bracket: "player" | "spectator", player?: User): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: player ? "switchbrackethost" : "switchbracket",
+      data: player ? { uid: player._id, bracket } : bracket,
+    });
+  }
+
+  /**
+   * Update the current Room's config
+   * @param {any} changes - The changes to be made
+   * @returns {void}
+   */
+  public updateConfig(changes: { index: string; value: any }[]): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "updateconfig",
+      data: changes,
+    });
+  }
+
+  /**
+   * Kicks a play from the Room
+   * @param {User} user - The User to kick from the room
+   * @returns {void}
+   */
+  public kick(user: User): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "kick",
+      data: user._id,
+    });
+  }
+
+  /**
+   * Transfers host to another User
+   * @param {User} user - The target user to receive host
+   * @returns {void}
+   */
+  public transferHost(user: User): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "transferownership",
+      data: user._id,
+    });
+  }
+
+  /**
    * Patches the Room Class
    * @param {any} gmupdateData - The data from the gmupdate event
    * @param {boolean} newRoom - Whether or not to emit the join event

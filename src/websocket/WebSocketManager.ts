@@ -104,7 +104,7 @@ export default class WebSocketManager {
    * @returns {void}
    */
   public send_packet(data: any): void {
-    // console.log("Client:", data);
+    console.log("Client:", data);
 
     const packet = msgpack.encode(data);
 
@@ -170,7 +170,7 @@ export default class WebSocketManager {
 
         return;
       case 0xb0:
-        // console.log("Server:", "Pong");
+        console.log("Server:", "Pong");
 
         return this.heartbeat(5000);
       default:
@@ -183,7 +183,7 @@ export default class WebSocketManager {
       } else return;
     }
 
-    // console.log("Server:", packet);
+    console.log("Server:", packet);
 
     const message = this.messages.get(packet.data.command);
 
@@ -202,7 +202,7 @@ export default class WebSocketManager {
 
     this.heartbeatTO = setTimeout(() => {
       if (this.socket.readyState === this.socket.OPEN) {
-        // console.log("Client:", "Ping");
+        console.log("Client:", "Ping");
 
         try {
           this.socket.send(Buffer.from([0xb0, 0x0b]));
