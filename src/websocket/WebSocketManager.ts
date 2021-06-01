@@ -104,7 +104,7 @@ export default class WebSocketManager {
    * @returns {void}
    */
   public send_packet(data: any): void {
-    console.log("Client:", data);
+    // console.log("Client:", data);
 
     const packet = msgpack.encode(data);
 
@@ -136,10 +136,15 @@ export default class WebSocketManager {
     switch (packet.type) {
       case 0x45:
         packet.data = msgpack.decode(data.slice(1));
+        if (packet.data.id && typeof packet.data.id === "number") {
+          packet.id = packet.data.id;
+          delete packet.data.id;
+        }
         break;
       case 0xae:
         packet.data = msgpack.decode(data.slice(5));
-        packet.data.id = data.readUInt32BE(1);
+        packet.id = data.readUInt32BE(1);
+        delete packet.data.id;
         break;
       case 0x58:
         var lengths = [];
@@ -165,22 +170,20 @@ export default class WebSocketManager {
 
         return;
       case 0xb0:
-        console.log("Server:", "Pong");
+        // console.log("Server:", "Pong");
 
         return this.heartbeat(5000);
       default:
         packet.data = msgpack.decode(data);
     }
 
-    if (packet.type === 0x45 && packet.id > this.serverId) {
-      this.serverId = packet.id;
-    } else if (packet.type === 0xae && packet.data.id > this.serverId) {
-      this.serverId = packet.data.id;
-    } else {
-      if (typeof (packet.id || packet.data.id) === "number") return;
+    if (packet.id) {
+      if (packet.id > this.serverId) {
+        this.serverId = packet.id;
+      } else return;
     }
 
-    console.log("Server:", packet);
+    // console.log("Server:", packet);
 
     const message = this.messages.get(packet.data.command);
 
@@ -199,7 +202,7 @@ export default class WebSocketManager {
 
     this.heartbeatTO = setTimeout(() => {
       if (this.socket.readyState === this.socket.OPEN) {
-        console.log("Client:", "Ping");
+        // console.log("Client:", "Ping");
 
         try {
           this.socket.send(Buffer.from([0xb0, 0x0b]));

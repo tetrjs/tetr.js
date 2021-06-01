@@ -1,13 +1,18 @@
-const { Client } = require("tetr.js");
-
+const { Client } = require("./dist/index");
 const client = new Client();
 
 client.on("ready", () => {
   console.log("Client Online.");
+
+  client.user.on("invite", (invite) => {
+    console.log(`Joining ${invite.room.name}`);
+
+    client.user.join(invite.room.id);
+  });
+
+  client.user.on("join", () => {
+    console.log(`Joined ${client.user.room.config.meta.name}`);
+  });
 });
 
-client.on("social_invite", (data) => {
-  client.joinRoom(data.room);
-});
-
-client.login("YOUR TOKEN HERE");
+client.login("YOUR-TOKEN-HERE");

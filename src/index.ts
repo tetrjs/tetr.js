@@ -1,6 +1,10 @@
 import Client from "./client/Client";
+import ClientUser from "./client/ClientUser";
+import Room from "./room/Room";
+import User from "./user/User";
+import UserManager from "./user/UserManager";
 
-export { Client };
+export { Client, ClientUser, Room, User, UserManager };
 
 export interface Handling {
   arr: number;
@@ -47,38 +51,38 @@ export interface Config {
     allowAnonymous?: boolean;
     bgm?: BGM;
     match?: { ft?: number; wb?: number };
-    options?: {
-      stock?: number;
-      bagtype?: Bag;
-      spinbonuses?: Spins;
-      allow180?: boolean;
-      kickset?: Kickset;
-      allow_harddrop?: boolean;
-      display_next?: boolean;
-      display_hold?: boolean;
-      nextcount?: number;
-      display_shadow?: boolean;
-      are?: number;
-      lineclear_are?: number;
-      room_handling?: boolean;
-      room_handling_arr?: number;
-      room_handling_das?: number;
-      room_handling_sdf?: number;
-      g?: number;
-      gincrease?: number;
-      gmargin?: number;
-      garbagemultiplier?: number;
-      garbagemargin?: number;
-      garbageincrease?: number;
-      locktime?: number;
-      garbagespeed?: number;
-      garbagecap?: number;
-      garbagecapincrease?: number;
-      garbagecapmax?: number;
-      manual_allowed?: boolean;
-      b2bchaining?: boolean;
-      clutch?: boolean;
-    };
+  };
+  options?: {
+    stock?: number;
+    bagtype?: Bag;
+    spinbonuses?: Spins;
+    allow180?: boolean;
+    kickset?: Kickset;
+    allow_harddrop?: boolean;
+    display_next?: boolean;
+    display_hold?: boolean;
+    nextcount?: number;
+    display_shadow?: boolean;
+    are?: number;
+    lineclear_are?: number;
+    room_handling?: boolean;
+    room_handling_arr?: number;
+    room_handling_das?: number;
+    room_handling_sdf?: number;
+    g?: number;
+    gincrease?: number;
+    gmargin?: number;
+    garbagemultiplier?: number;
+    garbagemargin?: number;
+    garbageincrease?: number;
+    locktime?: number;
+    garbagespeed?: number;
+    garbagecap?: number;
+    garbagecapincrease?: number;
+    garbagecapmax?: number;
+    manual_allowed?: boolean;
+    b2bchaining?: boolean;
+    clutch?: boolean;
   };
 }
 
