@@ -245,4 +245,27 @@ export default interface Room {
    * Emitted whenever the room ends
    */
   on(event: "end", callback: () => void): this;
+
+  /**
+   * Emitted whenever a player switches brackets
+   */
+  on(
+    event: "bracketSwap",
+    callback: (player: { bracket: "playing" | "spectator"; user: User }) => void
+  ): this;
+
+  /**
+   * Emitted whenever the ownership of the Room changes
+   */
+  on(event: "hostSwitch", callback: (newHost: User) => void): this;
+
+  /**
+   * Emitted whenever a user joins the Room
+   */
+  on(event: "join", callback: (user: User) => void): this;
+
+  /**
+   * Emitted whenever a user joins the Room
+   */
+  on(event: "leave", callback: (user: User) => void): this;
 }
