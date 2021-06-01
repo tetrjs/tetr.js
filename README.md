@@ -39,7 +39,7 @@ client.on("ready", () => {
   console.log("Bot online");
 });
 
-client.login("YOUR TOKEN HERE");
+client.login("YOUR-TOKEN-HERE");
 ```
 
 Find more examples [here](https://github.com/Proximitynow19/TETR.JS/tree/master/examples)
