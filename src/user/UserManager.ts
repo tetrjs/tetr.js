@@ -47,12 +47,14 @@ export default class UserManager {
     ).json();
 
     if (user.success) {
+      const userObject = new User(user.data.user, this.client);
+
       this.cache.set(user.data.user._id, {
         cache: user.cache,
-        user: user.data.user as User,
+        user: userObject,
       });
 
-      return new User(user.data.user, this.client);
+      return userObject;
     } else {
       return undefined;
     }
