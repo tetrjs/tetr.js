@@ -130,6 +130,17 @@ export default class Room extends EventEmitter {
   }
 
   /**
+   * Start's the Room
+   * @return {void}
+   */
+  public start(): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "startroom",
+    });
+  }
+
+  /**
    * Patches the Room Class
    * @param {any} gmupdateData - The data from the gmupdate event
    * @param {boolean} newRoom - Whether or not to emit the join event
