@@ -2,15 +2,12 @@ import { User } from "../..";
 import WebSocketManager from "../WebSocketManager";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
-  ws.client.user?.room?.emit("join", await ws.client.users?.fetch(packet.data));
+  const joinedUser = await ws.client.users?.fetch(packet.data._id);
 
-  ws.client.user?.room?.players.splice(
-    ws.client.user.room.players.indexOf(
-      ws.client.user.room.players.find((k) => k.user._id === packet.data) as {
-        bracket: "playing" | "spectator";
-        user: User;
-      }
-    ),
-    1
-  );
+  ws.client.user?.room?.players.push({
+    bracket: packet.data.bracket,
+    user: joinedUser as User,
+  });
+
+  ws.client.user?.room?.emit("join", joinedUser);
 };

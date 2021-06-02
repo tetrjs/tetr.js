@@ -59,6 +59,19 @@ export default class ClientUser extends User {
   public setPresence(data: Presence): void {
     this.client.ws?.send_packet({ command: "social.presence", data });
   }
+
+  /**
+   * Creates a new Room
+   * @param {boolean} discoverable - Whether or not the room should be public
+   * @returns {void}
+   */
+  public createRoom(discoverable: boolean): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "createroom",
+      data: discoverable ? "public" : "private",
+    });
+  }
 }
 
 export default interface ClientUser {

@@ -4,7 +4,6 @@ import fetch from "node-fetch";
 import ClientUser from "./ClientUser";
 import EventEmitter from "events";
 import { Worker } from "..";
-import chalk from "chalk";
 
 export default class Client extends EventEmitter {
   /**
@@ -102,11 +101,23 @@ export default class Client extends EventEmitter {
     ).json();
 
     if (!client.success) {
-      throw "Invalid Token.";
+      client.emit("err", {
+        fatal: true,
+        reason: "Invalid Token.",
+      });
+
+      return client.disconnect();
     }
 
-    if (client.user.role !== "bot")
-      throw "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.";
+    if (client.user.role !== "bot") {
+      client.emit("err", {
+        fatal: true,
+        reason:
+          "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.",
+      });
+
+      return client.disconnect();
+    }
 
     this.user = new ClientUser(
       {
@@ -127,11 +138,12 @@ export default class Client extends EventEmitter {
     const id = text.match(/"commit":{"id":"(.{7})"/);
 
     if (!id || !id[1]) {
-      console.error(
-        `${chalk.red.bold("[FATAL]:")} Unable to get current Commit ID.`
-      );
+      client.emit("err", {
+        fatal: true,
+        reason: "Unable to get current Commit ID.",
+      });
 
-      process.exit();
+      client.disconnect();
     } else {
       this.commitId = id[1];
 
@@ -165,17 +177,10 @@ export default interface Client {
   on(event: "playerCount", callback: (count: number) => void): this;
 
   /**
-   * Emitted when the client gets kicked (also closes the connection)
-   */
-  on(event: "kick", callback: (reason: string) => void): this;
-
-  /**
    * Emitted whenever an error occurs
    */
-  on(event: "error", callback: (error: string) => void): this;
-
-  /**
-   * Emitted when the client violates protocol and the Ribbon feels unsafe (also closes the connection)
-   */
-  on(event: "nope", callback: (reason: string) => void): this;
+  on(
+    event: "err",
+    callback: (error: { fatal: boolean; reason: string }) => void
+  ): this;
 }

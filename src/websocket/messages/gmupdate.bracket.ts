@@ -2,6 +2,8 @@ import { User } from "../..";
 import WebSocketManager from "../WebSocketManager";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
+  console.log(packet);
+
   if (ws.client.user?.room?.players)
     ws.client.user.room.players[
       ws.client.user.room.players.indexOf(
@@ -15,7 +17,7 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
     ].bracket = packet.data.bracket;
 
   ws.client.user?.room?.emit(
-    "bracketSwap",
+    "bracket_swap",
     ws.client.user.room.players.find((k) => k.user._id === packet.data.uid)
   );
 };
