@@ -152,4 +152,19 @@ export default interface Client {
    * Emitted whenever the amount of online players on TETR.IO changes
    */
   on(event: "playerCount", callback: (count: number) => void): this;
+
+  /**
+   * Emitted when the client gets kicked (also closes the connection)
+   */
+  on(event: "kick", callback: (reason: string) => void): this;
+
+  /**
+   * Emitted whenever an error occurs
+   */
+  on(event: "error", callback: (error: string) => void): this;
+
+  /**
+   * Emitted when the client violates protocol and the Ribbon feels unsafe (also closes the connection)
+   */
+  on(event: "nope", callback: (reason: string) => void): this;
 }
