@@ -13,6 +13,10 @@ export default class Client extends EventEmitter {
    */
   constructor() {
     super();
+
+    this.cacheSessionID = `SESS-${Math.floor(
+      Math.random() * Number.MAX_SAFE_INTEGER
+    )}`;
   }
 
   // Variables
@@ -58,6 +62,13 @@ export default class Client extends EventEmitter {
    * @readonly
    */
   public commitId: string = "";
+
+  /**
+   * The cache session ID
+   * @type {string}
+   * @readonly
+   */
+  public cacheSessionID!: string;
 
   // Functions
 

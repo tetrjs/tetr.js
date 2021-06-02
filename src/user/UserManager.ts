@@ -20,28 +20,37 @@ export default class UserManager {
    * The User cache
    * @type {Map<string, User>}
    */
-  public cache: Map<string, User> = new Map();
+  public cache: Map<
+    string,
+    {
+      cache: { status: string; cached_at: number; cached_until: number };
+      user: User;
+    }
+  > = new Map();
 
   // Functions
 
   /**
    * Fetch a User
    * @param {string} id - The User's ID
-   * @param {boolean} force - Weather to override the cache or not
    * @returns {Promise<User | undefined>}
    */
-  public async fetch(
-    id: string,
-    force: boolean = false
-  ): Promise<User | undefined> {
-    if (!force && this.cache.has(id)) return this.cache.get(id);
+  public async fetch(id: string): Promise<User | undefined> {
+    const cacheUser = this.cache.get(id);
+    if (cacheUser && new Date().getTime() < cacheUser.cache.cached_until)
+      return cacheUser.user;
 
     const user = await (
-      await fetch(`https://ch.tetr.io/api/users/${encodeURIComponent(id)}`)
+      await fetch(`https://ch.tetr.io/api/users/${encodeURIComponent(id)}`, {
+        headers: { "X-Session-ID": this.client.cacheSessionID },
+      })
     ).json();
 
     if (user.success) {
-      this.cache.set(user.data.user._id, user.data.user as User);
+      this.cache.set(user.data.user._id, {
+        cache: user.cache,
+        user: user.data.user as User,
+      });
 
       return new User(user.data.user, this.client);
     } else {
