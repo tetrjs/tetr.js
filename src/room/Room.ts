@@ -255,7 +255,17 @@ export default interface Room {
   /**
    * Emitted whenever the room ends
    */
-  on(event: "end", callback: () => void): this;
+  on(
+    event: "end",
+    callback: (
+      gameLeaderboard: {
+        user: User;
+        wins: number;
+        inputs: number;
+        piecesPlaced: number;
+      }[]
+    ) => void
+  ): this;
 
   /**
    * Emitted whenever a player switches brackets
