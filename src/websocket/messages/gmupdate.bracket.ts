@@ -2,8 +2,6 @@ import { User } from "../..";
 import WebSocketManager from "../WebSocketManager";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
-  console.log(packet);
-
   if (ws.client.user?.room?.players)
     ws.client.user.room.players[
       ws.client.user.room.players.indexOf(
