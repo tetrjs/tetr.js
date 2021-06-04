@@ -6,5 +6,5 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
 
   if (ws.client.user?.room) ws.client.user.room.owner = newHost as User;
 
-  ws.client.user?.room?.emit("host_transfer", newHost);
+  ws.client.user?.room?.emit("host_switch", newHost);
 };
