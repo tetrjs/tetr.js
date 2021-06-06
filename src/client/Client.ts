@@ -101,7 +101,7 @@ export default class Client extends EventEmitter {
     ).json();
 
     if (!client.success) {
-      client.emit("err", {
+      this.emit("err", {
         fatal: true,
         reason: "Invalid Token.",
       });
@@ -110,7 +110,7 @@ export default class Client extends EventEmitter {
     }
 
     if (client.user.role !== "bot") {
-      client.emit("err", {
+      this.emit("err", {
         fatal: true,
         reason:
           "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.",
@@ -138,7 +138,7 @@ export default class Client extends EventEmitter {
     const id = text.match(/"commit":{"id":"(.{7})"/);
 
     if (!id || !id[1]) {
-      client.emit("err", {
+      this.emit("err", {
         fatal: true,
         reason: "Unable to get current Commit ID.",
       });
