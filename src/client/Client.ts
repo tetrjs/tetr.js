@@ -106,7 +106,7 @@ export default class Client extends EventEmitter {
         reason: "Invalid Token.",
       });
 
-      return client.disconnect();
+      return this.disconnect();
     }
 
     if (client.user.role !== "bot") {
@@ -116,7 +116,7 @@ export default class Client extends EventEmitter {
           "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.",
       });
 
-      return client.disconnect();
+      return this.disconnect();
     }
 
     this.user = new ClientUser(
@@ -143,7 +143,7 @@ export default class Client extends EventEmitter {
         reason: "Unable to get current Commit ID.",
       });
 
-      client.disconnect();
+      this.disconnect();
     } else {
       this.commitId = id[1];
 
