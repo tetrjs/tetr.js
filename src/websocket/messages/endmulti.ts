@@ -2,6 +2,8 @@ import { User } from "../..";
 import WebSocketManager from "../WebSocketManager";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
+  if (ws.client.user?.room) ws.client.user.room.inGame = false;
+
   const gameLeaderboard: {
     user: User;
     wins: number;

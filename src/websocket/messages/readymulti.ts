@@ -3,6 +3,8 @@ import { Handling } from "../..";
 import User from "../../user/User";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
+  if (ws.client.user?.room) ws.client.user.room.inGame = true;
+
   let contexts: {
     user: User;
     handling: Handling;
