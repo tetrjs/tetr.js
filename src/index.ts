@@ -3,8 +3,9 @@ import ClientUser from "./client/ClientUser";
 import Room from "./room/Room";
 import User from "./user/User";
 import UserManager from "./user/UserManager";
+import { TetraChannel } from "./channel/Channel";
 
-export { Client, ClientUser, Room, User, UserManager };
+export { Client, ClientUser, Room, User, UserManager, TetraChannel };
 
 export interface Handling {
   arr: number;
