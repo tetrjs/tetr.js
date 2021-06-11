@@ -7,7 +7,9 @@ import type * as types from "./ChannelTypes";
  */
 
 async function generalStats(): Promise<types.generalStatsType> {
-  return await (await axios.get("https://ch.tetr.io/api/general/stats")).data;
+  return await (
+    await axios.get("https://ch.tetr.io/api/general/stats")
+  ).data;
 }
 
 /**
@@ -16,8 +18,9 @@ async function generalStats(): Promise<types.generalStatsType> {
  */
 
 async function generalActivity(): Promise<types.activityStatsType> {
-  return await (await axios.get("https://ch.tetr.io/api/general/activity"))
-    .data;
+  return await (
+    await axios.get("https://ch.tetr.io/api/general/activity")
+  ).data;
 }
 
 /**
@@ -122,8 +125,9 @@ async function XP_Leaderboard(
  */
 
 async function stream(stream: string): Promise<types.StreamType> {
-  return await (await axios.get("https://ch.tetr.io/api/streams/" + stream))
-    .data;
+  return await (
+    await axios.get("https://ch.tetr.io/api/streams/" + stream)
+  ).data;
 }
 
 /**
@@ -173,7 +177,7 @@ var leaderboards = {
 var misc = {
   stream,
   all_news,
-  news
+  news,
 };
 
 export var TetraChannel = {
