@@ -1,35 +1,21 @@
-export type cache = {
-  status: string;
-  cached_at: number;
-  cached_until: number;
-};
+import { CacheData } from "..";
 
 export type generalStatsType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    usercount: number;
-    usercount_delta: number;
-    anoncount: number;
-    rankedcount: number;
-    replaycount: number;
-    gamesplayed: number;
-    gamesplayed_delta: number;
-    gamesfinished: number;
-    gametime: number;
-    inputs: number;
-    piecesplaced: number;
-  };
-  cache?: cache;
+  usercount: number;
+  usercount_delta: number;
+  anoncount: number;
+  rankedcount: number;
+  replaycount: number;
+  gamesplayed: number;
+  gamesplayed_delta: number;
+  gamesfinished: number;
+  gametime: number;
+  inputs: number;
+  piecesplaced: number;
 };
 
 export type activityStatsType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    activity: number[];
-  };
-  cache?: cache;
+  activity: number[];
 };
 
 export type LeagueInfosType = {
@@ -66,32 +52,25 @@ export type LeagueInfosFullType = {
 };
 
 export type userInfosType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    user: {
-      _id: string;
-      username: string;
-      role: string;
-      ts: string;
-      badges: {
-        id: string;
-        label: string;
-        ts: string;
-      }[];
-      xp: number;
-      gamesplayed: number;
-      gameswon: number;
-      gametime: number;
-      country: string;
-      supporter_tier: number;
-      verified: boolean;
-      league: LeagueInfosFullType;
-      avatar_revision: number;
-      friend_count: number;
-    };
-  };
-  cache?: cache;
+  _id: string;
+  username: string;
+  role: string;
+  ts: string;
+  badges: {
+    id: string;
+    label: string;
+    ts: string;
+  }[];
+  xp: number;
+  gamesplayed: number;
+  gameswon: number;
+  gametime: number;
+  country: string;
+  supporter_tier: number;
+  verified: boolean;
+  league: LeagueInfosFullType;
+  avatar_revision: number;
+  friend_count: number;
 };
 
 export type recordType = {
@@ -156,20 +135,15 @@ export type recordType = {
   rank: number;
 };
 
-export type UserRecordsType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    records: {
-      "40l": recordType;
-      blitz: recordType;
-    };
-    zen: {
-      level: number;
-      score: number;
-    };
+export type userRecordsType = {
+  records: {
+    "40l": recordType;
+    blitz: recordType;
   };
-  cache?: cache;
+  zen: {
+    level: number;
+    score: number;
+  };
 };
 
 export type Leaderboard_UserInfoType = {
@@ -182,37 +156,10 @@ export type Leaderboard_UserInfoType = {
   league: LeagueInfosType;
 };
 
-export type LeaderboardType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    users: Leaderboard_UserInfoType[];
-  };
-  cache?: cache;
-};
-
-export type StreamType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    records: UserRecordsType[];
-  };
-  cache?: cache;
-};
-
 export type NewsType = {
   _id: string;
   stream: string;
   type: string;
   data: recordType;
   ts: string;
-};
-
-export type NewsListType = {
-  success: boolean;
-  error?: string;
-  data?: {
-    news: NewsType[];
-  };
-  cache?: cache;
 };
