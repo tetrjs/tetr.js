@@ -1,6 +1,7 @@
 import User from "./User";
 import fetch from "node-fetch";
 import Client from "../client/Client";
+import { CacheData } from "..";
 
 export default class UserManager {
   constructor(client: Client) {
@@ -18,15 +19,9 @@ export default class UserManager {
 
   /**
    * The User cache
-   * @type {Map<string, User>}
+   * @type {Map<string, CacheData>}
    */
-  public cache: Map<
-    string,
-    {
-      cache: { status: string; cached_at: number; cached_until: number };
-      user: User;
-    }
-  > = new Map();
+  public cache: Map<string, CacheData> = new Map();
 
   // Functions
 
@@ -38,7 +33,7 @@ export default class UserManager {
   public async fetch(id: string): Promise<User | undefined> {
     const cacheUser = this.cache.get(id);
     if (cacheUser && new Date().getTime() < cacheUser.cache.cached_until)
-      return cacheUser.user;
+      return cacheUser.data;
 
     const user = await (
       await fetch(`https://ch.tetr.io/api/users/${encodeURIComponent(id)}`, {
@@ -51,7 +46,7 @@ export default class UserManager {
 
       this.cache.set(user.data.user._id, {
         cache: user.cache,
-        user: userObject,
+        data: userObject,
       });
 
       return userObject;
