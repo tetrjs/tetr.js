@@ -1,4 +1,4 @@
-import { default as axios } from "axios";
+import fetch from "node-fetch";
 import type * as types from "./ChannelTypes";
 
 /**
@@ -6,8 +6,8 @@ import type * as types from "./ChannelTypes";
  * @returns {Promise<types.generalStatsType>}
  */
 
-async function generalStats(): Promise<types.generalStatsType> {
-  return await (await axios.get("https://ch.tetr.io/api/general/stats")).data;
+async function generalStats() /*: Promise<types.generalStatsType>*/ {
+  return await (await fetch("https://ch.tetr.io/api/general/stats")).json();
 }
 
 /**
@@ -16,8 +16,7 @@ async function generalStats(): Promise<types.generalStatsType> {
  */
 
 async function generalActivity(): Promise<types.activityStatsType> {
-  return await (await axios.get("https://ch.tetr.io/api/general/activity"))
-    .data;
+  return await (await fetch("https://ch.tetr.io/api/general/activity")).json();
 }
 
 /**
@@ -28,8 +27,8 @@ async function generalActivity(): Promise<types.activityStatsType> {
 
 async function userInfos(user: string): Promise<types.userInfosType> {
   return await (
-    await axios.get("https://ch.tetr.io/api/users/" + user.toLowerCase())
-  ).data;
+    await fetch(encodeURI("https://ch.tetr.io/api/users/" + user.toLowerCase()))
+  ).json();
 }
 
 /**
@@ -40,10 +39,12 @@ async function userInfos(user: string): Promise<types.userInfosType> {
 
 async function userRecords(user: string): Promise<types.userInfosType> {
   return await (
-    await axios.get(
-      "https://ch.tetr.io/api/users/" + user.toLowerCase() + "/records"
+    await fetch(
+      encodeURI(
+        "https://ch.tetr.io/api/users/" + user.toLowerCase() + "/records"
+      )
     )
-  ).data;
+  ).json();
 }
 
 /**
@@ -61,14 +62,14 @@ async function TL_Leaderboard(
     limit?: number;
   }
 ): Promise<types.LeaderboardType> {
-  return await (
-    await axios.get("https://ch.tetr.io/api/users/lists/league", {
-      params: {
-        ...params,
-        country,
-      },
-    })
-  ).data;
+  var url = new URL("https://ch.tetr.io/api/users/lists/league?");
+  if (params || country) {
+    var settings: object = { ...params, country };
+    Object.keys(settings).forEach((key, index) =>
+      url.searchParams.append(key, Object.values(settings)[index])
+    );
+  }
+  return await (await fetch(url)).json();
 }
 
 /**
@@ -82,12 +83,14 @@ async function TL_Leaderboard_full(
   country?: string
 ): Promise<types.LeaderboardType> {
   return await (
-    await axios.get("https://ch.tetr.io/api/users/lists/league/all", {
-      params: {
-        country,
-      },
-    })
-  ).data;
+    await await fetch(
+      encodeURI(
+        "https://ch.tetr.io/api/users/lists/league/all?" + country
+          ? `country=${country}`
+          : ""
+      )
+    )
+  ).json();
 }
 
 /**
@@ -105,14 +108,14 @@ async function XP_Leaderboard(
     limit?: number;
   }
 ): Promise<types.LeaderboardType> {
-  return await (
-    await axios.get("https://ch.tetr.io/api/users/lists/xp", {
-      params: {
-        ...params,
-        country,
-      },
-    })
-  ).data;
+  var url = new URL("https://ch.tetr.io/api/users/lists/xp?");
+  if (params || country) {
+    var settings: object = { ...params, country };
+    Object.keys(settings).forEach((key, index) =>
+      url.searchParams.append(key, Object.values(settings)[index])
+    );
+  }
+  return await (await fetch(url)).json();
 }
 
 /**
@@ -122,8 +125,9 @@ async function XP_Leaderboard(
  */
 
 async function stream(stream: string): Promise<types.StreamType> {
-  return await (await axios.get("https://ch.tetr.io/api/streams/" + stream))
-    .data;
+  return await (
+    await fetch(encodeURI("https://ch.tetr.io/api/streams/" + stream.toLowerCase()))
+  ).json();
 }
 
 /**
@@ -134,8 +138,14 @@ async function stream(stream: string): Promise<types.StreamType> {
 
 async function all_news(limit?: number): Promise<types.NewsListType> {
   return await (
-    await axios.get("https://ch.tetr.io/api/news/", { params: limit })
-  ).data;
+    await await fetch(
+      encodeURI(
+        "https://ch.tetr.io/api/news?" + limit
+          ? `limit=${limit}`
+          : ""
+      )
+    )
+  ).json();
 }
 
 /**
@@ -150,8 +160,14 @@ async function news(
   limit?: number
 ): Promise<types.NewsListType> {
   return await (
-    await axios.get("https://ch.tetr.io/api/news/" + stream, { params: limit })
-  ).data;
+    await await fetch(
+      encodeURI(
+        "https://ch.tetr.io/api/news/" + stream + "?" + limit
+          ? `limit=${limit}`
+          : ""
+      )
+    )
+  ).json();
 }
 
 var general = {
@@ -173,7 +189,7 @@ var leaderboards = {
 var misc = {
   stream,
   all_news,
-  news
+  news,
 };
 
 export var TetraChannel = {
