@@ -7,6 +7,15 @@ import { TetraChannel } from "./channel/Channel";
 
 export { Client, ClientUser, Room, User, UserManager, TetraChannel };
 
+export interface CacheData {
+  cache: {
+    status: string;
+    cached_at: number;
+    cached_until: number;
+  };
+  data: any;
+}
+
 export interface Handling {
   arr: number;
   das: number;
