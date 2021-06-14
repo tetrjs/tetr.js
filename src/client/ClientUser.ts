@@ -57,7 +57,11 @@ export default class ClientUser extends User {
    * @returns {void}
    */
   public setPresence(data: Presence): void {
-    this.client.ws?.send_packet({ command: "social.presence", data });
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "social.presence",
+      data,
+    });
   }
 
   /**
