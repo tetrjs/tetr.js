@@ -82,14 +82,12 @@ async function TL_Leaderboard(
 async function TL_Leaderboard_full(
   country?: string
 ): Promise<types.LeaderboardType> {
+  var url = new URL("https://ch.tetr.io/api/users/lists/league/all?");
+  if (country) {
+      url.searchParams.append("country", country)
+  }
   return await (
-    await await fetch(
-      encodeURI(
-        "https://ch.tetr.io/api/users/lists/league/all?" + country
-          ? `country=${country}`
-          : ""
-      )
-    )
+    await await fetch(url)
   ).json();
 }
 
