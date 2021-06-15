@@ -53,7 +53,8 @@
     "dev": "npm run build && npm test",
     "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
     "semantic-release": "semantic-release --branches stable",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "acp": "git add . && npm run commit && git push"
   },
   "config": {
     "commitizen": {
