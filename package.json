@@ -28,6 +28,8 @@
   "dependencies": {
     "@types/node": "^15.6.0",
     "@types/ws": "^7.4.4",
+    "assert": "^2.0.0",
+    "axios": "^0.21.1",
     "events": "^3.3.0",
     "msgpack-lite": "^0.1.26",
     "node-fetch": "^2.6.1",
@@ -38,15 +40,15 @@
     "@types/node-fetch": "^2.5.10",
     "dotenv": "^10.0.0",
     "fs": "^0.0.1-security",
+    "mocha": "^9.0.0",
     "typedoc": "^0.20.36",
     "typedoc-plugin-extras": "^1.1.8",
     "typescript": "^4.2.4"
   },
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "test": "node testing.js",
+    "test": "mocha",
     "dev": "npm run build && npm test",
-    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
-    "publish": "npm run build && npm run docs"
+    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME"
   }
 }
