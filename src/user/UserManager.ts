@@ -2,6 +2,7 @@ import User from "./User";
 import fetch from "node-fetch";
 import Client from "../client/Client";
 import { CacheData } from "..";
+import { TetraChannel } from "../channel/Channel";
 
 export default class UserManager {
   constructor(client: Client) {
@@ -31,27 +32,12 @@ export default class UserManager {
    * @returns {Promise<User | undefined>}
    */
   public async fetch(id: string): Promise<User | undefined> {
-    const cacheUser = this.cache.get(id);
-    if (cacheUser && new Date().getTime() < cacheUser.cache.cached_until)
-      return cacheUser.data;
+    let userObject;
+    await TetraChannel.users
+      .infos(id)
+      .then((userInfo) => (userObject = new User(userInfo, this.client)))
+      .catch((e) => (userObject = undefined));
 
-    const user = await (
-      await fetch(`https://ch.tetr.io/api/users/${encodeURIComponent(id)}`, {
-        headers: { "X-Session-ID": this.client.cacheSessionID },
-      })
-    ).json();
-
-    if (user.success) {
-      const userObject = new User(user.data.user, this.client);
-
-      this.cache.set(user.data.user._id, {
-        cache: user.cache,
-        data: userObject,
-      });
-
-      return userObject;
-    } else {
-      return undefined;
-    }
+    return userObject;
   }
 }
