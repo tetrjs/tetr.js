@@ -135,14 +135,12 @@ async function stream(stream: string): Promise<types.StreamType> {
  */
 
 async function all_news(limit?: number): Promise<types.NewsListType> {
+  var url = new URL("https://ch.tetr.io/api/news");
+  if (limit) {
+      url.searchParams.append("limit", limit.toString())
+  }
   return await (
-    await await fetch(
-      encodeURI(
-        "https://ch.tetr.io/api/news?" + limit
-          ? `limit=${limit}`
-          : ""
-      )
-    )
+    await await fetch(url)
   ).json();
 }
 
@@ -157,14 +155,12 @@ async function news(
   stream: string,
   limit?: number
 ): Promise<types.NewsListType> {
+  var url = new URL("https://ch.tetr.io/api/news/" + stream);
+  if (limit) {
+      url.searchParams.append("limit", limit.toString())
+  }
   return await (
-    await await fetch(
-      encodeURI(
-        "https://ch.tetr.io/api/news/" + stream + "?" + limit
-          ? `limit=${limit}`
-          : ""
-      )
-    )
+    await await fetch(url)
   ).json();
 }
 
