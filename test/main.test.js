@@ -73,15 +73,3 @@ describe("Tetra Channel Tests:", async () => {
     });
   });
 });
-
-describe("Client Tests:", async () => {
-  const client = new Client();
-
-  it("Ready Event Called", async () => {
-    await client.login(process.env.TOKEN);
-
-    client.on("ready", () => {
-      assert(true);
-    });
-  });
-});
