@@ -1,5 +1,3 @@
-import { CacheData } from "..";
-
 export type generalStatsType = {
   usercount: number;
   usercount_delta: number;

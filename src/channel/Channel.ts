@@ -162,9 +162,9 @@ async function TL_Leaderboard_full(
   const data = await (
     await fetch(
       encodeURI(
-        "https://ch.tetr.io/api/users/lists/league/all?" + country
-          ? `country=${country}`
-          : ""
+        `https://ch.tetr.io/api/users/lists/league/all?${
+          country ? `country=${country}` : ""
+        }`
       ),
       {
         headers: { "X-Session-ID": cacheSessionID },
@@ -261,7 +261,7 @@ async function all_news(limit?: number): Promise<types.NewsType[]> {
     await (
       await fetch(
         encodeURI(
-          "https://ch.tetr.io/api/news?" + limit ? `limit=${limit}` : ""
+          `https://ch.tetr.io/api/news?${limit ? `limit=${limit}` : ""}`
         )
       )
     ).json()
@@ -283,9 +283,7 @@ async function news(stream: string, limit?: number): Promise<types.NewsType[]> {
   const data = await (
     await fetch(
       encodeURI(
-        "https://ch.tetr.io/api/news/" + stream + "?" + limit
-          ? `limit=${limit}`
-          : ""
+        `https://ch.tetr.io/api/news/${stream}?${limit ? `limit=${limit}` : ""}`
       ),
       {
         headers: { "X-Session-ID": cacheSessionID },
