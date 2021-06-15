@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-const { Client, TetraChannel } = require("../dist/index");
+const { TetraChannel } = require("../dist/index");
 
 describe("Tetra Channel Tests:", async () => {
   describe("General:", async () => {
