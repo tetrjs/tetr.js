@@ -42,7 +42,7 @@ export default class Client extends EventEmitter {
    * @type {UserManager}
    * @readonly
    */
-  public users?: UserManager = new UserManager(this);
+  public users: UserManager = new UserManager(this);
 
   /**
    * The amount of currently online players
@@ -67,12 +67,17 @@ export default class Client extends EventEmitter {
   public disconnect(): void {
     this.ws?.send_packet({ command: "die" });
 
-    this.ws?.socket.close();
+    this.ws?.socket.terminate();
+
+    this.ws = undefined;
+
+    this.token = "";
+
+    this.user = undefined;
 
     this.players = 0;
 
-    this.user = undefined;
-    this.users = undefined;
+    this.commitId = "";
   }
 
   /**
