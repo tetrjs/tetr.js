@@ -23,6 +23,10 @@ export default class WebSocketManager {
     this.socket.onmessage = (e) => {
       this.receive_packet(e.data as Buffer);
     };
+
+    this.socket.onclose = () => {
+      if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
+    };
   }
 
   // Variables
@@ -250,6 +254,10 @@ export default class WebSocketManager {
 
     this.socket.onmessage = (e) => {
       this.receive_packet(e.data as Buffer);
+    };
+
+    this.socket.onclose = () => {
+      if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
     };
   }
 }

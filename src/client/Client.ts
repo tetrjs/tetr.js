@@ -66,17 +66,11 @@ export default class Client extends EventEmitter {
    */
   public disconnect(): void {
     this.ws?.send_packet({ command: "die" });
-
-    this.ws?.socket.terminate();
-
-    this.ws = undefined;
+    this.ws?.socket.close();
 
     this.token = "";
-
     this.user = undefined;
-
     this.players = 0;
-
     this.commitId = "";
   }
 
