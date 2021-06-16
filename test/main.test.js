@@ -76,7 +76,7 @@ describe("Tetra Channel Tests:", async () => {
 
 describe("Main Tests:", async () => {
   describe("Client:", async () => {
-    let client = new Client();
+    const client = new Client();
 
     it("Logging In", async () => {
       return new Promise(async (resolve, reject) => {
