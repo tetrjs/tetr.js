@@ -34,14 +34,21 @@ export type Detail =
   | ""
   | "menus"
   | "40l"
+  | "blitz"
   | "zen"
   | "custom"
   | "lobby_end:X-QP"
   | "lobby_spec:X_QP"
   | "lobby_ig:X-QP"
+  | "lobby:X-QP"
   | "lobby_end:X-PRIV"
   | "lobby_spec:X_PRIV"
   | "lobby_ig:X-PRIV"
+  | "lobby:X-PRIV"
+  | `lobby_end:${string}`
+  | `lobby_spec:${string}`
+  | `lobby_ig:${string}`
+  | `lobby:${string}`
   | "tl_mm"
   | "tl"
   | "tl_end"
