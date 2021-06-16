@@ -1,6 +1,5 @@
 const assert = require("assert");
-
-const { TetraChannel } = require("../dist/index");
+const { TetraChannel, Client } = require("../dist/index");
 
 describe("Tetra Channel Tests:", async () => {
   describe("General:", async () => {
@@ -70,6 +69,26 @@ describe("Tetra Channel Tests:", async () => {
       const res = await TetraChannel.misc.news("40l_global");
 
       assert(res);
+    });
+  });
+});
+
+describe("Main Tests:", async () => {
+  describe("Client:", async () => {
+    const client = new Client();
+
+    it("Logging In", async () => {
+      return new Promise((resolve, reject) => {
+        client.on("err", async (e) => {
+          reject(e);
+        });
+
+        client.on("ready", async () => {
+          resolve();
+        });
+
+        client.login(process.env.TOKEN);
+      });
     });
   });
 });
