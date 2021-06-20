@@ -1,4 +1,4 @@
-const { Client } = require("./../dist/index");
+const { Client } = require("../dist/index");
 const main = new Client();
 const START_DELAY = 5000;
 
