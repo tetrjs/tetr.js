@@ -1,5 +1,6 @@
 import EventEmitter from "events";
-import { Client, Config, Handling } from "..";
+import { Client, Config, Context, Handling } from "..";
+import GameplayManager from "../gameplay/GameplayManager";
 import User from "../user/User";
 
 export default class Room extends EventEmitter {
@@ -48,6 +49,8 @@ export default class Room extends EventEmitter {
    * @type {boolean}
    */
   public inGame: boolean = false;
+
+  public game?: GameplayManager;
 
   /**
    * The config of the Room
@@ -138,6 +141,15 @@ export default class Room extends EventEmitter {
       id: this.client.ws.clientId,
       command: "startroom",
     });
+  }
+
+  /**
+   * Makes a new GameplayManager for the new game
+   * @param {any} readyData - The data from the readymulti event
+   * @param {Context[]} contexts - The contexts of the game
+   */
+  public newGame(readyData: any, contexts: Context[]): void {
+    this.game = new GameplayManager(readyData, contexts, this.client);
   }
 
   /**
@@ -232,14 +244,7 @@ export default interface Room {
    */
   on(
     event: "ready",
-    callback: (data: {
-      contexts: {
-        user: User;
-        handling: Handling;
-        opts: { fulloffset: number; fullinterval: number };
-      }[];
-      firstGame: boolean;
-    }) => void
+    callback: (data: { contexts: Context[]; firstGame: boolean }) => void
   ): this;
 
   /**

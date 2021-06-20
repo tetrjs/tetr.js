@@ -25,6 +25,12 @@ export interface Handling {
   dcd: number;
 }
 
+export interface Context {
+  user: User;
+  handling: Handling;
+  opts: { fulloffset: number; fullinterval: number };
+}
+
 export interface Presence {
   status: "online" | "away" | "busy" | "offline";
   detail: Detail;

@@ -1,15 +1,10 @@
 import WebSocketManager from "../WebSocketManager";
-import { Handling } from "../..";
-import User from "../../user/User";
+import { Context } from "../..";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
   if (ws.client.user?.room) ws.client.user.room.inGame = true;
 
-  let contexts: {
-    user: User;
-    handling: Handling;
-    opts: { fulloffset: number; fullinterval: number };
-  }[] = [];
+  let contexts: Context[] = [];
 
   for (let context of packet.data.contexts) {
     const user = await ws.client.users?.fetch(context.user._id);
@@ -17,6 +12,8 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
       contexts.push({ user, handling: context.handling, opts: context.opts });
     }
   }
+
+  ws.client.user?.room?.newGame(packet.data, contexts);
 
   ws.client.user?.room?.emit("ready", {
     contexts,
