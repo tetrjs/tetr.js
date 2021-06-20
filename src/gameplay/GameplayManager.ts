@@ -87,8 +87,7 @@ export default class GameplayManager extends EventEmitter {
   public move(): void {}
 
   public start(): void {
-    console.log("starting");
-    if (!!this.started)
+    if (!!this.started && this.playing)
       this.client.ws?.send_packet({
         id: this.client.ws.clientId,
         command: "replay",
