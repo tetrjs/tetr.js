@@ -40,7 +40,7 @@ export interface InGameEvent {
 }
 
 export interface RecieveReplay extends BaseReplay {
-  frames: (KeyEvent | InGameEvent)[] | [];
+  frames: (KeyEvent | InGameEvent)[];
 }
 
 // Output
@@ -63,5 +63,5 @@ export interface Targets {
 }
 
 export interface SendReplay extends BaseReplay {
-  frames: (KeyEvent | StartEvent | Targets)[] | [];
+  frames: (KeyEvent | StartEvent | Targets | InGameEvent)[];
 }

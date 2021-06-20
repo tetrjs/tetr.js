@@ -153,6 +153,14 @@ export default class Room extends EventEmitter {
   }
 
   /**
+   * Stops and removes the GameplayManager
+   */
+  public removeGame(): void {
+    this.game?.stop();
+    this.game = undefined;
+  }
+
+  /**
    * Patches the Room Class
    * @param {any} gmupdateData - The data from the gmupdate event
    * @param {boolean} newRoom - Whether or not to emit the join event
