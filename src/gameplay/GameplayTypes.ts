@@ -53,7 +53,7 @@ export interface StartEvent {
 
 export interface Targets {
   frame: number;
-  type: "start";
+  type: "targets";
   data: {
     id: "diyusi";
     frame: number;
