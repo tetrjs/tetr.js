@@ -84,10 +84,47 @@ export default class GameplayManager extends EventEmitter {
 
   // Functions
 
-  public move(): void {}
+  public move() {}
 
-  public start(): void {
-    if (!!this.started && this.playing)
+  public currentFrame() {
+    if (!this.started) this.started = new Date();
+    return (new Date().getSeconds() - this.started.getSeconds()) * 60;
+  }
+
+  public inGameEvent(data: any) {
+    switch (data.type) {
+      case "attack":
+        // TODO
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  public setTarget(stream: string) {
+    this.nextFrames.push({
+      frame: this.currentFrame(),
+      type: "targets",
+      data: {
+        id: "diyusi",
+        frame: this.currentFrame(),
+        type: "targets",
+        data: [
+          !!stream
+            ? stream
+            : this.contexts[Math.floor(Math.random() * this.contexts.length)]
+                .user._id + this.id,
+        ],
+      },
+    });
+  }
+
+  public start() {
+    if (!!this.started && this.playing) {
+      // Check for started and playing
+
+      // Send required replay packets
       this.client.ws?.send_packet({
         id: this.client.ws.clientId,
         command: "replay",
@@ -114,25 +151,29 @@ export default class GameplayManager extends EventEmitter {
               },
             },
           ],
-          provisioned:
-            (new Date().getSeconds() - this.started.getSeconds()) * 60,
+          provisioned: this.currentFrame(),
         },
       });
-    if (!this.frameTimer)
-      this.frameTimer = setInterval(() => {
-        if (!!this.started) {
-          this.client.ws?.send_packet({
-            id: this.client.ws.clientId,
-            command: "replay",
-            data: {
-              listenID: this.id,
-              frames: this.nextFrames,
-              provisioned:
-                (new Date().getSeconds() - this.started.getSeconds()) * 60,
-            },
-          });
-        }
-      }, 500);
+
+      // Start frameTimer
+      if (!this.frameTimer)
+        this.frameTimer = setInterval(() => {
+          if (!!this.started) {
+            const currentFrame = this.currentFrame();
+            this.client.ws?.send_packet({
+              id: this.client.ws.clientId,
+              command: "replay",
+              data: {
+                listenID: this.id,
+                frames: this.nextFrames.filter(
+                  (frame) => frame.frame < currentFrame
+                ),
+                provisioned: currentFrame,
+              },
+            });
+          }
+        }, 500);
+    }
   }
 
   public stop(): void {
