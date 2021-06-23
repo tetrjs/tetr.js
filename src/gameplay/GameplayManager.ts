@@ -1,6 +1,6 @@
 import { Client, Context } from "..";
 import EventEmitter from "events";
-import { KeyEvent, StartEvent, Targets } from "./GameplayTypes";
+import { InGameEvent, KeyEvent, StartEvent, Targets } from "./GameplayTypes";
 
 export default class GameplayManager extends EventEmitter {
   constructor(readyData: any, contexts: Context[], client: Client) {
@@ -15,24 +15,12 @@ export default class GameplayManager extends EventEmitter {
     );
 
     const options = readyData.options;
-    console.log(options);
-
     client.user?.room?.once("start", () => {
-      setTimeout(
-        () => {
-          this.started = new Date();
+      setTimeout(() => {
+        this.started = new Date();
 
-          this.start();
-        },
-        options.countdown
-          ? options.countdown_count * options.countdown_interval
-          : 0 + options.precountdown + options.prestart
-      );
-      console.log(
-        options.countdown
-          ? options.countdown_count * options.countdown_interval
-          : 0 + options.precountdown + options.prestart
-      );
+        this.start();
+      }, (options.countdown ? options.countdown_count * options.countdown_interval : 0) + options.precountdown + options.prestart);
     });
   }
 
@@ -76,11 +64,13 @@ export default class GameplayManager extends EventEmitter {
 
   /**
    * Replays that will be sent
-   * @type {(KeyEvent | StartEvent | Targets)[]}
+   * @type {((KeyEvent | StartEvent | Targets | InGameEvent)[]}
    */
-  public nextFrames: (KeyEvent | StartEvent | Targets)[] = [];
+  public nextFrames: (KeyEvent | StartEvent | Targets | InGameEvent)[] = [];
 
   private frameTimer?: NodeJS.Timeout;
+
+  private igeId = 0;
 
   // Functions
 
@@ -92,9 +82,19 @@ export default class GameplayManager extends EventEmitter {
   }
 
   public inGameEvent(data: any) {
-    switch (data.type) {
+    switch (data.data.type) {
       case "attack":
         // TODO
+        this.nextFrames.push({
+          frame: this.currentFrame(),
+          type: "ige",
+          data: {
+            id: this.igeId++,
+            frame: this.currentFrame(),
+            type: "ige",
+            data: data.data,
+          },
+        });
         break;
 
       default:
@@ -160,14 +160,25 @@ export default class GameplayManager extends EventEmitter {
         this.frameTimer = setInterval(() => {
           if (!!this.started) {
             const currentFrame = this.currentFrame();
+
+            const sendFrames: (
+              | KeyEvent
+              | StartEvent
+              | Targets
+              | InGameEvent
+            )[] = [];
+            for (const [i, frame] of this.nextFrames.entries()) {
+              if (frame.frame < currentFrame)
+                sendFrames.push(...this.nextFrames.splice(i, 1));
+            }
+
+            console.log(sendFrames);
             this.client.ws?.send_packet({
               id: this.client.ws.clientId,
               command: "replay",
               data: {
                 listenID: this.id,
-                frames: this.nextFrames.filter(
-                  (frame) => frame.frame < currentFrame
-                ),
+                frames: sendFrames,
                 provisioned: currentFrame,
               },
             });
