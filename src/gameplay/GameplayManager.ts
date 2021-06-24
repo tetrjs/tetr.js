@@ -78,7 +78,7 @@ export default class GameplayManager extends EventEmitter {
 
   public currentFrame() {
     if (!this.started) this.started = new Date();
-    return (new Date().getSeconds() - this.started.getSeconds()) * 60;
+    return ((new Date().getTime() - this.started.getTime()) / 1000) * 60;
   }
 
   public inGameEvent(data: any) {
@@ -172,7 +172,7 @@ export default class GameplayManager extends EventEmitter {
                 sendFrames.push(...this.nextFrames.splice(i, 1));
             }
 
-            console.log(sendFrames);
+            // console.log(sendFrames);
             this.client.ws?.send_packet({
               id: this.client.ws.clientId,
               command: "replay",
