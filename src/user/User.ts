@@ -286,4 +286,16 @@ export default class User extends EventEmitter {
       data: { recipient: this._id, msg: content },
     });
   }
+
+  /**
+   * Invites a user into your current room
+   * @returns {void}
+   */
+  public invite(): void {
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "social.invite",
+      data: this._id,
+    });
+  }
 }
