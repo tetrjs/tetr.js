@@ -4,7 +4,6 @@ import fetch from "node-fetch";
 import ClientUser from "./ClientUser";
 import EventEmitter from "events";
 import { Worker } from "..";
-import AbortController from "abort-controller";
 
 export default class Client extends EventEmitter {
   /**
@@ -123,47 +122,11 @@ export default class Client extends EventEmitter {
       })
     ).json();
 
-    let id;
+    const environment = await (
+      await fetch("https://tetr.io/api/server/environment")
+    ).json();
 
-    const read = async (
-      body: NodeJS.ReadableStream,
-      controller: AbortController
-    ) => {
-      let error: any;
-      body.on("error", (err) => {
-        error = err;
-      });
-
-      let promise = new Promise<void>((resolve, reject) => {
-        body.on("close", () => {
-          error ? reject(error) : resolve();
-        });
-      });
-
-      let text = "";
-      for await (const chunk of body) {
-        text += chunk.toString();
-        id = text.match(/"commit":{"id":"(.{7})"/);
-        if (id) {
-          controller.abort();
-          break;
-        }
-      }
-
-      return promise;
-    };
-
-    try {
-      const controller = new AbortController();
-      const response = await fetch("https://tetr.io/js/tetrio.js", {
-        signal: controller.signal,
-      });
-      await read(response.body, controller);
-    } catch (err) {
-      if (err.name != "AbortError") console.error(err);
-    }
-
-    if (!id || !id[1]) {
+    if (!environment.success) {
       this.emit("err", {
         fatal: true,
         reason: "Unable to get current Commit ID.",
@@ -171,7 +134,7 @@ export default class Client extends EventEmitter {
 
       this.disconnect();
     } else {
-      this.commitId = id[1];
+      this.commitId = environment.signature.commit.id;
 
       this.ws = new WebSocketManager(
         endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon",
