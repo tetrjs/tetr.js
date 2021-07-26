@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import ClientUser from "./ClientUser";
 import EventEmitter from "events";
 import { Worker } from "..";
+import AbortController from "abort-controller";
 
 export default class Client extends EventEmitter {
   /**
@@ -133,6 +134,12 @@ export default class Client extends EventEmitter {
         error = err;
       });
 
+      let promise = new Promise<void>((resolve, reject) => {
+        body.on("close", () => {
+          error ? reject(error) : resolve();
+        });
+      });
+
       let text = "";
       for await (const chunk of body) {
         text += chunk.toString();
@@ -143,17 +150,14 @@ export default class Client extends EventEmitter {
         }
       }
 
-      return new Promise<void>((resolve, reject) => {
-        body.on("close", () => {
-          error ? reject(error) : resolve();
-        });
-      });
+      return promise;
     };
 
     try {
       const controller = new AbortController();
-      const { signal } = controller;
-      const response = await fetch("https://tetr.io/js/tetrio.js", { signal });
+      const response = await fetch("https://tetr.io/js/tetrio.js", {
+        signal: controller.signal,
+      });
       await read(response.body, controller);
     } catch (err) {
       if (err.name != "AbortError") console.error(err);
