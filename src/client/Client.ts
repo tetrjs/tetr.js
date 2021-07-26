@@ -124,30 +124,40 @@ export default class Client extends EventEmitter {
 
     let id;
 
-    let text = "";
-    await new Promise<void>((resolve) => {
+    const read = async (
+      body: NodeJS.ReadableStream,
+      controller: AbortController
+    ) => {
+      let error: any;
+      body.on("error", (err) => {
+        error = err;
+      });
+
+      let text = "";
+      for await (const chunk of body) {
+        text += chunk.toString();
+        id = text.match(/"commit":{"id":"(.{7})"/);
+        if (id) {
+          controller.abort();
+          break;
+        }
+      }
+
+      return new Promise<void>((resolve, reject) => {
+        body.on("close", () => {
+          error ? reject(error) : resolve();
+        });
+      });
+    };
+
+    try {
       const controller = new AbortController();
       const { signal } = controller;
-      fetch("https://tetr.io/js/tetrio.js", { signal })
-        .then((res) => res.body)
-        .then((res) => {
-          res.on("readable", () => {
-            let chunk;
-            while (null !== (chunk = res.read())) {
-              text += chunk.toString();
-              id = text.match(/"commit":{"id":"(.{7})"/);
-              if (id) {
-                controller.abort();
-                resolve();
-              }
-            }
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-          resolve();
-        });
-    });
+      const response = await fetch("https://tetr.io/js/tetrio.js", { signal });
+      await read(response.body, controller);
+    } catch (err) {
+      if (err.name != "AbortError") console.error(err);
+    }
 
     if (!id || !id[1]) {
       this.emit("err", {
