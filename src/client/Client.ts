@@ -49,14 +49,14 @@ export default class Client extends EventEmitter {
    * @type {number}
    * @readonly
    */
-  public players: number = 0;
+  public players = 0;
 
   /**
    * The commitId of the latest build of TETR.IO
    * @type {string}
    * @readonly
    */
-  public commitId: string = "";
+  public commitId = "";
 
   // Functions
 
@@ -101,8 +101,7 @@ export default class Client extends EventEmitter {
     if (client.user.role !== "bot") {
       this.emit("err", {
         fatal: true,
-        reason:
-          "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.",
+        reason: "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.",
       });
 
       return this.disconnect();
@@ -122,9 +121,7 @@ export default class Client extends EventEmitter {
       })
     ).json();
 
-    const environment = await (
-      await fetch("https://tetr.io/api/server/environment")
-    ).json();
+    const environment = await (await fetch("https://tetr.io/api/server/environment")).json();
 
     if (!environment.success) {
       this.emit("err", {
@@ -168,8 +165,5 @@ export default interface Client {
   /**
    * Emitted whenever an error occurs
    */
-  on(
-    event: "err",
-    callback: (error: { fatal: boolean; reason: string }) => void
-  ): this;
+  on(event: "err", callback: (error: { fatal: boolean; reason: string }) => void): this;
 }

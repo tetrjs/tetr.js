@@ -1,10 +1,4 @@
-export type Key =
-  | "hardDrop"
-  | "softDrop"
-  | "moveLeft"
-  | "moveRight"
-  | "rotateCW"
-  | "rotateCCW";
+export type Key = "hardDrop" | "softDrop" | "moveLeft" | "moveRight" | "rotateCW" | "rotateCCW";
 
 export interface KeyEvent {
   frame: number;
@@ -48,7 +42,7 @@ export interface RecieveReplay extends BaseReplay {
 export interface StartEvent {
   frame: number;
   type: "start";
-  data: {};
+  data: Record<string, never>;
 }
 
 export interface Targets {

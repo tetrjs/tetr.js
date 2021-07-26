@@ -168,12 +168,4 @@ export type Bag = "7-bag" | "14-bag" | "classic" | "pairs" | "total mayhem";
 
 export type Spins = "T-spins" | "all" | "stupid" | "none";
 
-export type Kickset =
-  | "SRS+"
-  | "SRS"
-  | "SRS-X"
-  | "TETRA-X"
-  | "NRS"
-  | "ARS"
-  | "ASC"
-  | "none";
+export type Kickset = "SRS+" | "SRS" | "SRS-X" | "TETRA-X" | "NRS" | "ARS" | "ASC" | "none";

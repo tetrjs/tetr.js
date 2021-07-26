@@ -29,21 +29,19 @@ export default class WebSocketManager {
     };
   }
 
-  // Variables
+  // letiables
 
   /**
    * WebSocket messages
    * @type {Map<string, Function>}
    */
-  private messages: Map<string, Function> = new Map(
-    fs
-      .readdirSync(`${__dirname}/messages`)
-      .filter((k) => k.endsWith(".js"))
-      .map((k: string) => [
-        k.slice(0, -3),
-        require(`${__dirname}/messages/${k}`),
-      ])
-  );
+  private messages: Map<string, (packet: any, ws: WebSocketManager) => Promise<void> | void> =
+    new Map(
+      fs
+        .readdirSync(`${__dirname}/messages`)
+        .filter((k) => k.endsWith(".js"))
+        .map((k: string) => [k.slice(0, -3), require(`${__dirname}/messages/${k}`)])
+    );
 
   /**
    * The Client
@@ -62,7 +60,7 @@ export default class WebSocketManager {
    * The current ServerId
    * @type {number}
    */
-  public serverId: number = 0;
+  public serverId = 0;
 
   /**
    * The WebSocket's id
@@ -92,7 +90,7 @@ export default class WebSocketManager {
    * The current ClientId
    * @type {number}
    */
-  public clientId: number = 1;
+  public clientId = 1;
 
   /**
    * The Timeout for the Ribbon's heartbeat
@@ -150,16 +148,16 @@ export default class WebSocketManager {
         packet.id = data.readUInt32BE(1);
         delete packet.data.id;
         break;
-      case 0x58:
-        var lengths = [];
+      case 0x58: {
+        const lengths = [];
 
-        for (var i = 0; true; i++) {
+        for (let i = 0; true; i++) {
           if (data.slice(i * 4 + 1).readUInt32BE() === 0) break;
 
           lengths.push(data.slice(i * 4 + 1).readUInt32BE());
         }
 
-        var pointer = 0;
+        let pointer = 0;
 
         for (let i = 0; i < lengths.length; i++) {
           this.receive_packet(
@@ -173,6 +171,7 @@ export default class WebSocketManager {
         }
 
         return;
+      }
       case 0xb0:
         // console.log("Server:", "Pong");
 
@@ -243,7 +242,7 @@ export default class WebSocketManager {
         packets: this.history,
       });
 
-      for (var i = 0; this.queue.length; i++) {
+      for (let i = 0; this.queue.length; i++) {
         this.send_packet(this.queue[i]);
 
         this.queue.splice(i, 1);

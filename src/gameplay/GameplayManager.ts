@@ -10,9 +10,7 @@ export default class GameplayManager extends EventEmitter {
     this.id = readyData.gameID;
     this.first = readyData.first;
     this.contexts = contexts;
-    this.playing = !!contexts.find(
-      (context) => context.user._id == client.user?._id
-    );
+    this.playing = !!contexts.find((context) => context.user._id == client.user?._id);
 
     const options = readyData.options;
     client.user?.room?.once("start", () => {
@@ -74,8 +72,6 @@ export default class GameplayManager extends EventEmitter {
 
   // Functions
 
-  public move() {}
-
   public currentFrame() {
     if (!this.started) this.started = new Date();
     return ((new Date().getTime() - this.started.getTime()) / 1000) * 60;
@@ -111,10 +107,9 @@ export default class GameplayManager extends EventEmitter {
         frame: this.currentFrame(),
         type: "targets",
         data: [
-          !!stream
+          stream
             ? stream
-            : this.contexts[Math.floor(Math.random() * this.contexts.length)]
-                .user._id + this.id,
+            : this.contexts[Math.floor(Math.random() * this.contexts.length)].user._id + this.id,
         ],
       },
     });
@@ -144,9 +139,8 @@ export default class GameplayManager extends EventEmitter {
                 frame: 0,
                 type: "targets",
                 data: [
-                  this.contexts[
-                    Math.floor(Math.random() * this.contexts.length)
-                  ].user._id + this.id,
+                  this.contexts[Math.floor(Math.random() * this.contexts.length)].user._id +
+                    this.id,
                 ],
               },
             },
@@ -158,18 +152,12 @@ export default class GameplayManager extends EventEmitter {
       // Start frameTimer
       if (!this.frameTimer)
         this.frameTimer = setInterval(() => {
-          if (!!this.started) {
+          if (this.started) {
             const currentFrame = this.currentFrame();
 
-            const sendFrames: (
-              | KeyEvent
-              | StartEvent
-              | Targets
-              | InGameEvent
-            )[] = [];
+            const sendFrames: (KeyEvent | StartEvent | Targets | InGameEvent)[] = [];
             for (const [i, frame] of this.nextFrames.entries()) {
-              if (frame.frame < currentFrame)
-                sendFrames.push(...this.nextFrames.splice(i, 1));
+              if (frame.frame < currentFrame) sendFrames.push(...this.nextFrames.splice(i, 1));
             }
 
             // console.log(sendFrames);

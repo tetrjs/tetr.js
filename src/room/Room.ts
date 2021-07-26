@@ -1,10 +1,10 @@
 import EventEmitter from "events";
-import { Client, Config, Context, Handling } from "..";
+import { Client, Config, Context } from "..";
 import GameplayManager from "../gameplay/GameplayManager";
 import User from "../user/User";
 
 export default class Room extends EventEmitter {
-  constructor(gmupdateData: Object, client: Client) {
+  constructor(gmupdateData: Record<string, unknown>, client: Client) {
     super();
 
     this.client = client;
@@ -30,7 +30,7 @@ export default class Room extends EventEmitter {
    * The Room ID
    * @type {string}
    */
-  public id: string = "";
+  public id = "";
 
   /**
    * Whether or not the room is discoverable
@@ -48,7 +48,7 @@ export default class Room extends EventEmitter {
    * If the room has been started
    * @type {boolean}
    */
-  public inGame: boolean = false;
+  public inGame = false;
 
   public game?: GameplayManager;
 
@@ -240,20 +240,13 @@ export default interface Room {
    */
   on(
     event: "message",
-    callback: (message: {
-      content: string;
-      author?: User;
-      system: boolean;
-    }) => void
+    callback: (message: { content: string; author?: User; system: boolean }) => void
   ): this;
 
   /**
    * Emitted whenever a Room is about to start
    */
-  on(
-    event: "ready",
-    callback: (data: { contexts: Context[]; firstGame: boolean }) => void
-  ): this;
+  on(event: "ready", callback: (data: { contexts: Context[]; firstGame: boolean }) => void): this;
 
   /**
    * Emitted whenever the room settings update

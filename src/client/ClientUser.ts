@@ -108,9 +108,6 @@ export default interface ClientUser {
    */
   on(
     event: "invite",
-    callback: (data: {
-      author: User;
-      room: { id: string; name: string };
-    }) => void
+    callback: (data: { author: User; room: { id: string; name: string } }) => void
   ): this;
 }
