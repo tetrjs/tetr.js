@@ -122,9 +122,32 @@ export default class Client extends EventEmitter {
       })
     ).json();
 
-    const file = await fetch("https://tetr.io/js/tetrio.js");
-    const text = await file.text();
-    const id = text.match(/"commit":{"id":"(.{7})"/);
+    let id;
+
+    let text = "";
+    await new Promise<void>((resolve) => {
+      const controller = new AbortController();
+      const { signal } = controller;
+      fetch("https://tetr.io/js/tetrio.js", { signal })
+        .then((res) => res.body)
+        .then((res) => {
+          res.on("readable", () => {
+            let chunk;
+            while (null !== (chunk = res.read())) {
+              text += chunk.toString();
+              id = text.match(/"commit":{"id":"(.{7})"/);
+              if (id) {
+                controller.abort();
+                resolve();
+              }
+            }
+          });
+        })
+        .catch((e) => {
+          console.error(e);
+          resolve();
+        });
+    });
 
     if (!id || !id[1]) {
       this.emit("err", {
