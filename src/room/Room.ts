@@ -240,7 +240,12 @@ export default interface Room {
    */
   on(
     event: "message",
-    callback: (message: { content: string; author?: User; system: boolean }) => void
+    callback: (message: {
+      content: string;
+      content_safe: string;
+      author?: User;
+      system: boolean;
+    }) => void
   ): this;
 
   /**

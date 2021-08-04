@@ -96,6 +96,7 @@ export default interface ClientUser {
     event: "message",
     callback: (message: {
       content: string;
+      content_safe: string;
       author: User | undefined;
       systemMessage: boolean;
       id: string;
