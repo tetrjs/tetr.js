@@ -2,9 +2,7 @@ import fetch from "node-fetch";
 import { CacheData } from "..";
 import type * as types from "./ChannelTypes";
 
-let cacheSessionID = `SESS-${Math.floor(
-  Math.random() * Number.MAX_SAFE_INTEGER
-)}`;
+const cacheSessionID = `SESS-${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
 
 /**
  * The User cache
@@ -18,8 +16,7 @@ const cache: Map<string, CacheData> = new Map();
  */
 async function generalStats(): Promise<types.generalStatsType> {
   const cacheData = cache.get("generalStats");
-  if (!!cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data;
+  if (!!cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
 
   const data = await (
     await fetch("https://ch.tetr.io/api/general/stats", {
@@ -38,8 +35,7 @@ async function generalStats(): Promise<types.generalStatsType> {
  */
 async function generalActivity(): Promise<types.activityStatsType> {
   const cacheData = cache.get("generalActivity");
-  if (!!cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data;
+  if (!!cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
 
   const data = await (
     await fetch("https://ch.tetr.io/api/general/activity", {
@@ -59,8 +55,7 @@ async function generalActivity(): Promise<types.activityStatsType> {
  */
 async function userInfos(user: string): Promise<types.userInfosType> {
   const cacheData = cache.get(`user_${user}`);
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data.user;
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data.user;
 
   const data = await (
     await fetch(encodeURI("https://ch.tetr.io/api/users/" + user.toLowerCase()))
@@ -79,18 +74,12 @@ async function userInfos(user: string): Promise<types.userInfosType> {
  */
 async function userRecords(user: string): Promise<types.userRecordsType> {
   const cacheData = cache.get(`userRecords_${user}`);
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data;
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
 
   const data = await (
-    await fetch(
-      encodeURI(
-        "https://ch.tetr.io/api/users/" + user.toLowerCase() + "/records"
-      ),
-      {
-        headers: { "X-Session-ID": cacheSessionID },
-      }
-    )
+    await fetch(encodeURI("https://ch.tetr.io/api/users/" + user.toLowerCase() + "/records"), {
+      headers: { "X-Session-ID": cacheSessionID },
+    })
   ).json();
 
   if (!data.success) throw new Error(data.error);
@@ -110,7 +99,7 @@ async function TL_Leaderboard(options?: {
   before?: number;
   limit?: number;
 }): Promise<types.Leaderboard_UserInfoType[]> {
-  var url = new URL("https://ch.tetr.io/api/users/lists/league?");
+  const url = new URL("https://ch.tetr.io/api/users/lists/league?");
   if (options) {
     for (const option in options) {
       url.searchParams.append(
@@ -121,17 +110,16 @@ async function TL_Leaderboard(options?: {
   }
 
   const cacheString = `TL_Leaderboard${
-    !!options
-      ? (!!options.country ? "_" + options.country : "") +
-        (!!options.after ? "_" + options.after : "") +
-        (!!options.before ? "_" + options.before : "") +
-        (!!options.limit ? "_" + options.limit : "")
+    options
+      ? (options.country ? "_" + options.country : "") +
+        (options.after ? "_" + options.after : "") +
+        (options.before ? "_" + options.before : "") +
+        (options.limit ? "_" + options.limit : "")
       : ""
   }`;
 
   const cacheData = cache.get(cacheString);
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data;
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
 
   const data = await (
     await fetch(url, {
@@ -150,21 +138,14 @@ async function TL_Leaderboard(options?: {
  * @param {string} country
  * @returns {Promise<types.Leaderboard_UserInfoType[]>}
  */
-async function TL_Leaderboard_full(
-  country?: string
-): Promise<types.Leaderboard_UserInfoType[]> {
-  const cacheData = cache.get(
-    `TL_Leaderboard_full${country ? "_" + country : ""}`
-  );
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data;
+async function TL_Leaderboard_full(country?: string): Promise<types.Leaderboard_UserInfoType[]> {
+  const cacheData = cache.get(`TL_Leaderboard_full${country ? "_" + country : ""}`);
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
 
   const data = await (
     await fetch(
       encodeURI(
-        `https://ch.tetr.io/api/users/lists/league/all?${
-          country ? `country=${country}` : ""
-        }`
+        `https://ch.tetr.io/api/users/lists/league/all?${country ? `country=${country}` : ""}`
       ),
       {
         headers: { "X-Session-ID": cacheSessionID },
@@ -190,7 +171,7 @@ async function XP_Leaderboard(options?: {
   before?: number;
   limit?: number;
 }): Promise<types.Leaderboard_UserInfoType[]> {
-  var url = new URL("https://ch.tetr.io/api/users/lists/league?");
+  const url = new URL("https://ch.tetr.io/api/users/lists/league?");
   if (options) {
     for (const option in options) {
       url.searchParams.append(
@@ -201,17 +182,16 @@ async function XP_Leaderboard(options?: {
   }
 
   const cacheString = `XP_Leaderboard${
-    !!options
-      ? (!!options.country ? "_" + options.country : "") +
-        (!!options.after ? "_" + options.after : "") +
-        (!!options.before ? "_" + options.before : "") +
-        (!!options.limit ? "_" + options.limit : "")
+    options
+      ? (options.country ? "_" + options.country : "") +
+        (options.after ? "_" + options.after : "") +
+        (options.before ? "_" + options.before : "") +
+        (options.limit ? "_" + options.limit : "")
       : ""
   }`;
 
   const cacheData = cache.get(cacheString);
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data;
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
 
   const data = await (
     await fetch(url, {
@@ -236,12 +216,9 @@ async function stream(stream: string): Promise<types.userRecordsType[]> {
     return cacheData.data.records;
 
   const data = await (
-    await fetch(
-      encodeURI("https://ch.tetr.io/api/streams/" + stream.toLowerCase()),
-      {
-        headers: { "X-Session-ID": cacheSessionID },
-      }
-    )
+    await fetch(encodeURI("https://ch.tetr.io/api/streams/" + stream.toLowerCase()), {
+      headers: { "X-Session-ID": cacheSessionID },
+    })
   ).json();
 
   if (!data.success) throw new Error(data.error);
@@ -259,11 +236,7 @@ async function stream(stream: string): Promise<types.userRecordsType[]> {
 async function all_news(limit?: number): Promise<types.NewsType[]> {
   return (
     await (
-      await fetch(
-        encodeURI(
-          `https://ch.tetr.io/api/news?${limit ? `limit=${limit}` : ""}`
-        )
-      )
+      await fetch(encodeURI(`https://ch.tetr.io/api/news?${limit ? `limit=${limit}` : ""}`))
     ).json()
   ).data.news;
 }
@@ -276,15 +249,12 @@ async function all_news(limit?: number): Promise<types.NewsType[]> {
  */
 
 async function news(stream: string, limit?: number): Promise<types.NewsType[]> {
-  const cacheData = cache.get(`news_${stream}${!!limit ? "_" + limit : ""}`);
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until)
-    return cacheData.data.news;
+  const cacheData = cache.get(`news_${stream}${limit ? "_" + limit : ""}`);
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data.news;
 
   const data = await (
     await fetch(
-      encodeURI(
-        `https://ch.tetr.io/api/news/${stream}?${limit ? `limit=${limit}` : ""}`
-      ),
+      encodeURI(`https://ch.tetr.io/api/news/${stream}?${limit ? `limit=${limit}` : ""}`),
       {
         headers: { "X-Session-ID": cacheSessionID },
       }
@@ -293,33 +263,33 @@ async function news(stream: string, limit?: number): Promise<types.NewsType[]> {
 
   if (!data.success) throw new Error(data.error);
 
-  cache.set(`news_${stream}${!!limit ? "_" + limit : ""}`, data);
+  cache.set(`news_${stream}${limit ? "_" + limit : ""}`, data);
   return data.data.news;
 }
 
-var general = {
+const general = {
   stats: generalStats,
   activity: generalActivity,
 };
 
-var users = {
+const users = {
   infos: userInfos,
   records: userRecords,
 };
 
-var leaderboards = {
+const leaderboards = {
   tetra_league: TL_Leaderboard,
   tetra_league_full: TL_Leaderboard_full,
   xp: XP_Leaderboard,
 };
 
-var misc = {
+const misc = {
   stream,
   all_news,
   news,
 };
 
-export var TetraChannel = {
+export const TetraChannel = {
   general,
   users,
   leaderboards,

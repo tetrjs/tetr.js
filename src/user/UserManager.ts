@@ -1,5 +1,4 @@
 import User from "./User";
-import fetch from "node-fetch";
 import Client from "../client/Client";
 import { CacheData } from "..";
 import { TetraChannel } from "../channel/Channel";
@@ -36,7 +35,7 @@ export default class UserManager {
     await TetraChannel.users
       .infos(id)
       .then((userInfo) => (userObject = new User(userInfo, this.client)))
-      .catch((e) => (userObject = undefined));
+      .catch(() => (userObject = undefined));
 
     return userObject;
   }

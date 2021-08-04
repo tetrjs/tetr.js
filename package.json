@@ -38,10 +38,13 @@
   "devDependencies": {
     "@types/msgpack-lite": "^0.1.7",
     "@types/node-fetch": "^2.5.10",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
     "cz-conventional-changelog": "^3.3.0",
     "dotenv": "^10.0.0",
-    "fs": "^0.0.1-security",
+    "eslint": "^7.31.0",
     "mocha": "^9.0.0",
+    "prettier": "^2.3.2",
     "semantic-release": "^17.4.4",
     "typedoc": "^0.20.36",
     "typedoc-plugin-extras": "^1.1.8",
@@ -54,7 +57,10 @@
     "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
     "semantic-release": "semantic-release --branches stable",
     "commit": "git-cz",
-    "acp": "git add . && npm run commit && git push"
+    "acp": "git add . && npm run commit && git push",
+    "prettier": "prettier --write src/**/*.ts",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "config": {
     "commitizen": {

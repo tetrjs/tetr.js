@@ -1,9 +1,10 @@
 import EventEmitter from "events";
-import { Client, Config, Handling } from "..";
+import { Client, Config, Context } from "..";
+import GameplayManager from "../gameplay/GameplayManager";
 import User from "../user/User";
 
 export default class Room extends EventEmitter {
-  constructor(gmupdateData: Object, client: Client) {
+  constructor(gmupdateData: Record<string, unknown>, client: Client) {
     super();
 
     this.client = client;
@@ -29,7 +30,7 @@ export default class Room extends EventEmitter {
    * The Room ID
    * @type {string}
    */
-  public id: string = "";
+  public id = "";
 
   /**
    * Whether or not the room is discoverable
@@ -47,7 +48,9 @@ export default class Room extends EventEmitter {
    * If the room has been started
    * @type {boolean}
    */
-  public inGame: boolean = false;
+  public inGame = false;
+
+  public game?: GameplayManager;
 
   /**
    * The config of the Room
@@ -141,6 +144,23 @@ export default class Room extends EventEmitter {
   }
 
   /**
+   * Makes a new GameplayManager for the new game
+   * @param {any} readyData - The data from the readymulti event
+   * @param {Context[]} contexts - The contexts of the game
+   */
+  public newGame(readyData: any, contexts: Context[]): void {
+    this.game = new GameplayManager(readyData, contexts, this.client);
+  }
+
+  /**
+   * Stops and removes the GameplayManager
+   */
+  public removeGame(): void {
+    this.game?.stop();
+    this.game = undefined;
+  }
+
+  /**
    * Patches the Room Class
    * @param {any} gmupdateData - The data from the gmupdate event
    * @param {boolean} newRoom - Whether or not to emit the join event
@@ -222,6 +242,7 @@ export default interface Room {
     event: "message",
     callback: (message: {
       content: string;
+      content_safe: string;
       author?: User;
       system: boolean;
     }) => void
@@ -230,17 +251,7 @@ export default interface Room {
   /**
    * Emitted whenever a Room is about to start
    */
-  on(
-    event: "ready",
-    callback: (data: {
-      contexts: {
-        user: User;
-        handling: Handling;
-        opts: { fulloffset: number; fullinterval: number };
-      }[];
-      firstGame: boolean;
-    }) => void
-  ): this;
+  on(event: "ready", callback: (data: { contexts: Context[]; firstGame: boolean }) => void): this;
 
   /**
    * Emitted whenever the room settings update

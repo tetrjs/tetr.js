@@ -1,0 +1,8 @@
+dist/
+testing/
+testing.js
+docs/
+assets/
+examples/
+images/
+.github/

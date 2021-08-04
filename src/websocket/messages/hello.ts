@@ -30,9 +30,9 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
       },
     });
   } else {
-    for (var i = 0; i < packet.packets.length; i++) {
+    for (let i = 0; i < packet.packets.length; i++) {
       if (!["authorize", "migrate"].includes(packet.packets[i].command)) {
-        var buf = Buffer.alloc(msgpack.encode(packet.packets[i]).length + 1);
+        const buf = Buffer.alloc(msgpack.encode(packet.packets[i]).length + 1);
 
         buf.set([0x45], 0);
 
