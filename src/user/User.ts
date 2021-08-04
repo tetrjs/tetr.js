@@ -1,4 +1,6 @@
 import EventEmitter from "events";
+import fetch from "node-fetch";
+import { DirectMessage } from "..";
 import Client from "../client/Client";
 
 export default class User extends EventEmitter {
@@ -297,5 +299,49 @@ export default class User extends EventEmitter {
       command: "social.invite",
       data: this._id,
     });
+  }
+
+  /**
+   * Fetches the DMs between the bot and the user
+   */
+  public async getDMs(): Promise<DirectMessage[]> {
+    const id = this._id;
+    const token = this.client.token;
+    const data: {
+      success: boolean;
+      error?: any;
+      dms: {
+        _id: string;
+        ts: string;
+        stream: string;
+        data: {
+          content: string;
+          content_safe: string;
+          system: boolean;
+          user: string;
+          userdata: any;
+        };
+      }[];
+    } = await (
+      await fetch(`https://tetr.io/api/dms/${encodeURIComponent(id)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    ).json();
+    if (!data.success) throw new Error(data.error);
+    else {
+      const dms: DirectMessage[] = [];
+      data.dms.forEach(async (message) => {
+        dms.push({
+          content: message.data.content,
+          content_safe: message.data.content_safe,
+          system: message.data.system,
+          id: message._id,
+          ts: message.ts,
+          author:
+            message.data.user == this._id ? this : await this.client.users.fetch(message.data.user),
+        });
+      });
+      return dms;
+    }
   }
 }

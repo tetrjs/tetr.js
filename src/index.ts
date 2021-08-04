@@ -7,6 +7,27 @@ import { TetraChannel } from "./channel/Channel";
 
 export { Client, ClientUser, Room, User, UserManager, TetraChannel };
 
+export interface DirectMessage {
+  /** Contents of the message. */
+  content: string;
+  /** Contents of the message after being passed through TETR.IO's profanity filter. */
+  content_safe: string;
+
+  /** Whether this is a system message. */
+  system: boolean;
+
+  /** The ISO 8601-formatted timestamp of the message. */
+  ts: string;
+
+  /** The id of the message. */
+  id: string;
+
+  /**
+   * The author of the message.
+   */
+  author?: User;
+}
+
 export interface CacheData {
   cache: {
     status: string;

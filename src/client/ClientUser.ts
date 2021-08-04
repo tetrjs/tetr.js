@@ -2,6 +2,7 @@ import Room from "../room/Room";
 import User from "../user/User";
 import Client from "../client/Client";
 import { Handling, Presence } from "..";
+import { DirectMessage } from "..";
 
 export default class ClientUser extends User {
   constructor(data: any, client: Client) {
@@ -92,17 +93,7 @@ export default interface ClientUser {
   /**
    * Emitted when the ClientUser receives a message from another User
    */
-  on(
-    event: "message",
-    callback: (message: {
-      content: string;
-      content_safe: string;
-      author: User | undefined;
-      systemMessage: boolean;
-      id: string;
-      ts: string;
-    }) => void
-  ): this;
+  on(event: "message", callback: (message: DirectMessage) => void): this;
 
   /**
    * Emitted when the ClientUser is invited to a room
