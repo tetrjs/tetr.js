@@ -1,6 +1,7 @@
-import { Client, Context } from "..";
+import { Client, Context, User } from "..";
 import EventEmitter from "events";
-import { InGameEvent, KeyEvent, StartEvent, Targets } from "./GameplayTypes";
+import { InGameEvent, Key, KeyEvent, StartEvent, Targets } from "./GameplayTypes";
+import PiecesGen from "./piecesGen";
 
 export default class GameplayManager extends EventEmitter {
   constructor(readyData: any, contexts: Context[], client: Client) {
@@ -12,17 +13,20 @@ export default class GameplayManager extends EventEmitter {
     this.contexts = contexts;
     this.playing = !!contexts.find((context) => context.user._id == client.user?._id);
 
-    const options = readyData.options;
+    this.options = readyData.options;
+
     client.user?.room?.once("start", () => {
       setTimeout(() => {
         this.started = new Date();
 
         this.start();
-      }, (options.countdown ? options.countdown_count * options.countdown_interval : 0) + options.precountdown + options.prestart);
+      }, (this.options.countdown ? this.options.countdown_count * this.options.countdown_interval : 0) + this.options.precountdown + this.options.prestart);
     });
   }
 
   // Variables
+
+  private options;
 
   /**
    * The Client Class
@@ -77,7 +81,7 @@ export default class GameplayManager extends EventEmitter {
     return ((new Date().getTime() - this.started.getTime()) / 1000) * 60;
   }
 
-  public inGameEvent(data: any) {
+  public async inGameEvent(data: any) {
     switch (data.data.type) {
       case "attack":
         // TODO
@@ -90,6 +94,11 @@ export default class GameplayManager extends EventEmitter {
             type: "ige",
             data: data.data,
           },
+        });
+        this.emit("attack", {
+          lines: data.data.lines,
+          column: data.data.column,
+          sender: await this.client.users.fetch(data.data.sender),
         });
         break;
 
@@ -126,6 +135,124 @@ export default class GameplayManager extends EventEmitter {
         data: {
           listenID: this.id,
           frames: [
+            {
+              frame: 0,
+              type: "full",
+              data: {
+                successful: false,
+                gameoverreason: null,
+                replay: {},
+                source: {},
+                options: {
+                  ...this.options,
+                  ...this.contexts.find((context) => context.user._id == this.client.user?._id)
+                    ?.opts,
+                  username: this.client.user?.username,
+                  physical: true,
+                },
+                stats: {
+                  seed: this.options.seed,
+                  lines: 0,
+                  level_lines: 0,
+                  level_lines_needed: 1,
+                  inputs: 0,
+                  time: { start: 0, zero: true, locked: false, prev: 0, frameoffset: 0 },
+                  score: 0,
+                  zenlevel: 1,
+                  zenprogress: 0,
+                  level: 1,
+                  combo: 0,
+                  currentcombopower: 0,
+                  topcombo: 0,
+                  btb: 0,
+                  topbtb: 0,
+                  tspins: 0,
+                  piecesplaced: 0,
+                  clears: {
+                    singles: 0,
+                    doubles: 0,
+                    triples: 0,
+                    quads: 0,
+                    realtspins: 0,
+                    minitspins: 0,
+                    minitspinsingles: 0,
+                    tspinsingles: 0,
+                    minitspindoubles: 0,
+                    tspindoubles: 0,
+                    tspintriples: 0,
+                    tspinquads: 0,
+                    allclear: 0,
+                  },
+                  garbage: { sent: 0, received: 0, attack: 0, cleared: 0 },
+                  kills: 0,
+                  finesse: { combo: 0, faults: 0, perfectpieces: 0 },
+                },
+                targets: [],
+                fire: 0,
+                game: {
+                  board: [
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null, null, null],
+                  ],
+                  bag: new PiecesGen(this.options.seed).nextBag(),
+                  hold: { piece: null, locked: false },
+                  g: 0.02,
+                  controlling: {
+                    ldas: 0,
+                    ldasiter: 0,
+                    lshift: false,
+                    rdas: 0,
+                    rdasiter: 0,
+                    rshift: false,
+                    lastshift: 0,
+                    softdrop: false,
+                  },
+                  handling: this.client.user?.handling,
+                  playing: true,
+                },
+                killer: { name: null, type: "sizzle" },
+                assumptions: {},
+                aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
+              },
+            },
             {
               frame: 0,
               type: "start",
@@ -178,4 +305,28 @@ export default class GameplayManager extends EventEmitter {
   public stop(): void {
     if (this.frameTimer) clearInterval(this.frameTimer);
   }
+
+  /** Move a piece */
+  public move(key: Key, frames = 1, subframeStart = 0, subframeEnd = 0): void {
+    const currentFrame = this.currentFrame();
+    this.nextFrames.push({
+      frame: currentFrame,
+      type: "keydown",
+      data: { key, subframe: subframeStart },
+    });
+    this.nextFrames.push({
+      frame: currentFrame + frames,
+      type: "keyup",
+      data: { key, subframe: subframeEnd },
+    });
+  }
+}
+export default interface GameplayManager {
+  /**
+   * Emitted whenever an attack is sent to the bot
+   */
+  on(
+    event: "attack",
+    callback: (data: { lines: number; column: number; sender?: User }) => void
+  ): this;
 }
