@@ -107,6 +107,9 @@ export default class WebSocketManager {
    */
   public send_packet(data: any): void {
     // console.log("Client:", data);
+    // fs.appendFile("./send.log", `[${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
+    //   return;
+    // });
 
     const packet = msgpack.encode(data);
 
