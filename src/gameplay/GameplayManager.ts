@@ -284,7 +284,7 @@ export default class GameplayManager extends EventEmitter {
             const currentFrame = this.currentFrame();
 
             const sendFrames: (KeyEvent | StartEvent | Targets | InGameEvent)[] = [];
-            console.log(this.nextFrames);
+            // console.log(this.nextFrames);
             for (const [i, frame] of this.nextFrames.entries()) {
               if (frame.frame < currentFrame) sendFrames.push(...this.nextFrames.splice(i, 1));
             }
