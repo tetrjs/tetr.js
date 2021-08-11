@@ -9,9 +9,9 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
     if (ws.client.user)
       ws.client.user.handling = {
         arr: 0,
-        das: 6,
-        sdf: 5,
-        safelock: true,
+        das: 1,
+        sdf: 41,
+        safelock: false,
         cancel: false,
         dcd: 0,
       };

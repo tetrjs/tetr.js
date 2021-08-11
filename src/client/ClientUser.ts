@@ -77,6 +77,21 @@ export default class ClientUser extends User {
       data: discoverable ? "public" : "private",
     });
   }
+
+  /**
+   * Set the client user's handling settings.
+   * @param {Handling} handling - The handling options you want to set.
+   * @returns {void}
+   */
+  public setHandling(handling: Handling): void {
+    this.handling = handling;
+
+    this.client.ws?.send_packet({
+      id: this.client.ws.clientId,
+      command: "sethandling",
+      data: handling
+    });
+  }
 }
 
 export default interface ClientUser {
