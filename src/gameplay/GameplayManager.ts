@@ -20,7 +20,7 @@ export default class GameplayManager extends EventEmitter {
         this.started = new Date();
 
         this.start();
-      }, (this.options.countdown ? this.options.countdown_count * this.options.countdown_interval : 0) + this.options.precountdown + this.options.prestart);
+      }, (this.options.countdown ? this.options.countdown_count * this.options.countdown_interval : 0) + (this.first ? this.options.precountdown : 0) + this.options.prestart);
     });
   }
 
@@ -78,7 +78,7 @@ export default class GameplayManager extends EventEmitter {
 
   public currentFrame() {
     if (!this.started) this.started = new Date();
-    return ((new Date().getTime() - this.started.getTime()) / 1000) * 60;
+    return Math.round(((new Date().getTime() - this.started.getTime()) / 1000) * 60);
   }
 
   public async inGameEvent(data: any) {
@@ -284,6 +284,7 @@ export default class GameplayManager extends EventEmitter {
             const currentFrame = this.currentFrame();
 
             const sendFrames: (KeyEvent | StartEvent | Targets | InGameEvent)[] = [];
+            console.log(this.nextFrames);
             for (const [i, frame] of this.nextFrames.entries()) {
               if (frame.frame < currentFrame) sendFrames.push(...this.nextFrames.splice(i, 1));
             }

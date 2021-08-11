@@ -107,7 +107,7 @@ export default class WebSocketManager {
    */
   public send_packet(data: any): void {
     // console.log("Client:", data);
-    // fs.appendFile("./send.log", `[${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
+    // fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
     //   return;
     // });
 
@@ -190,6 +190,9 @@ export default class WebSocketManager {
     }
 
     // console.log("Server:", packet);
+    // fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
+    //   return;
+    // });
 
     const message = this.messages.get(packet.data.command);
 
