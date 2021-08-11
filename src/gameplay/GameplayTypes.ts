@@ -1,5 +1,13 @@
 /** The possible inputs in a game */
-export type Key = "hardDrop" | "softDrop" | "moveLeft" | "moveRight" | "rotateCW" | "rotateCCW";
+export type Key =
+  | "hardDrop"
+  | "softDrop"
+  | "moveLeft"
+  | "moveRight"
+  | "rotateCW"
+  | "rotateCCW"
+  | "hold"
+  | "rotate180";
 
 export interface KeyEvent {
   frame: number;
