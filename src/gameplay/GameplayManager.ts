@@ -125,6 +125,7 @@ export default class GameplayManager extends EventEmitter {
   }
 
   public start() {
+    this.emit("start");
     if (!!this.started && this.playing) {
       // Check for started and playing
 
@@ -329,4 +330,8 @@ export default interface GameplayManager {
     event: "attack",
     callback: (data: { lines: number; column: number; sender?: User }) => void
   ): this;
+  /**
+   * Emitted when the start function is done, which should be after all the countdowns are done
+   */
+  on(event: "start", callback: () => void): this;
 }
