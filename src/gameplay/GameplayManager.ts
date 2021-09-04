@@ -76,9 +76,16 @@ export default class GameplayManager extends EventEmitter {
 
   // Functions
 
-  public currentFrame() {
+  public currentFrame(): number;
+  public currentFrame(returnSubframe: true): { frame: number; subframe: number };
+  public currentFrame(returnSubframe?: true) {
     if (!this.started) this.started = new Date();
-    return Math.round(((new Date().getTime() - this.started.getTime()) / 1000) * 60);
+    if (returnSubframe) {
+      const amountTime = ((new Date().getTime() - this.started.getTime()) / 1000) * 60;
+      return { frame: Math.floor(amountTime), subframe: +(amountTime % 1).toFixed(1) };
+    } else {
+      return Math.round(((new Date().getTime() - this.started.getTime()) / 1000) * 60);
+    }
   }
 
   public async inGameEvent(data: any) {
@@ -268,17 +275,17 @@ export default class GameplayManager extends EventEmitter {
   }
 
   /** Move a piece */
-  public move(key: Key, frames = 1, subframeStart = 0, subframeEnd = 0): void {
-    const currentFrame = this.currentFrame();
+  public move(key: Key, frames = 1, subframes = 0): void {
+    const currentFrame = this.currentFrame(true);
     this.nextFrames.push({
-      frame: currentFrame,
+      frame: currentFrame.frame,
       type: "keydown",
-      data: { key, subframe: subframeStart },
+      data: { key, subframe: currentFrame.subframe },
     });
     this.nextFrames.push({
-      frame: currentFrame + frames,
+      frame: currentFrame.frame + frames,
       type: "keyup",
-      data: { key, subframe: subframeEnd },
+      data: { key, subframe: currentFrame.subframe + subframes },
     });
   }
 }
