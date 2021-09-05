@@ -1,6 +1,6 @@
 import { Client, Context, User } from "..";
 import EventEmitter from "events";
-import { InGameEvent, Key, KeyEvent, StartEvent, Targets } from "./GameplayTypes";
+import { GameplayEvents, Key } from "./GameplayTypes";
 import PiecesGen from "./piecesGen";
 
 export default class GameplayManager extends EventEmitter {
@@ -66,9 +66,9 @@ export default class GameplayManager extends EventEmitter {
 
   /**
    * Replays that will be sent
-   * @type {((KeyEvent | StartEvent | Targets | InGameEvent)[]}
+   * @type {GameplayEvents}
    */
-  public nextFrames: (KeyEvent | StartEvent | Targets | InGameEvent)[] = [];
+  public nextFrames: GameplayEvents = [];
 
   private frameTimer?: NodeJS.Timeout;
 
@@ -249,11 +249,16 @@ export default class GameplayManager extends EventEmitter {
           if (this.started) {
             const currentFrame = this.currentFrame();
 
-            const sendFrames: (KeyEvent | StartEvent | Targets | InGameEvent)[] = [];
-            // console.log(this.nextFrames);
-            for (const [i, frame] of this.nextFrames.entries()) {
-              if (frame.frame < currentFrame) sendFrames.push(...this.nextFrames.splice(i, 1));
-            }
+            const sendFrames: GameplayEvents = [];
+
+            this.nextFrames = this.nextFrames.reduce<GameplayEvents>((acc, current) => {
+              if (current.frame < currentFrame) {
+                sendFrames.push(current);
+              } else {
+                acc.push(current);
+              }
+              return acc;
+            }, []);
 
             // console.log(sendFrames);
             this.client.ws?.send_packet({

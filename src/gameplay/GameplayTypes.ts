@@ -68,3 +68,5 @@ export interface Targets {
 export interface SendReplay extends BaseReplay {
   frames: (KeyEvent | StartEvent | Targets | InGameEvent)[];
 }
+
+export type GameplayEvents = (KeyEvent | StartEvent | Targets | InGameEvent)[];
