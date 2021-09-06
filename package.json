@@ -26,28 +26,28 @@
   },
   "homepage": "https://tetr.js.org",
   "dependencies": {
-    "@types/node": "^15.6.0",
-    "@types/ws": "^7.4.4",
+    "@types/node": "^16.7.10",
+    "@types/ws": "^7.4.7",
     "events": "^3.3.0",
     "msgpack-lite": "^0.1.26",
     "node-fetch": "^2.6.1",
-    "ws": "^7.4.6"
+    "ws": "^8.2.1"
   },
   "devDependencies": {
-    "@types/msgpack-lite": "^0.1.7",
-    "@types/node-fetch": "^2.5.10",
-    "@typescript-eslint/eslint-plugin": "^4.28.4",
-    "@typescript-eslint/parser": "^4.28.4",
+    "@types/msgpack-lite": "^0.1.8",
+    "@types/node-fetch": "^2.5.12",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
     "assert": "^2.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "dotenv": "^10.0.0",
-    "eslint": "^7.31.0",
-    "mocha": "^9.0.0",
+    "eslint": "^7.32.0",
+    "mocha": "^9.1.1",
     "prettier": "^2.3.2",
-    "semantic-release": "^17.4.4",
-    "typedoc": "^0.20.36",
+    "semantic-release": "^17.4.7",
+    "typedoc": "^0.21.9",
     "typedoc-plugin-extras": "^1.1.8",
-    "typescript": "^4.2.4"
+    "typescript": "^4.4.2"
   },
   "scripts": {
     "build": "rm -rf dist/ && tsc",
