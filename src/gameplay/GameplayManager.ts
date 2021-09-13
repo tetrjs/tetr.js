@@ -27,6 +27,7 @@ export default class GameplayManager extends EventEmitter {
   // Variables
 
   private options;
+  private previousFramesSent?: number;
 
   /**
    * The Client Class
@@ -251,8 +252,13 @@ export default class GameplayManager extends EventEmitter {
 
             const sendFrames: GameplayEvents = [];
 
+            let frameBias = 0;
+
             this.nextFrames = this.nextFrames.reduce<GameplayEvents>((acc, current) => {
               if (current.frame < currentFrame) {
+                if (current.frame <= (this.previousFramesSent || 0))
+                  frameBias = (this.previousFramesSent || 0) - current.frame + 1;
+                current.frame = current.frame + frameBias;
                 sendFrames.push(current);
               } else {
                 acc.push(current);
@@ -260,6 +266,7 @@ export default class GameplayManager extends EventEmitter {
               return acc;
             }, []);
 
+            this.previousFramesSent = currentFrame;
             // console.log(sendFrames);
             this.client.ws?.send_packet({
               id: this.client.ws.clientId,
@@ -267,7 +274,7 @@ export default class GameplayManager extends EventEmitter {
               data: {
                 listenID: this.id,
                 frames: sendFrames,
-                provisioned: currentFrame,
+                provisioned: currentFrame + frameBias,
               },
             });
           }
