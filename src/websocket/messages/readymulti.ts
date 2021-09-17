@@ -13,8 +13,6 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
     }
   }
 
-  ws.client.user?.room?.newGame(packet.data, contexts);
-
   ws.client.user?.room?.emit("ready", {
     contexts,
     firstGame: packet.data.first,

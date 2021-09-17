@@ -2,14 +2,16 @@ import WebSocket from "ws";
 import Client from "../client/Client";
 import msgpack from "msgpack-lite";
 import fs from "fs";
+import { EventEmitter } from "stream";
 
-export default class WebSocketManager {
+export default class WebSocketManager extends EventEmitter {
   /**
    * The WebSocketManager Class
    * @param {string} endpoint - The endpoint of the server to connect to
    * @param {Client} client - The Client Class
    */
   constructor(endpoint: string, client: Client) {
+    super();
     this.socket = new WebSocket(endpoint);
 
     this.client = client;
@@ -199,6 +201,7 @@ export default class WebSocketManager {
     if (message) {
       message(packet.data, this);
     }
+    this.emit("raw", packet.data.command, packet.data, this);
   }
 
   /**
@@ -265,4 +268,11 @@ export default class WebSocketManager {
       if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
     };
   }
+}
+
+export default interface WebSocketManager {
+  /**
+   * Emitted whenever a packet gets recieved
+   */
+  on(event: "raw", callback: (command: string, packet: any, ws: WebSocketManager) => any): this;
 }
