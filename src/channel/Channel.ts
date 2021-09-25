@@ -119,7 +119,7 @@ async function TL_Leaderboard(options?: {
   }`;
 
   const cacheData = cache.get(cacheString);
-  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data;
+  if (cacheData && new Date().getTime() < cacheData.cache.cached_until) return cacheData.data.users;
 
   const data = await (
     await fetch(url, {
