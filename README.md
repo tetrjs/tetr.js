@@ -15,6 +15,7 @@
 
 - [Install](#install)
 - [Example](#example)
+- [Gameplay](#gameplay)
 - [Technologies](#technologies)
 - [Contributing](#contributing)
 - [Discord](#discord)
@@ -43,6 +44,10 @@ client.login("YOUR-TOKEN-HERE");
 ```
 
 Find more examples [here](https://github.com/Proximitynow19/TETR.JS/tree/master/examples)
+
+## Gameplay
+
+_**Gameplay is currently NOT built-in to this package**_. However, we do have a currently WIP addon to this package to enable gameplay. If you want access to it, or you just want to know the specifics of how it works, you can join [our discord](https://discord.gg/e3vFHq9WZz) and ask there.
 
 ## Technologies
 
