@@ -1,3 +1,5 @@
+import { AllRanks } from "./League";
+
 export type recordType = {
   /** The Record's ID. This is **NOT** the replay ID. */
   _id: string;
@@ -101,5 +103,68 @@ export type userRecordsType = {
   };
 };
 
-// TODO
-export type NewsRecordsType = unknown;
+/** News Records */
+
+/** When a user's new personal best enters a global leaderboard. Seen in the global stream only. */
+type leaderboardNews = {
+  /** The username of the person who got the leaderboard spot. */
+  username: string;
+  /** The game mode played. */
+  gametype: string;
+  /** The global rank achieved. */
+  rank: number;
+  /** The result (score or time) achieved. */
+  result: number;
+  /** The replay's shortID. */
+  replayid: string;
+};
+
+/** When a user gets a personal best. Seen in user streams only. */
+type personalbestNews = {
+  /** The username of the person. */
+  username: string;
+  /** The game mode played. */
+  gametype: string;
+  /** The result (score or time) achieved. */
+  result: number;
+  /** The replay's shortID. */
+  replayid: string;
+};
+
+/** When a user gets a badge. Seen in user streams only. */
+type badgeNews = {
+  /** The username of the player. */
+  username: string;
+  /** The badge's internal ID, and the filename of the badge icon (all PNGs within `/res/badges/`) */
+  type: string;
+  /** The badge's label. */
+  label: string;
+};
+
+/** When a user gets a new top rank in TETRA LEAGUE. Seen in user streams only. */
+type rankupNews = {
+  /** The username of the player. */
+  username: string;
+  /** The badge's internal ID, and the filename of the badge icon (all PNGs within `/res/badges/`) */
+  rank: AllRanks;
+};
+
+/** When a user gets TETR.IO Supporter. Seen in user streams only. */
+type supporterNews = {
+  /** The username of the player. */
+  username: string;
+};
+
+/** When a user is gifted TETR.IO Supporter. Seen in user streams only. */
+type supporter_giftNews = {
+  /** The username of the recipient. */
+  username: string;
+};
+
+export type NewsRecordsType =
+  | leaderboardNews
+  | personalbestNews
+  | badgeNews
+  | rankupNews
+  | supporterNews
+  | supporter_giftNews;
