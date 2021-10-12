@@ -4,6 +4,7 @@ import Room from "./room/Room";
 import User from "./user/User";
 import UserManager from "./user/UserManager";
 import { TetraChannel } from "./channel/Channel";
+export * as ChannelTypes from "./channel/ChannelTypes";
 
 export { Client, ClientUser, Room, User, UserManager, TetraChannel };
 
