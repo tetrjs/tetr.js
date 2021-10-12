@@ -4,7 +4,7 @@ export type recordType = {
   /** The Record's ID. This is **NOT** the replay ID. */
   _id: string;
   /** The Stream this Record belongs to. */
-  stream: string;
+  stream: streamID;
   /** The ID of the associated replay. */
   replayid: string;
 
@@ -102,6 +102,11 @@ export type userRecordsType = {
     score: number;
   };
 };
+
+/** Stream IDs may be broken up into two or three parts, delimited by underscores. Read more [here](https://tetr.io/about/api/#streamid). */
+export type streamID = `${"40l" | "blitz" | "any"}_${"global" | "userbest" | "userrecent"}${
+  | `_${"userbest" | "userrecent" | string}`
+  | ""}`;
 
 /** News Records */
 

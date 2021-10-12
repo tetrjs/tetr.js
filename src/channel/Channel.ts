@@ -216,10 +216,10 @@ async function XP_Leaderboard(options?: {
 
 /**
  * The records in this Stream. A Stream is a list of records with a set length. Replays that are not featured in any Stream are automatically pruned.
- * @param {string} stream The stream ID to look up.
+ * @param {types.streamID} stream The stream ID to look up.
  * @returns {Promise<types.recordType[]>}
  */
-async function stream(stream: string): Promise<types.recordType[]> {
+async function stream(stream: types.streamID): Promise<types.recordType[]> {
   const cacheData = checkCache(`stream_${stream}`);
   if (cacheData) return cacheData;
 
@@ -251,12 +251,12 @@ async function all_news(limit?: number): Promise<types.NewsType[]> {
 
 /**
  * The latest news items in the stream. Use stream "global" for the global news.
- * @param {string} stream The news stream to look up (either "global" or "user_{ userID }").
+ * @param {types.streamID} stream The news stream to look up (either "global" or "user_{ userID }").
  * @param {number} limit The amount of entries to return, between 1 and 100. 25 by default.
  * @returns {Promise<NewsType[]>}
  */
 
-async function news(stream: string, limit?: number): Promise<types.NewsType[]> {
+async function news(stream: types.streamID, limit?: number): Promise<types.NewsType[]> {
   const cacheData = checkCache(`news_${stream}${limit ? "_" + limit : ""}`);
   if (cacheData) return cacheData;
 

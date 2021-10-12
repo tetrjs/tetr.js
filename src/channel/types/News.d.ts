@@ -1,10 +1,11 @@
 import { NewsRecordsType } from "../ChannelTypes";
+import { streamID } from "./Record";
 
 export type NewsType = {
   /** The item's internal ID. */
   _id: string;
   /** The item's stream. */
-  stream: string;
+  stream: streamID;
   /** The item's type. */
   type: string;
   /** The item's records. */
