@@ -101,14 +101,14 @@ async function userRecords(user: string): Promise<types.userRecordsType> {
 /**
  * @description An array of users fulfilling the search criteria.
  * @param {object} options
- * @returns {Promise<types.Leaderboard_UserInfoType[]>}
+ * @returns {Promise<types.TL_Leaderboard_UserInfoType[]>}
  */
 async function TL_Leaderboard(options?: {
   country?: string;
   after?: number;
   before?: number;
   limit?: number;
-}): Promise<types.Leaderboard_UserInfoType[]> {
+}): Promise<types.TL_Leaderboard_UserInfoType[]> {
   const url = new URL("https://ch.tetr.io/api/users/lists/league?");
   if (options) {
     for (const option in options) {
@@ -146,9 +146,9 @@ async function TL_Leaderboard(options?: {
 /**
  * @description An array of all users fulfilling the search criteria. Please do not overuse this.
  * @param {string} country
- * @returns {Promise<types.Leaderboard_UserInfoType[]>}
+ * @returns {Promise<types.TL_Leaderboard_UserInfoType[]>}
  */
-async function TL_Leaderboard_full(country?: string): Promise<types.Leaderboard_UserInfoType[]> {
+async function TL_Leaderboard_full(country?: string): Promise<types.TL_Leaderboard_UserInfoType[]> {
   const cache = checkCache(`TL_Leaderboard_full${country ? "_" + country : ""}`);
   if (cache) return cache;
 
@@ -172,16 +172,15 @@ async function TL_Leaderboard_full(country?: string): Promise<types.Leaderboard_
 /**
  * @description An array of users fulfilling the search criteria.
  * @param {object} options
- * @returns {Promise<types.Leaderboard_UserInfoType[]>}
+ * @returns {Promise<types.XP_Leaderboard_UserInfoType[]>}
  */
-
 async function XP_Leaderboard(options?: {
   country?: string;
   after?: number;
   before?: number;
   limit?: number;
-}): Promise<types.Leaderboard_UserInfoType[]> {
-  const url = new URL("https://ch.tetr.io/api/users/lists/league?");
+}): Promise<types.XP_Leaderboard_UserInfoType[]> {
+  const url = new URL("https://ch.tetr.io/api/users/lists/xp?");
   if (options) {
     for (const option in options) {
       url.searchParams.append(
@@ -217,10 +216,10 @@ async function XP_Leaderboard(options?: {
 
 /**
  * The records in this Stream. A Stream is a list of records with a set length. Replays that are not featured in any Stream are automatically pruned.
- * @param {string} stream
- * @returns {Promise<types.userRecordsType[]>}
+ * @param {string} stream The stream ID to look up.
+ * @returns {Promise<types.recordType[]>}
  */
-async function stream(stream: string): Promise<types.userRecordsType[]> {
+async function stream(stream: string): Promise<types.recordType[]> {
   const cache = checkCache(`stream_${stream}`);
   if (cache) return cache;
 
@@ -238,7 +237,7 @@ async function stream(stream: string): Promise<types.userRecordsType[]> {
 
 /**
  * The latest news items in any stream.
- * @param {number} limit
+ * @param {number} limit The amount of entries to return, between 1 and 100. 25 by default.
  * @returns {Promise<types.NewsType[]>}
  */
 
@@ -252,9 +251,9 @@ async function all_news(limit?: number): Promise<types.NewsType[]> {
 
 /**
  * The latest news items in the stream. Use stream "global" for the global news.
- * @param {string} stream
- * @param {number} limit
- * @returns {Promise<types.NewsType[]>}
+ * @param {string} stream The news stream to look up (either "global" or "user_{ userID }").
+ * @param {number} limit The amount of entries to return, between 1 and 100. 25 by default.
+ * @returns {Promise<NewsType[]>}
  */
 
 async function news(stream: string, limit?: number): Promise<types.NewsType[]> {
