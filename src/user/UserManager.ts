@@ -31,7 +31,7 @@ export default class UserManager {
    * @returns {Promise<User | undefined>}
    */
   public async fetch(id: string): Promise<User | undefined> {
-    let userObject;
+    let userObject: User | undefined;
     await TetraChannel.users
       .infos(id)
       .then((userInfo) => (userObject = new User(userInfo, this.client)))
