@@ -8,6 +8,23 @@ export * as ChannelTypes from "./channel/ChannelTypes";
 
 export { Client, ClientUser, Room, User, UserManager, TetraChannel };
 
+export interface Relationship {
+  /** The id of the relationship. */
+  _id: string;
+
+  /** The user initiating the relationship. */
+  from: User;
+  /** The user recieving the relationship. */
+  to: User;
+
+  /** The amount of unread messages. */
+  unread: number;
+  /** The type of relationship. */
+  type: string;
+  /** The last updated date */
+  updated: Date;
+}
+
 export interface DirectMessage {
   /** Contents of the message. */
   content: string;
