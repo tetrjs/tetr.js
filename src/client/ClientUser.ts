@@ -1,7 +1,7 @@
 import Room from "../room/Room";
 import User from "../user/User";
 import Client from "../client/Client";
-import { Handling, Presence } from "..";
+import { Handling, Presence, Relationship } from "..";
 import { DirectMessage } from "..";
 
 export default class ClientUser extends User {
@@ -24,6 +24,12 @@ export default class ClientUser extends User {
    * @readonly
    */
   public room?: Room;
+
+  /**
+   * The relationships of the ClientUser
+   * @type {Relationship[]}
+   */
+  public relationships?: Relationship[];
 
   // Functions
 
@@ -89,8 +95,30 @@ export default class ClientUser extends User {
     this.client.ws?.send_packet({
       id: this.client.ws.clientId,
       command: "sethandling",
-      data: handling
+      data: handling,
     });
+  }
+
+  /**
+   * Set the client user's handling settings.
+   * @param {any} raw - Raw data.
+   * @returns {Promise<void>}
+   */
+  public async setRelationships(raw: any): Promise<void> {
+    const relationships: Relationship[] = [];
+    raw.forEach(async (curr: any) => {
+      const fromUser = await this.client.users.fetch(curr.from._id);
+      const toUser = await this.client.users.fetch(curr.to._id);
+      if (!fromUser || !toUser) return;
+      const relationship = {
+        ...curr,
+        from: fromUser,
+        to: toUser,
+        updated: new Date(curr.updated),
+      };
+      relationships.push(relationship);
+    });
+    this.relationships = relationships;
   }
 }
 
