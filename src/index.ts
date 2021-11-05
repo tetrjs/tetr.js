@@ -12,17 +12,20 @@ export interface Relationship {
   /** The id of the relationship. */
   _id: string;
 
-  /** The user initiating the relationship. */
-  from: User;
-  /** The user recieving the relationship. */
-  to: User;
+  /** The user in the relationship. */
+  user: User;
 
   /** The amount of unread messages. */
   unread: number;
   /** The type of relationship. */
   type: string;
-  /** The last updated date */
+  /** The last updated date. */
   updated: Date;
+
+  /** The presence of the user. `undefined` if not online. */
+  presence?: Presence & {
+    invitable: boolean;
+  };
 }
 
 export interface DirectMessage {
@@ -70,10 +73,10 @@ export interface Context {
   opts: { fulloffset: number; fullinterval: number };
 }
 
-export interface Presence {
+export type Presence = {
   status: "online" | "away" | "busy" | "offline";
   detail: Detail;
-}
+};
 
 export type Detail =
   | ""

@@ -101,20 +101,20 @@ export default class ClientUser extends User {
 
   /**
    * Set the client user's handling settings.
-   * @param {any} raw - Raw data.
+   * @param {any} raw - Raw relationship data.
+   * @param {any} presences - The presences of the users.
    * @returns {Promise<void>}
    */
-  public async setRelationships(raw: any): Promise<void> {
+  public async setRelationships(raw: any, presences: any): Promise<void> {
     const relationships: Relationship[] = [];
     raw.forEach(async (curr: any) => {
-      const fromUser = await this.client.users.fetch(curr.from._id);
-      const toUser = await this.client.users.fetch(curr.to._id);
-      if (!fromUser || !toUser) return;
+      const user = await this.client.users.fetch(curr.to._id);
+      if (!user) return;
       const relationship = {
         ...curr,
-        from: fromUser,
-        to: toUser,
+        user: user,
         updated: new Date(curr.updated),
+        presence: presences[user._id],
       };
       relationships.push(relationship);
     });
