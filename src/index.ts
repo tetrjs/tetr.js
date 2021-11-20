@@ -145,6 +145,7 @@ export interface Config {
     garbagecap?: number;
     garbagecapincrease?: number;
     garbagecapmax?: number;
+    passthrough?: boolean;
     manual_allowed?: boolean;
     b2bchaining?: boolean;
     clutch?: boolean;
