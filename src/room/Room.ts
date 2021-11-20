@@ -204,6 +204,7 @@ export default class Room extends EventEmitter {
         garbagecap: gmupdateData.game.options.garbagecap,
         garbagecapincrease: gmupdateData.game.options.garbagecapincrease,
         garbagecapmax: gmupdateData.game.options.garbagecapmax,
+        passthrough: gmupdateData.game.options.passthrough,
         manual_allowed: gmupdateData.game.options.manual_allowed,
         b2bchaining: gmupdateData.game.options.b2bchaining,
         clutch: gmupdateData.game.options.clutch,
