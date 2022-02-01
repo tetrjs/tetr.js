@@ -152,14 +152,12 @@ export default class Room extends EventEmitter {
     this.id = gmupdateData.id;
     this.type = gmupdateData.type;
 
-    this.players = [];
-
-    for (const player of gmupdateData.players) {
-      this.players.push({
+    this.players = await Promise.all(
+      gmupdateData.players.map(async (player: any) => ({
         bracket: player.bracket,
         user: (await this.client.users?.fetch(player._id)) as User,
-      });
-    }
+      }))
+    );
 
     this.owner = (await this.client.users?.fetch(gmupdateData.owner)) as User;
 
