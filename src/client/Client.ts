@@ -82,7 +82,17 @@ export default class Client extends EventEmitter {
   public async login(token: string): Promise<void> {
     this.token = token;
 
-    const id = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString()).sub;
+    let id;
+    try {
+      id = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString()).sub;
+    } catch (e) {
+      this.emit("err", {
+        fatal: true,
+        reason: "Invalid Token.",
+      });
+
+      return void this.disconnect();
+    }
 
     const user = await this.users?.fetch(id);
 
