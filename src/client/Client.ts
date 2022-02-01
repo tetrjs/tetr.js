@@ -106,14 +106,13 @@ export default class Client extends EventEmitter {
 
     this.user = new ClientUser(user, this);
 
-    const endpoint = await (
-      await fetch("https://tetr.io/api/server/ribbon", {
+    const [endpoint, environment] = await Promise.all([
+      fetch("https://tetr.io/api/server/ribbon", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
-      })
-    ).json();
-
-    const environment = await (await fetch("https://tetr.io/api/server/environment")).json();
+      }).then((res) => res.json()),
+      fetch("https://tetr.io/api/server/environment").then((res) => res.json()),
+    ]);
 
     if (!environment.success) {
       this.emit("err", {
