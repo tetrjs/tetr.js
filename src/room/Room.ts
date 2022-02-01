@@ -95,12 +95,20 @@ export default class Room extends EventEmitter {
    * @param {any} changes - The changes to be made
    * @returns {void}
    */
-  public updateConfig(changes: { index: string; value: any }[]): void {
-    this.client.ws?.send_packet({
-      id: this.client.ws.clientId,
-      command: "updateconfig",
-      data: changes,
-    });
+  public updateConfig(changes: { index: string; value: any }[] | Record<string, any>): void {
+    if (!Array.isArray(changes)) {
+      this.client.ws?.send_packet({
+        id: this.client.ws.clientId,
+        command: "updateconfig",
+        data: Object.entries(changes).map(([index, value]) => ({ index, value })),
+      });
+    } else {
+      this.client.ws?.send_packet({
+        id: this.client.ws.clientId,
+        command: "updateconfig",
+        data: changes,
+      });
+    }
   }
 
   /**
