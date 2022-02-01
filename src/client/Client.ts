@@ -82,36 +82,29 @@ export default class Client extends EventEmitter {
   public async login(token: string): Promise<void> {
     this.token = token;
 
-    const client = await (
-      await fetch("https://tetr.io/api/users/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-    ).json();
+    const id = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString()).sub;
 
-    if (!client.success) {
+    const user = await this.users?.fetch(id);
+
+    if (!user) {
       this.emit("err", {
         fatal: true,
         reason: "Invalid Token.",
       });
 
-      return this.disconnect();
+      return void this.disconnect();
     }
 
-    if (client.user.role !== "bot") {
+    if (user.role !== "bot") {
       this.emit("err", {
         fatal: true,
         reason: "Client is not a bot. Apply for a bot account by messaging osk#9999 on Discord.",
       });
 
-      return this.disconnect();
+      return void this.disconnect();
     }
 
-    this.user = new ClientUser(
-      {
-        ...(await this.users?.fetch(client.user._id)),
-      },
-      this
-    );
+    this.user = new ClientUser(user, this);
 
     const endpoint = await (
       await fetch("https://tetr.io/api/server/ribbon", {
