@@ -74,26 +74,30 @@ describe("Tetra Channel Tests:", async () => {
   });
 });
 
-describe("Main Tests:", async () => {
-  describe("Client:", async () => {
-    const client = new Client();
+if (process.env.TOKEN) {
+  describe("Client Tests:", async () => {
+    describe("Client:", async () => {
+      const client = new Client();
 
-    it("Logging In", async () => {
-      return new Promise(async (resolve, reject) => {
-        client.on("err", async (e) => {
-          reject(e);
+      it("Logging In", async () => {
+        return new Promise(async (resolve, reject) => {
+          client.on("err", async (e) => {
+            reject(e);
+          });
+
+          client.on("ready", async () => {
+            resolve();
+          });
+
+          await client.login(process.env.TOKEN);
         });
+      });
 
-        client.on("ready", async () => {
-          resolve();
-        });
-
-        await client.login(process.env.TOKEN);
+      it("Disconnect", () => {
+        client.disconnect();
       });
     });
-
-    it("Disconnect", () => {
-      client.disconnect();
-    });
   });
-});
+} else {
+  console.log("No token provided, skipping main client tests");
+}
