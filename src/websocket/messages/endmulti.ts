@@ -11,7 +11,7 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
     piecesPlaced: number;
   }[] = await Promise.all(
     (packet.data.leaderboard as Array<any>).map(async (user) => ({
-      user: (await ws.client.users?.fetch(user._id)) as User,
+      user: (await ws.client.users?.fetch(user.user._id)) as User,
       wins: user.wins,
       inputs: user.inputs,
       piecesPlaced: user.piecesplaced,
