@@ -95,12 +95,20 @@ export default class Room extends EventEmitter {
    * @param {any} changes - The changes to be made
    * @returns {void}
    */
-  public updateConfig(changes: { index: string; value: any }[]): void {
-    this.client.ws?.send_packet({
-      id: this.client.ws.clientId,
-      command: "updateconfig",
-      data: changes,
-    });
+  public updateConfig(changes: { index: string; value: any }[] | Record<string, any>): void {
+    if (!Array.isArray(changes)) {
+      this.client.ws?.send_packet({
+        id: this.client.ws.clientId,
+        command: "updateconfig",
+        data: Object.entries(changes).map(([index, value]) => ({ index, value })),
+      });
+    } else {
+      this.client.ws?.send_packet({
+        id: this.client.ws.clientId,
+        command: "updateconfig",
+        data: changes,
+      });
+    }
   }
 
   /**
@@ -152,14 +160,12 @@ export default class Room extends EventEmitter {
     this.id = gmupdateData.id;
     this.type = gmupdateData.type;
 
-    this.players = [];
-
-    for (const player of gmupdateData.players) {
-      this.players.push({
+    this.players = await Promise.all(
+      gmupdateData.players.map(async (player: any) => ({
         bracket: player.bracket,
         user: (await this.client.users?.fetch(player._id)) as User,
-      });
-    }
+      }))
+    );
 
     this.owner = (await this.client.users?.fetch(gmupdateData.owner)) as User;
 
@@ -204,6 +210,7 @@ export default class Room extends EventEmitter {
         garbagecap: gmupdateData.game.options.garbagecap,
         garbagecapincrease: gmupdateData.game.options.garbagecapincrease,
         garbagecapmax: gmupdateData.game.options.garbagecapmax,
+        passthrough: gmupdateData.game.options.passthrough,
         manual_allowed: gmupdateData.game.options.manual_allowed,
         b2bchaining: gmupdateData.game.options.b2bchaining,
         clutch: gmupdateData.game.options.clutch,

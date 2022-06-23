@@ -9,17 +9,14 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
     wins: number;
     inputs: number;
     piecesPlaced: number;
-  }[] = [];
-
-  const leaderboard = packet.data.leaderboard;
-  for (let i = 0; i < leaderboard.length; i++) {
-    gameLeaderboard.push({
-      user: (await ws.client.users?.fetch(leaderboard[i]._id)) as User,
-      wins: leaderboard[i].wins,
-      inputs: leaderboard[i].inputs,
-      piecesPlaced: leaderboard[i].piecesplaced,
-    });
-  }
+  }[] = await Promise.all(
+    (packet.data.leaderboard as Array<any>).map(async (user) => ({
+      user: (await ws.client.users?.fetch(user.user._id)) as User,
+      wins: user.wins,
+      inputs: user.inputs,
+      piecesPlaced: user.piecesplaced,
+    }))
+  );
 
   ws.client.user?.room?.emit("end", gameLeaderboard);
 };

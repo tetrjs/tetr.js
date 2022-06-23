@@ -8,6 +8,26 @@ export * as ChannelTypes from "./channel/ChannelTypes";
 
 export { Client, ClientUser, Room, User, UserManager, TetraChannel };
 
+export interface Relationship {
+  /** The id of the relationship. */
+  _id: string;
+
+  /** The user in the relationship. */
+  user: User;
+
+  /** The amount of unread messages. */
+  unread: number;
+  /** The type of relationship. */
+  type: string;
+  /** The last updated date. */
+  updated: Date;
+
+  /** The presence of the user. `undefined` if not online. */
+  presence?: Presence & {
+    invitable: boolean;
+  };
+}
+
 export interface DirectMessage {
   /** Contents of the message. */
   content: string;
@@ -53,10 +73,10 @@ export interface Context {
   opts: { fulloffset: number; fullinterval: number };
 }
 
-export interface Presence {
+export type Presence = {
   status: "online" | "away" | "busy" | "offline";
   detail: Detail;
-}
+};
 
 export type Detail =
   | ""
@@ -125,6 +145,7 @@ export interface Config {
     garbagecap?: number;
     garbagecapincrease?: number;
     garbagecapmax?: number;
+    passthrough?: boolean;
     manual_allowed?: boolean;
     b2bchaining?: boolean;
     clutch?: boolean;

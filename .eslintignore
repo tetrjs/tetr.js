@@ -1,8 +1,8 @@
 dist/
-testing/
-testing.js
+test/
 docs/
 assets/
 examples/
 images/
 .github/
+test/
