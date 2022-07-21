@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import ClientUser from "./ClientUser";
 import EventEmitter from "events";
 import { Worker } from "..";
+import Fetch from "../fetch/Fetch";
 
 export default class Client extends EventEmitter {
   /**
@@ -12,9 +13,12 @@ export default class Client extends EventEmitter {
    */
   constructor() {
     super();
+    this.fetch = new Fetch(this);
   }
 
   // Variables
+
+  public fetch: Fetch;
 
   /**
    * The WebSocketManager
@@ -116,12 +120,11 @@ export default class Client extends EventEmitter {
 
     this.user = new ClientUser(user, this);
 
-    const [endpoint, environment] = await Promise.all([
-      fetch("https://tetr.io/api/server/ribbon", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }).then((res) => res.json()),
-      fetch("https://tetr.io/api/server/environment").then((res) => res.json()),
+    const [spools, environment] = await Promise.all([
+      this.fetch.get({
+        url: "/api/server/ribbon",
+      }),
+      this.fetch.get({ url: "/api/server/environment", authenticated: false }),
     ]);
 
     if (!environment.success) {
@@ -134,10 +137,18 @@ export default class Client extends EventEmitter {
     } else {
       this.commitId = environment.signature.commit.id;
 
-      this.ws = new WebSocketManager(
-        endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon",
-        this
-      );
+      if (!spools.endpoint || !spools.spools?.spools?.length) {
+        this.emit("err", {
+          fatal: true,
+          reason: "No endpoints available.",
+        });
+        this.disconnect();
+      }
+
+      // this.ws = new WebSocketManager(
+      //   endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon",
+      //   this
+      // );
     }
   }
 }

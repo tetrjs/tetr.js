@@ -322,11 +322,7 @@ export default class User extends EventEmitter {
           userdata: any;
         };
       }[];
-    } = await (
-      await fetch(`https://tetr.io/api/dms/${encodeURIComponent(id)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-    ).json();
+    } = await this.client.fetch.get({ url: `/api/dms/${encodeURIComponent(id)}` });
     if (!data.success) throw new Error(data.error);
     else {
       const dms: DirectMessage[] = [];
