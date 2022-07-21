@@ -173,29 +173,46 @@ export default class WebSocketManager extends EventEmitter {
    * Sends data to the server
    * @param {any} data - Data to be sent
    * @param {boolean} useSequential - Should the function use the sequential msgpackr instance
+   * @param {any} extensionData - Data to be used for a custom extension
    * @returns {void}
    */
-  public send_packet(data: any, useSequential = false): void {
+  public send_packet(data: any, useSequential = false, extensionData?: any): void {
     // console.log("Client:", data);
     // fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
     //   return;
     // });
 
-    const packet = msgpack.encode(data);
+    let encoded;
 
-    if (this.socket.readyState === this.socket.OPEN) {
-      this.socket.send(packet);
-    } else {
-      this.queue.push(packet);
+    if (typeof data === "string") {
+      const found = RIBBON_EXTENSIONS.get(data);
+      if (found) {
+        encoded = found(extensionData);
+      }
     }
 
-    this.history.push(packet);
+    if (!encoded) {
+      const prependable = RIBBON_STANDARD_ID_TAG;
 
-    if (this.history.length > 500) {
-      this.history.splice(0, this.history.length - 500);
+      const msgpacked = (useSequential ? this.packr : globalRibbonPackr).pack(data);
+      encoded = Buffer.concat([prependable, msgpacked]);
     }
 
-    if (data.id) this.clientId = data.id + 1;
+    // TODO: send the packets, currently encoded is the variable with the packets
+
+    //   if (this.socket.readyState === this.socket.OPEN) {
+    //   this.socket.send(encoded);
+    // } else {
+    //   this.queue.push(encoded);
+    // }
+
+    // this.history.push(encoded);
+
+    // if (this.history.length > 500) {
+    //   this.history.splice(0, this.history.length - 500);
+    // }
+
+    // if (data.id) this.clientId = data.id + 1;
   }
 
   /**
