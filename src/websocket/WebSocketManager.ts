@@ -1,8 +1,57 @@
 import WebSocket from "ws";
 import Client from "../client/Client";
-import msgpack from "msgpack-lite";
+import msgpackr from "msgpackr";
 import fs from "fs";
 import { EventEmitter } from "stream";
+
+const RIBBON_BATCH_TIMEOUT = 25;
+const RIBBON_CACHE_EVICTION_TIME = 25000;
+
+const RIBBON_EXTRACTED_ID_TAG = new Uint8Array([174]);
+const RIBBON_STANDARD_ID_TAG = new Uint8Array([69]);
+const RIBBON_BATCH_TAG = new Uint8Array([88]);
+const RIBBON_EXTENSION_TAG = new Uint8Array([0xb0]);
+
+const RIBBON_EXTENSIONS = new Map();
+RIBBON_EXTENSIONS.set(0x0b, (payload: Buffer) => {
+  if (payload.byteLength >= 6) {
+    return { command: "ping", at: new DataView(payload.buffer).getUint32(2, false) };
+  } else {
+    return { command: "ping" };
+  }
+});
+RIBBON_EXTENSIONS.set("PING", (extensionData: any) => {
+  if (typeof extensionData === "number") {
+    const dat = Buffer.from([0xb0, 0x0b, 0x00, 0x00, 0x00, 0x00]);
+    new DataView(dat.buffer).setUint32(2, extensionData, false);
+    return dat;
+  } else {
+    return Buffer.from([0xb0, 0x0b]);
+  }
+});
+RIBBON_EXTENSIONS.set(0x0c, (payload: Buffer) => {
+  if (payload.byteLength >= 6) {
+    return { command: "pong", at: new DataView(payload.buffer).getUint32(2, false) };
+  } else {
+    return { command: "pong" };
+  }
+});
+RIBBON_EXTENSIONS.set("PONG", (extensionData: any) => {
+  if (typeof extensionData === "number") {
+    const dat = Buffer.from([0xb0, 0x0c, 0x00, 0x00, 0x00, 0x00]);
+    new DataView(dat.buffer).setUint32(2, extensionData, false);
+    return dat;
+  } else {
+    return Buffer.from([0xb0, 0x0c]);
+  }
+});
+
+const globalRibbonPackr = new msgpackr.Packr({
+  bundleStrings: false,
+});
+const globalRibbonUnpackr = new msgpackr.Unpackr({
+  bundleStrings: false,
+});
 
 export default class WebSocketManager extends EventEmitter {
   /**
@@ -12,12 +61,20 @@ export default class WebSocketManager extends EventEmitter {
    */
   constructor(endpoint: string, client: Client) {
     super();
+    this.packr = new msgpackr.Packr({
+      bundleStrings: false,
+    });
+    this.unpackr = new msgpackr.Unpackr({
+      bundleStrings: false,
+      structures: [],
+    });
+
     this.socket = new WebSocket(endpoint);
 
     this.client = client;
 
     this.socket.onopen = () => {
-      this.send_packet({ command: "new" });
+      this.send_packet({ command: "new" }, true);
 
       this.heartbeat(5000);
     };
@@ -31,7 +88,17 @@ export default class WebSocketManager extends EventEmitter {
     };
   }
 
-  // letiables
+  /**
+   * Private sequential packr
+   * @type {msgpackr.Packr}
+   */
+  private packr: msgpackr.Packr;
+
+  /**
+   * Private sequential unpackr
+   * @type {msgpackr.Unpackr}
+   */
+  private unpackr: msgpackr.Unpackr;
 
   /**
    * WebSocket messages
@@ -105,9 +172,10 @@ export default class WebSocketManager extends EventEmitter {
   /**
    * Sends data to the server
    * @param {any} data - Data to be sent
+   * @param {boolean} useSequential - Should the function use the sequential msgpackr instance
    * @returns {void}
    */
-  public send_packet(data: any): void {
+  public send_packet(data: any, useSequential = false): void {
     // console.log("Client:", data);
     // fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
     //   return;
@@ -133,56 +201,81 @@ export default class WebSocketManager extends EventEmitter {
   /**
    * Used to receive messages from the server
    * @param {Buffer} data - Data received from the server
+   * @param {boolean} useSequential - Should the function use the sequential msgpackr instance
    * @returns {void}
    */
-  public receive_packet(data: Buffer): void {
+  public receive_packet(data: Buffer, useSequential = false): void {
     const packet: any = {
       type: Number((data.slice(0, 1) as any as Buffer[])[0]),
     };
 
     switch (packet.type) {
-      case 0x45:
-        packet.data = msgpack.decode(data.slice(1));
-        if (packet.data.id && typeof packet.data.id === "number") {
-          packet.id = packet.data.id;
-          delete packet.data.id;
+      case RIBBON_EXTENSION_TAG[0]:
+        {
+          // look up this extension
+          const found = RIBBON_EXTENSIONS.get(packet[1]);
+          if (!found) {
+            return; //! No clue what to do here, just return or something
+          }
+          packet.data = found(packet);
+
+          if (packet.data.id && typeof packet.data.id === "number") {
+            packet.id = packet.data.id;
+            delete packet.data.id;
+          }
         }
         break;
-      case 0xae:
-        packet.data = msgpack.decode(data.slice(5));
+      case RIBBON_STANDARD_ID_TAG[0]:
+        // simply extract
+        packet.data = this.hybridUnpack(data.slice(1), useSequential);
+
         packet.id = data.readUInt32BE(1);
         delete packet.data.id;
         break;
-      case 0x58: {
+      case RIBBON_EXTRACTED_ID_TAG[0]:
+        {
+          // extract id and msgpacked, then inject id back in
+          // these don't support sequential!
+          const object = globalRibbonUnpackr.unpack(data.slice(5));
+          const view = new DataView(data.buffer);
+          const id = view.getUint32(1, false);
+          object.id = id;
+          packet.data = object;
+        }
+        break;
+      case RIBBON_BATCH_TAG[0]: {
+        // ok these are complex, keep looking through the header until you get to the (uint32)0 delimiter
         const lengths = [];
+        const view = new DataView(packet.buffer);
 
+        // Get the lengths
         for (let i = 0; true; i++) {
-          if (data.slice(i * 4 + 1).readUInt32BE() === 0) break;
-
-          lengths.push(data.slice(i * 4 + 1).readUInt32BE());
+          const length = view.getUint32(1 + i * 4, false);
+          if (length === 0) {
+            // We've hit the end of the batch
+            break;
+          }
+          lengths.push(length);
         }
 
+        // Get the items at those lengths
         let pointer = 0;
-
         for (let i = 0; i < lengths.length; i++) {
           this.receive_packet(
-            data.slice(
+            packet.slice(
               1 + lengths.length * 4 + 4 + pointer,
               1 + lengths.length * 4 + 4 + pointer + lengths[i]
-            )
+            ),
+            useSequential
           );
-
           pointer += lengths[i];
         }
 
         return;
       }
-      case 0xb0:
-        // console.log("Server:", "Pong");
-
-        return this.heartbeat(5000);
       default:
-        packet.data = msgpack.decode(data);
+        packet.data = this.hybridUnpack(data, useSequential);
+        break;
     }
 
     if (packet.id) {
@@ -202,6 +295,14 @@ export default class WebSocketManager extends EventEmitter {
       message(packet.data, this);
     }
     this.emit("raw", packet.data.command, packet.data, this);
+  }
+
+  private hybridUnpack(packet: Buffer, useSequential: boolean) {
+    if (useSequential) {
+      return (this.unpackr.unpackMultiple(packet) as any)[0];
+    } else {
+      return globalRibbonUnpackr.unpack(packet);
+    }
   }
 
   /**
@@ -240,16 +341,22 @@ export default class WebSocketManager extends EventEmitter {
     this.socket = new WebSocket(endpoint);
 
     this.socket.onopen = () => {
-      this.send_packet({
-        command: "resume",
-        socketid: this.socketId,
-        resumetoken: this.resumeId,
-      });
+      this.send_packet(
+        {
+          command: "resume",
+          socketid: this.socketId,
+          resumetoken: this.resumeId,
+        },
+        true
+      );
 
-      this.send_packet({
-        command: "hello",
-        packets: this.history,
-      });
+      this.send_packet(
+        {
+          command: "hello",
+          packets: this.history,
+        },
+        true
+      );
 
       for (let i = 0; this.queue.length; i++) {
         this.send_packet(this.queue[i]);
@@ -272,7 +379,7 @@ export default class WebSocketManager extends EventEmitter {
 
 export default interface WebSocketManager {
   /**
-   * Emitted whenever a packet gets recieved
+   * Emitted whenever a packet gets received
    */
   on(event: "raw", callback: (command: string, packet: any, ws: WebSocketManager) => any): this;
 }
