@@ -1,10 +1,9 @@
 import WebSocketManager from "../websocket/WebSocketManager";
 import UserManager from "../user/UserManager";
-import fetch from "node-fetch";
 import ClientUser from "./ClientUser";
 import EventEmitter from "events";
 import { Worker } from "..";
-import Fetch from "../fetch/Fetch";
+import Api from "../api/Api";
 
 export default class Client extends EventEmitter {
   /**
@@ -13,12 +12,12 @@ export default class Client extends EventEmitter {
    */
   constructor() {
     super();
-    this.fetch = new Fetch(this);
+    this.api = new Api(this);
   }
 
   // Variables
 
-  public fetch: Fetch;
+  public api: Api;
 
   /**
    * The WebSocketManager
@@ -121,10 +120,10 @@ export default class Client extends EventEmitter {
     this.user = new ClientUser(user, this);
 
     const [spools, environment] = await Promise.all([
-      this.fetch.get({
+      this.api.get({
         url: "/api/server/ribbon",
       }),
-      this.fetch.get({ url: "/api/server/environment", authenticated: false }),
+      this.api.get({ url: "/api/server/environment", authenticated: false }),
     ]);
 
     if (!environment.success) {

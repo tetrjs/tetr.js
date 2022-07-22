@@ -322,7 +322,7 @@ export default class User extends EventEmitter {
           userdata: any;
         };
       }[];
-    } = await this.client.fetch.get({ url: `/api/dms/${encodeURIComponent(id)}` });
+    } = await this.client.api.get({ url: `/api/dms/${encodeURIComponent(id)}` });
     if (!data.success) throw new Error(data.error);
     else {
       const dms: DirectMessage[] = [];
