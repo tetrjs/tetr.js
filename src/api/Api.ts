@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import https from "https";
-import msgpackr from "msgpackr";
+import * as msgpackr from "msgpackr";
 import { Client } from "..";
 
 //@ts-ignore

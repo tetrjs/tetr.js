@@ -1,5 +1,4 @@
 import EventEmitter from "events";
-import fetch from "node-fetch";
 import { DirectMessage } from "..";
 import Client from "../client/Client";
 
