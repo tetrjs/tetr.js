@@ -69,6 +69,11 @@ export default class Api {
           spools.spools.spools.map(
             (spool, index) =>
               new Promise<{
+                spool: {
+                  name: string;
+                  host: string;
+                  flag: string;
+                };
                 ttfb: number;
                 load: number[];
                 version: number;
@@ -122,6 +127,7 @@ export default class Api {
                       if (!flags.online) resolve();
 
                       resolve({
+                        spool,
                         ttfb: getTimeMS(responseBodyStart) - getTimeMS(tlsHandshake),
                         load,
                         version,
@@ -146,6 +152,11 @@ export default class Api {
           )
         )
       ).filter((val) => !!val) as {
+        spool: {
+          name: string;
+          host: string;
+          flag: string;
+        };
         ttfb: number;
         load: number[];
         version: number;
@@ -161,6 +172,7 @@ export default class Api {
         };
       }[]
     ).sort((a, b) => a.ttfb - b.ttfb);
+    if (!spoolData.length) throw new Error("Couldn't find a valid spool.");
     return spoolData[0];
   }
 }

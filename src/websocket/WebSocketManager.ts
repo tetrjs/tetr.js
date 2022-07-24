@@ -69,6 +69,7 @@ export default class WebSocketManager extends EventEmitter {
       structures: [],
     });
 
+    // TODO use spool token
     this.socket = new WebSocket(endpoint);
 
     this.client = client;

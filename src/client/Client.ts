@@ -144,10 +144,10 @@ export default class Client extends EventEmitter {
         this.disconnect();
       }
 
-      // this.ws = new WebSocketManager(
-      //   endpoint.success ? endpoint.endpoint : "wss://tetr.io/ribbon",
-      //   this
-      // );
+      this.ws = new WebSocketManager(
+        "wss://" + (await this.api.getOptimalSpool(spools)).spool.host + spools.endpoint,
+        this
+      );
     }
   }
 }
