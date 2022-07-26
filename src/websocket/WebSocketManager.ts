@@ -183,37 +183,37 @@ export default class WebSocketManager extends EventEmitter {
     //   return;
     // });
 
-    let encoded;
-
-    if (typeof data === "string") {
-      const found = RIBBON_EXTENSIONS.get(data);
-      if (found) {
-        encoded = found(extensionData);
-      }
-    }
-
-    if (!encoded) {
-      const prependable = RIBBON_STANDARD_ID_TAG;
-
-      const msgpacked = (useSequential ? this.packr : globalRibbonPackr).pack(data);
-      encoded = Buffer.concat([prependable, msgpacked]);
-    }
-
-    // TODO: send the packets, currently encoded is the variable with the packets
-
-    //   if (this.socket.readyState === this.socket.OPEN) {
-    //   this.socket.send(encoded);
-    // } else {
-    //   this.queue.push(encoded);
+    // if (typeof data === "string") {
+    //   const found = RIBBON_EXTENSIONS.get(data);
+    //   if (found) {
+    //     encoded = found(extensionData);
+    //   }
     // }
 
-    // this.history.push(encoded);
+    // if (!encoded) {
+    // const prependable = RIBBON_STANDARD_ID_TAG;
 
-    // if (this.history.length > 500) {
-    //   this.history.splice(0, this.history.length - 500);
+    const msgpacked = (useSequential ? this.packr : globalRibbonPackr).pack(data);
+    const encoded = Buffer.concat([RIBBON_STANDARD_ID_TAG, msgpacked]);
     // }
 
-    // if (data.id) this.clientId = data.id + 1;
+    // // TODO: send the packets, currently encoded is the variable with the packets
+
+    // TODO: Follow tetrio.js implementation, CC: @Proximitynow19
+
+    if (this.socket.readyState === this.socket.OPEN) {
+      this.socket.send(encoded);
+    } else {
+      this.queue.push(encoded);
+    }
+
+    this.history.push(encoded);
+
+    if (this.history.length > 500) {
+      this.history.splice(0, this.history.length - 500);
+    }
+
+    if (data.id) this.clientId = data.id + 1;
   }
 
   /**
