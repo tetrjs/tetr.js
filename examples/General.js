@@ -1,6 +1,10 @@
 const { Client } = require("../dist/index");
 const client = new Client();
 
+client.on("err", (e) => {
+  console.error(e);
+});
+
 client.on("ready", () => {
   console.log("Client Online.");
 

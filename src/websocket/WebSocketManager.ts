@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import Client from "../client/Client";
-import msgpackr from "msgpackr";
+import * as msgpackr from "msgpackr";
 import fs from "fs";
 import { EventEmitter } from "stream";
 

@@ -106,7 +106,6 @@ export default class Api {
 
                     res.on("end", () => {
                       const binary = Buffer.from(body);
-                      console.log(binary);
                       const version = binary[0];
                       const flags = {
                         online: binary[1] & 0b10000000,
@@ -137,7 +136,7 @@ export default class Api {
                   }
                 );
 
-                req.on("error", (_error) => {
+                req.on("error", (error) => {
                   resolve();
                 });
 
