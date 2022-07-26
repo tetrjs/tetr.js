@@ -218,82 +218,87 @@ export default class WebSocketManager extends EventEmitter {
 
   /**
    * Used to receive messages from the server
-   * @param {Buffer} data - Data received from the server
+   * @param {Buffer | any} data - Data received from the server
    * @param {boolean} useSequential - Should the function use the sequential msgpackr instance
    * @returns {void}
    */
-  public receive_packet(data: Buffer, useSequential = false): void {
-    const packet: any = {
-      type: Number((data.slice(0, 1) as any as Buffer[])[0]),
-    };
+  public receive_packet(data: Buffer | any, useSequential = false): void {
+    let packet: any;
+    if (Buffer.isBuffer(data)) {
+      packet = {
+        type: Number((data.slice(0, 1) as any as Buffer[])[0]),
+      };
 
-    switch (packet.type) {
-      case RIBBON_EXTENSION_TAG[0]:
-        {
-          // look up this extension
-          const found = RIBBON_EXTENSIONS.get(packet[1]);
-          if (!found) {
-            return; //! No clue what to do here, just return or something
+      switch (packet.type) {
+        case RIBBON_EXTENSION_TAG[0]:
+          {
+            // look up this extension
+            const found = RIBBON_EXTENSIONS.get(packet[1]);
+            if (!found) {
+              return; //! No clue what to do here, just return or something
+            }
+            packet.data = found(packet);
+
+            if (packet.data.id && typeof packet.data.id === "number") {
+              packet.id = packet.data.id;
+              delete packet.data.id;
+            }
           }
-          packet.data = found(packet);
+          break;
+        case RIBBON_STANDARD_ID_TAG[0]:
+          // simply extract
+          packet.data = this.hybridUnpack(data.slice(1), useSequential);
 
-          if (packet.data.id && typeof packet.data.id === "number") {
-            packet.id = packet.data.id;
-            delete packet.data.id;
+          packet.id = data.readUInt32BE(1);
+          delete packet.data.id;
+          break;
+        case RIBBON_EXTRACTED_ID_TAG[0]:
+          {
+            // extract id and msgpacked, then inject id back in
+            // these don't support sequential!
+            const object = globalRibbonUnpackr.unpack(data.slice(5));
+            const view = new DataView(data.buffer);
+            const id = view.getUint32(1, false);
+            object.id = id;
+            packet.data = object;
           }
-        }
-        break;
-      case RIBBON_STANDARD_ID_TAG[0]:
-        // simply extract
-        packet.data = this.hybridUnpack(data.slice(1), useSequential);
+          break;
+        case RIBBON_BATCH_TAG[0]: {
+          // ok these are complex, keep looking through the header until you get to the (uint32)0 delimiter
+          const lengths = [];
+          const view = new DataView(packet.buffer);
 
-        packet.id = data.readUInt32BE(1);
-        delete packet.data.id;
-        break;
-      case RIBBON_EXTRACTED_ID_TAG[0]:
-        {
-          // extract id and msgpacked, then inject id back in
-          // these don't support sequential!
-          const object = globalRibbonUnpackr.unpack(data.slice(5));
-          const view = new DataView(data.buffer);
-          const id = view.getUint32(1, false);
-          object.id = id;
-          packet.data = object;
-        }
-        break;
-      case RIBBON_BATCH_TAG[0]: {
-        // ok these are complex, keep looking through the header until you get to the (uint32)0 delimiter
-        const lengths = [];
-        const view = new DataView(packet.buffer);
-
-        // Get the lengths
-        for (let i = 0; true; i++) {
-          const length = view.getUint32(1 + i * 4, false);
-          if (length === 0) {
-            // We've hit the end of the batch
-            break;
+          // Get the lengths
+          for (let i = 0; true; i++) {
+            const length = view.getUint32(1 + i * 4, false);
+            if (length === 0) {
+              // We've hit the end of the batch
+              break;
+            }
+            lengths.push(length);
           }
-          lengths.push(length);
-        }
 
-        // Get the items at those lengths
-        let pointer = 0;
-        for (let i = 0; i < lengths.length; i++) {
-          this.receive_packet(
-            packet.slice(
-              1 + lengths.length * 4 + 4 + pointer,
-              1 + lengths.length * 4 + 4 + pointer + lengths[i]
-            ),
-            useSequential
-          );
-          pointer += lengths[i];
-        }
+          // Get the items at those lengths
+          let pointer = 0;
+          for (let i = 0; i < lengths.length; i++) {
+            this.receive_packet(
+              packet.slice(
+                1 + lengths.length * 4 + 4 + pointer,
+                1 + lengths.length * 4 + 4 + pointer + lengths[i]
+              ),
+              useSequential
+            );
+            pointer += lengths[i];
+          }
 
-        return;
+          return;
+        }
+        default:
+          packet.data = this.hybridUnpack(data, useSequential);
+          break;
       }
-      default:
-        packet.data = this.hybridUnpack(data, useSequential);
-        break;
+    } else {
+      packet = data;
     }
 
     if (packet.id) {

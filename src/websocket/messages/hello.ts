@@ -1,5 +1,4 @@
 import WebSocketManager from "../WebSocketManager";
-import msgpack from "msgpack-lite";
 
 export = async function (packet: any, ws: WebSocketManager): Promise<void> {
   if (!ws.socketId && !ws.resumeId) {
@@ -30,16 +29,6 @@ export = async function (packet: any, ws: WebSocketManager): Promise<void> {
       },
     });
   } else {
-    for (let i = 0; i < packet.packets.length; i++) {
-      if (!["authorize", "migrate"].includes(packet.packets[i].command)) {
-        const buf = Buffer.alloc(msgpack.encode(packet.packets[i]).length + 1);
-
-        buf.set([0x45], 0);
-
-        buf.set(msgpack.encode(packet.packets[i]), 1);
-
-        ws.receive_packet(buf);
-      }
-    }
+    packet.packets.forEach((messages: any) => ws.receive_packet(messages));
   }
 };
