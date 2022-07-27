@@ -174,4 +174,8 @@ export default class Api {
     if (!spoolData.length) throw new Error("Couldn't find a valid spool.");
     return spoolData[0];
   }
+
+  public async getSpoolToken() {
+    return (await this.get({ url: "/api/server/ribbon" })).spools.token;
+  }
 }

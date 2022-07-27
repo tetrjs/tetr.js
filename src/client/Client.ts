@@ -146,6 +146,7 @@ export default class Client extends EventEmitter {
 
       this.ws = new WebSocketManager(
         "wss://" + (await this.api.getOptimalSpool(spools)).spool.host + spools.endpoint,
+        spools.spools.token,
         this
       );
     }

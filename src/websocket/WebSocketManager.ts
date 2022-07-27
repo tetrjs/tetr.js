@@ -57,10 +57,12 @@ export default class WebSocketManager extends EventEmitter {
   /**
    * The WebSocketManager Class
    * @param {string} endpoint - The endpoint of the server to connect to
+   * @param {string} token - The token to connect to the WebSocket
    * @param {Client} client - The Client Class
    */
-  constructor(endpoint: string, client: Client) {
+  constructor(endpoint: string, token: string, client: Client) {
     super();
+
     this.packr = new msgpackr.Packr({
       bundleStrings: false,
     });
@@ -69,8 +71,7 @@ export default class WebSocketManager extends EventEmitter {
       structures: [],
     });
 
-    // TODO use spool token
-    this.socket = new WebSocket(endpoint);
+    this.socket = new WebSocket(endpoint, token);
 
     this.client = client;
 
@@ -356,12 +357,15 @@ export default class WebSocketManager extends EventEmitter {
    * @param {string} endpoint - The new endpoint URI
    * @returns {void}
    */
-  public migrate(endpoint: string): void {
+  public async migrate(endpoint: string): Promise<void> {
     if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
 
     this.socket.close();
 
-    this.socket = new WebSocket(endpoint);
+    this.socket = new WebSocket(
+      endpoint,
+      await this.client.api.getSpoolToken().catch(() => this.migrate(endpoint))
+    );
 
     this.socket.onopen = () => {
       this.send_packet(
