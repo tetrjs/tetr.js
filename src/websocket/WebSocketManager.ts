@@ -57,9 +57,10 @@ export default class WebSocketManager extends EventEmitter {
   /**
    * The WebSocketManager Class
    * @param {string} endpoint - The endpoint of the server to connect to
+   * @param {string} token - The token to connect to the WebSocket
    * @param {Client} client - The Client Class
    */
-  constructor(endpoint: string, client: Client) {
+  constructor(endpoint: string, token: string, client: Client) {
     super();
     this.lastPong = Date.now();
     this.packr = new msgpackr.Packr({
@@ -74,7 +75,7 @@ export default class WebSocketManager extends EventEmitter {
 
     // TODO use spool token
     (async () => {
-      this.socket = new WebSocket(endpoint, await client.api.getSpoolToken());
+      this.socket = new WebSocket(endpoint, token);
 
       this.socket.onopen = () => {
         this.send_packet({ command: "new" }, true);
@@ -187,9 +188,9 @@ export default class WebSocketManager extends EventEmitter {
    */
   public send_packet(data: any, useSequential = false, extensionData?: any): void {
     // console.log("Client:", data);
-    fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
-      return;
-    });
+    // fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
+    //   return;
+    // });
 
     // if (typeof data === "string") {
     //   const found = RIBBON_EXTENSIONS.get(data);
@@ -318,9 +319,9 @@ export default class WebSocketManager extends EventEmitter {
     }
 
     // console.log("Server:", packet);
-    fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
-      return;
-    });
+    // fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
+    //   return;
+    // });
 
     const message = this.messages.get(packet.data.command);
 
@@ -375,7 +376,10 @@ export default class WebSocketManager extends EventEmitter {
 
     this.socket.close();
 
-    this.socket = new WebSocket(endpoint, await this.client.api.getSpoolToken());
+    this.socket = new WebSocket(
+      endpoint,
+      await this.client.api.getSpoolToken().catch(() => this.migrate(endpoint))
+    );
 
     this.socket.onopen = () => {
       this.send_packet(
