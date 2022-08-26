@@ -61,6 +61,7 @@ export default class WebSocketManager extends EventEmitter {
    */
   constructor(endpoint: string, client: Client) {
     super();
+    this.lastPong = Date.now();
     this.packr = new msgpackr.Packr({
       bundleStrings: false,
     });
@@ -69,24 +70,26 @@ export default class WebSocketManager extends EventEmitter {
       structures: [],
     });
 
-    // TODO use spool token
-    this.socket = new WebSocket(endpoint);
-
     this.client = client;
 
-    this.socket.onopen = () => {
-      this.send_packet({ command: "new" }, true);
+    // TODO use spool token
+    (async () => {
+      this.socket = new WebSocket(endpoint, await client.api.getSpoolToken());
 
-      this.heartbeat(5000);
-    };
+      this.socket.onopen = () => {
+        this.send_packet({ command: "new" }, true);
 
-    this.socket.onmessage = (e) => {
-      this.receive_packet(e.data as Buffer);
-    };
+        this.heartbeat();
+      };
 
-    this.socket.onclose = () => {
-      if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
-    };
+      this.socket.onmessage = (e) => {
+        this.receive_packet(e.data as Buffer);
+      };
+
+      this.socket.onclose = () => {
+        if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
+      };
+    })();
   }
 
   /**
@@ -167,6 +170,11 @@ export default class WebSocketManager extends EventEmitter {
    * @type {NodeJS.Timeout}
    */
   private heartbeatTO?: NodeJS.Timeout;
+  /**
+   * The last pong
+   * @type {number}
+   */
+  private lastPong: number;
 
   // Functions
 
@@ -179,9 +187,9 @@ export default class WebSocketManager extends EventEmitter {
    */
   public send_packet(data: any, useSequential = false, extensionData?: any): void {
     // console.log("Client:", data);
-    // fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
-    //   return;
-    // });
+    fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
+      return;
+    });
 
     // if (typeof data === "string") {
     //   const found = RIBBON_EXTENSIONS.get(data);
@@ -243,6 +251,8 @@ export default class WebSocketManager extends EventEmitter {
               packet.id = packet.data.id;
               delete packet.data.id;
             }
+
+            if (packet.data.command == "pong") this.lastPong = Date.now();
           }
           break;
         case RIBBON_STANDARD_ID_TAG[0]:
@@ -308,9 +318,9 @@ export default class WebSocketManager extends EventEmitter {
     }
 
     // console.log("Server:", packet);
-    // fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
-    //   return;
-    // });
+    fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
+      return;
+    });
 
     const message = this.messages.get(packet.data.command);
 
@@ -330,25 +340,29 @@ export default class WebSocketManager extends EventEmitter {
 
   /**
    * The heartbeat function to keep the ribbon alive
-   * @param {number} ms - Amount of milliseconds to wait before next heartbeat
    * @returns {void}
    */
-  private heartbeat(ms: number): void {
+  private heartbeat(): void {
     if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
 
-    this.heartbeatTO = setTimeout(() => {
+    if (this.socket.readyState !== this.socket.OPEN) {
+      return void setTimeout(this.heartbeat, 200);
+    }
+    this.heartbeatTO = setInterval(() => {
       if (this.socket.readyState === this.socket.OPEN) {
         // console.log("Client:", "Ping");
+
+        if (Date.now() - this.lastPong > 30000) {
+          // TODO: Handle this eventually
+        }
 
         try {
           this.socket.send(Buffer.from([0xb0, 0x0b]));
         } catch {
-          this.heartbeat(200);
+          return;
         }
-      } else {
-        this.heartbeat(200);
       }
-    }, ms);
+    }, 5000);
   }
 
   /**
@@ -356,12 +370,12 @@ export default class WebSocketManager extends EventEmitter {
    * @param {string} endpoint - The new endpoint URI
    * @returns {void}
    */
-  public migrate(endpoint: string): void {
+  public async migrate(endpoint: string): Promise<void> {
     if (this.heartbeatTO) clearTimeout(this.heartbeatTO);
 
     this.socket.close();
 
-    this.socket = new WebSocket(endpoint);
+    this.socket = new WebSocket(endpoint, await this.client.api.getSpoolToken());
 
     this.socket.onopen = () => {
       this.send_packet(
@@ -387,7 +401,7 @@ export default class WebSocketManager extends EventEmitter {
         this.queue.splice(i, 1);
       }
 
-      this.heartbeat(5000);
+      this.heartbeat();
     };
 
     this.socket.onmessage = (e) => {

@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
-import https from "https";
 import * as msgpackr from "msgpackr";
+import https from "https";
 import { Client } from "..";
 
 //@ts-ignore
@@ -51,6 +51,13 @@ export default class Api {
     ).arrayBuffer();
     return unpackr.unpack(Buffer.from(rawData));
   }
+
+  public async getSpoolToken() {
+    const response = await this.get({ url: "/api/server/ribbon" });
+    if (!response.spools?.token) throw new Error("Failed to get spool token");
+    return response.spools.token;
+  }
+
   public async getOptimalSpool(spools: {
     success: true;
     endpoint: string;
