@@ -48,7 +48,7 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "build": "rm -rf dist/ && tsc",
+    "build": "tsc",
     "test": "mocha",
     "dev": "npm run build && npm test",
     "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",

@@ -47,10 +47,10 @@ RIBBON_EXTENSIONS.set("PONG", (extensionData: any) => {
 });
 
 const globalRibbonPackr = new msgpackr.Packr({
-  bundleStrings: false,
+  bundleStrings: true,
 });
 const globalRibbonUnpackr = new msgpackr.Unpackr({
-  bundleStrings: false,
+  bundleStrings: true,
 });
 
 export default class WebSocketManager extends EventEmitter {
@@ -64,11 +64,10 @@ export default class WebSocketManager extends EventEmitter {
     super();
     this.lastPong = Date.now();
     this.packr = new msgpackr.Packr({
-      bundleStrings: false,
+      bundleStrings: true,
     });
     this.unpackr = new msgpackr.Unpackr({
-      bundleStrings: false,
-      structures: [],
+      bundleStrings: true,
     });
 
     this.client = client;
@@ -188,9 +187,9 @@ export default class WebSocketManager extends EventEmitter {
    */
   public send_packet(data: any, useSequential = false, extensionData?: any): void {
     // console.log("Client:", data);
-    // fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
-    //   return;
-    // });
+    fs.appendFile("./send.log", `[O ${new Date().toString()}] ${JSON.stringify(data)}\n`, () => {
+      return;
+    });
 
     // if (typeof data === "string") {
     //   const found = RIBBON_EXTENSIONS.get(data);
@@ -319,9 +318,9 @@ export default class WebSocketManager extends EventEmitter {
     }
 
     // console.log("Server:", packet);
-    // fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
-    //   return;
-    // });
+    fs.appendFile("./send.log", `[I ${new Date().toString()}] ${JSON.stringify(packet)}\n`, () => {
+      return;
+    });
 
     const message = this.messages.get(packet.data.command);
 
@@ -333,7 +332,7 @@ export default class WebSocketManager extends EventEmitter {
 
   private hybridUnpack(packet: Buffer, useSequential: boolean) {
     if (useSequential) {
-      return (this.unpackr.unpackMultiple(packet) as any)[0];
+      return this.unpackr.unpack(packet);
     } else {
       return globalRibbonUnpackr.unpack(packet);
     }
