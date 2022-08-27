@@ -72,7 +72,6 @@ export default class WebSocketManager extends EventEmitter {
 
     this.client = client;
 
-    // TODO use spool token
     (async () => {
       this.socket = new WebSocket(endpoint, token);
 
@@ -230,22 +229,22 @@ export default class WebSocketManager extends EventEmitter {
    * @param {boolean} useSequential - Should the function use the sequential msgpackr instance
    * @returns {void}
    */
-  public receive_packet(data: Buffer | any, useSequential = false): void {
+  public receive_packet(data: Buffer | any, useSequential = true): void {
     let packet: any;
     if (Buffer.isBuffer(data)) {
       packet = {
-        type: Number((data.slice(0, 1) as any as Buffer[])[0]),
+        type: data[0],
       };
 
       switch (packet.type) {
         case RIBBON_EXTENSION_TAG[0]:
           {
             // look up this extension
-            const found = RIBBON_EXTENSIONS.get(packet[1]);
+            const found = RIBBON_EXTENSIONS.get(data[1]);
             if (!found) {
               return; //! No clue what to do here, just return or something
             }
-            packet.data = found(packet);
+            packet.data = found(data);
 
             if (packet.data.id && typeof packet.data.id === "number") {
               packet.id = packet.data.id;
@@ -259,8 +258,10 @@ export default class WebSocketManager extends EventEmitter {
           // simply extract
           packet.data = this.hybridUnpack(data.slice(1), useSequential);
 
-          packet.id = data.readUInt32BE(1);
-          delete packet.data.id;
+          if (packet.data.id && typeof packet.data.id === "number") {
+            packet.id = packet.data.id;
+            delete packet.data.id;
+          }
           break;
         case RIBBON_EXTRACTED_ID_TAG[0]:
           {
@@ -276,7 +277,7 @@ export default class WebSocketManager extends EventEmitter {
         case RIBBON_BATCH_TAG[0]: {
           // ok these are complex, keep looking through the header until you get to the (uint32)0 delimiter
           const lengths = [];
-          const view = new DataView(packet.buffer);
+          const view = new DataView(data.buffer);
 
           // Get the lengths
           for (let i = 0; true; i++) {
@@ -292,7 +293,7 @@ export default class WebSocketManager extends EventEmitter {
           let pointer = 0;
           for (let i = 0; i < lengths.length; i++) {
             this.receive_packet(
-              packet.slice(
+              data.slice(
                 1 + lengths.length * 4 + 4 + pointer,
                 1 + lengths.length * 4 + 4 + pointer + lengths[i]
               ),
@@ -304,6 +305,7 @@ export default class WebSocketManager extends EventEmitter {
           return;
         }
         default:
+          console.log("Default unpack");
           packet.data = this.hybridUnpack(data, useSequential);
           break;
       }
@@ -331,11 +333,7 @@ export default class WebSocketManager extends EventEmitter {
   }
 
   private hybridUnpack(packet: Buffer, useSequential: boolean) {
-    if (useSequential) {
-      return this.unpackr.unpack(packet);
-    } else {
-      return globalRibbonUnpackr.unpack(packet);
-    }
+    return (useSequential ? this.unpackr : globalRibbonUnpackr).unpack(packet);
   }
 
   /**
