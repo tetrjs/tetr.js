@@ -226,10 +226,9 @@ export default class WebSocketManager extends EventEmitter {
   /**
    * Used to receive messages from the server
    * @param {Buffer | any} data - Data received from the server
-   * @param {boolean} useSequential - Should the function use the sequential msgpackr instance
    * @returns {void}
    */
-  public receive_packet(data: Buffer | any, useSequential = true): void {
+  public receive_packet(data: Buffer | any): void {
     let packet: any;
     if (Buffer.isBuffer(data)) {
       packet = {
@@ -256,13 +255,16 @@ export default class WebSocketManager extends EventEmitter {
           break;
         case RIBBON_STANDARD_ID_TAG[0]:
           // simply extract
-          packet.data = this.hybridUnpack(data.slice(1), useSequential);
-
-          if (packet.data.id && typeof packet.data.id === "number") {
-            packet.id = packet.data.id;
-            delete packet.data.id;
+          for (const parsedData of this.unpackr.unpackMultiple(data.slice(1)) as any[]) {
+            const packet = { data: parsedData } as any;
+            if (packet.data.id && typeof packet.data.id === "number") {
+              packet.id = packet.data.id;
+              delete packet.data.id;
+            }
+            this.receive_packet(packet);
           }
-          break;
+          return;
+
         case RIBBON_EXTRACTED_ID_TAG[0]:
           {
             // extract id and msgpacked, then inject id back in
@@ -296,8 +298,7 @@ export default class WebSocketManager extends EventEmitter {
               data.slice(
                 1 + lengths.length * 4 + 4 + pointer,
                 1 + lengths.length * 4 + 4 + pointer + lengths[i]
-              ),
-              useSequential
+              )
             );
             pointer += lengths[i];
           }
@@ -305,8 +306,7 @@ export default class WebSocketManager extends EventEmitter {
           return;
         }
         default:
-          console.log("Default unpack");
-          packet.data = this.hybridUnpack(data, useSequential);
+          packet.data = this.unpackr.unpack(data);
           break;
       }
     } else {
@@ -330,10 +330,6 @@ export default class WebSocketManager extends EventEmitter {
       message(packet.data, this);
     }
     this.emit("raw", packet.data.command, packet.data, this);
-  }
-
-  private hybridUnpack(packet: Buffer, useSequential: boolean) {
-    return (useSequential ? this.unpackr : globalRibbonUnpackr).unpack(packet);
   }
 
   /**
