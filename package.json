@@ -1,11 +1,21 @@
 {
+  "devDependencies": {
+    "@types/msgpack-lite": "^0.1.11",
+    "@types/ws": "^8.5.10",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "msgpackr": "^1.10.0",
+    "ws": "^8.15.1"
+  },
   "name": "tetr.js",
-  "version": "0.0.0-development",
+  "version": "4.0.0",
   "description": "An API Wrapper For TETR.IO",
-  "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tetrjs/tetr.js.git"
+    "url": "git+https://github.com/tetrjs/tetr.js.git"
   },
   "keywords": [
     "tetr.js",
@@ -18,52 +28,13 @@
     "websocket",
     "osk",
     "osk.sh",
-    "stacker"
+    "stacker",
+    "tetris"
   ],
+  "author": "tetrjs",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/tetrjs/tetr.js/issues"
   },
-  "homepage": "https://tetr.js.org",
-  "dependencies": {
-    "@types/node": "^16.7.10",
-    "@types/ws": "^7.4.7",
-    "events": "^3.3.0",
-    "msgpack-lite": "^0.1.26",
-    "node-fetch": "^2.6.7",
-    "ws": "^8.2.1"
-  },
-  "devDependencies": {
-    "@types/msgpack-lite": "^0.1.8",
-    "@types/node-fetch": "^2.5.12",
-    "@typescript-eslint/eslint-plugin": "^4.30.0",
-    "@typescript-eslint/parser": "^4.30.0",
-    "assert": "^2.0.0",
-    "cz-conventional-changelog": "^3.3.0",
-    "dotenv": "^10.0.0",
-    "eslint": "^7.32.0",
-    "mocha": "^9.1.1",
-    "prettier": "^2.3.2",
-    "semantic-release": "^17.4.7",
-    "typedoc": "^0.21.9",
-    "typedoc-plugin-extras": "^1.1.8",
-    "typescript": "^4.4.2"
-  },
-  "scripts": {
-    "build": "rm -rf dist/ && tsc",
-    "test": "mocha",
-    "dev": "npm run build && npm test",
-    "docs": "npx typedoc --plugin typedoc-plugin-extras --excludePrivate --favicon 'images/small.png' --hideDate --hideTime && echo 'tetr.js.org' > docs/CNAME",
-    "semantic-release": "semantic-release --branches stable",
-    "commit": "git-cz",
-    "acp": "git add . && npm run commit && git push",
-    "prettier": "prettier --write src/**/*.ts",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  }
+  "homepage": "https://github.com/tetrjs/tetr.js#readme"
 }
