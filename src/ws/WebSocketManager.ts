@@ -1,20 +1,19 @@
 import api from "../util/api";
 import Client from "../client/Client";
 import WebSocket from "ws";
-import { Packr, Unpackr } from "msgpackr";
+import { Packr, Unpackr, unpack } from "msgpackr";
 import { readdirSync } from "fs";
 import { join } from "path";
+import EventEmitter from "node:events";
 
 const ribbonPackr = new Packr({
-  bundleStrings: true,
-  sequential: false,
+  sequential: true,
 });
 const ribbonUnpackr = new Unpackr({
-  bundleStrings: true,
-  sequential: false,
+  sequential: true,
 });
 
-export default class WebSocketManager {
+export default class WebSocketManager extends EventEmitter {
   static readonly MESSAGE_TYPE = {
     STANDARD: 0x45,
     EXTRACTED_ID: 0xae,
@@ -24,6 +23,8 @@ export default class WebSocketManager {
   static readonly EXTENSION = { PING: 0x0b, PONG: 0x0c };
 
   constructor(client: Client) {
+    super();
+
     this.client = client;
   }
 
@@ -36,6 +37,8 @@ export default class WebSocketManager {
       require(join(__dirname, "commands", file)).default,
     ])
   );
+  private lastIddCalculation = Date.now();
+  private spool?: any;
 
   public heartbeat?: NodeJS.Timeout;
   public socket?: WebSocket;
@@ -43,12 +46,85 @@ export default class WebSocketManager {
   public socketId?: string;
   public resumeToken?: string;
   public messageId = 0;
+  public serverId = 0;
+  public clientIdd: any[] = [];
 
-  public async connect(resume = false, endpoint?: string) {
-    if (!endpoint)
-      ({ endpoint } = await api("/server/ribbon", this.client.token));
+  private async getOptimalSpool({ spools: { spools } }: any) {
+    let spool;
 
-    this.socket = new WebSocket(`wss://tetr.io${endpoint}`);
+    if (
+      (spool = await Promise.race(
+        spools.map(
+          (spool: any) =>
+            new Promise<any>(async (resolve, reject) => {
+              let spool_ = await checkSpool(spool);
+
+              if (
+                !spool_.health.flags.online ||
+                spool_.health.flags.avoidDueToHighLoad
+              )
+                return reject();
+
+              resolve(spool_);
+            })
+        )
+      ))
+    )
+      return spool;
+
+    if (
+      (spool = await Promise.race(
+        spools.map(
+          (spool: any) =>
+            new Promise<any>(async (resolve, reject) => {
+              let spool_ = await checkSpool(spool);
+
+              if (!spool_.health.flags.online) return reject();
+
+              resolve(spool_);
+            })
+        )
+      ))
+    )
+      return spool;
+
+    return "tetr.io";
+
+    async function checkSpool(spool: any) {
+      let data = await fetch(`https://${spool.host}/spool`);
+
+      let health_ = Buffer.from(await data.arrayBuffer());
+
+      let flags_ = health_.readUint8(1);
+
+      return {
+        ...spool,
+        health: {
+          version: health_.readUint8(),
+          flags: {
+            online: flags_ & 0b10000000,
+            avoidDueToHighLoad: flags_ & 0b01000000,
+            recentlyRestarted: flags_ & 0b00100000,
+          },
+          load1m: health_.readUint8(2) / 64,
+          load5m: health_.readUint8(3) / 64,
+          load15m: health_.readUint8(4) / 64,
+        },
+      };
+    }
+  }
+
+  public async connect(resume = false, endpoint?: string): Promise<void> {
+    let ribbon = await api("/server/ribbon", this.client.token);
+
+    if (!this.spool) this.spool = await this.getOptimalSpool(ribbon);
+
+    if (!endpoint) ({ endpoint } = ribbon);
+
+    this.socket = new WebSocket(
+      `wss://${this.spool.host}${endpoint}`,
+      ribbon.spools.token
+    );
 
     this.socket.on("error", (err: string) => {
       throw new Error(err);
@@ -79,12 +155,12 @@ export default class WebSocketManager {
     });
 
     this.socket.on("message", (data: Buffer) => {
-      switch (Number(data.readUint8(0))) {
+      switch (Number(data.readUint8())) {
         case WebSocketManager.MESSAGE_TYPE.STANDARD:
-          this.receive(data.subarray(1));
+          this.receive(ribbonUnpackr.unpack(data.subarray(1)));
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTRACTED_ID:
-          this.receive(data.subarray(5), data.readUint32BE(1));
+          this.receive(unpack(data.subarray(5)), data.readUint32BE(1));
           break;
         case WebSocketManager.MESSAGE_TYPE.BATCH:
           let lengths: number[] = [];
@@ -96,13 +172,22 @@ export default class WebSocketManager {
             let offset = lengths
               .slice(0, i)
               .reduce((a, b) => a + b, 5 + lengths.length * 4);
-            this.receive(data.subarray(offset, offset + length));
+            this.socket?.emit(
+              "message",
+              data.subarray(offset, offset + length)
+            );
           });
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTENSION:
-          // ping/pong
+          // ping / pong
           break;
       }
+    });
+
+    await new Promise<void>((resolve) => {
+      this.once(resume ? "hello" : "authorize", () => {
+        resolve();
+      });
     });
   }
 
@@ -111,26 +196,47 @@ export default class WebSocketManager {
     id = true,
     type = WebSocketManager.MESSAGE_TYPE.STANDARD
   ) {
-    if (id) message.id = ++this.messageId;
+    if (id) {
+      message.id = ++this.messageId;
 
-    console.log("outgoing");
-    console.log(message);
+      this.clientIdd.push(message);
+
+      if (message.id % 100 === 0) {
+        let currentCalculation = Date.now();
+        this.clientIdd = this.clientIdd.slice(
+          0,
+          Math.max(
+            100,
+            Math.min(
+              30 * (1000 / (currentCalculation - this.lastIddCalculation)),
+              2000
+            )
+          )
+        );
+        this.lastIddCalculation = currentCalculation;
+      }
+    }
+
+    console.log("out :", message.command);
 
     this.socket?.send(
       Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)])
     );
   }
 
-  public receive(packet: Buffer, id?: number) {
-    let message = ribbonUnpackr.unpack(packet);
-
+  public async receive(message: any, id?: number) {
     if (id) message.id = id;
 
-    console.log("incoming");
-    console.log(message);
+    if (typeof message.id === "number") {
+      this.serverId = message.id;
+    }
 
     let command = this.commands.get(message.command);
 
-    if (command) command(this, message);
+    if (command) await command(this, message);
+
+    if (!command) console.log("unknown in :\n", message);
+
+    this.emit(message.command, message);
   }
 }

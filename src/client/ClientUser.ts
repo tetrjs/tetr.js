@@ -1,8 +1,14 @@
 import User from "../user/User";
 import { APIResponse } from "../util/types";
+import WebSocketManager from "../ws/WebsocketManager";
+import EventEmitter from "node:events";
 
-export default class ClientUser {
-  constructor({ user: me }: APIResponse, user: User) {
+export default class ClientUser extends EventEmitter {
+  constructor(ws: WebSocketManager, { user: me }: APIResponse, user: User) {
+    super();
+
+    this.ws = ws;
+
     if (me.role !== "bot")
       throw new Error(
         `Client "${me.username}" is not a bot account. Contact osk (https://osk.sh/) to apply for a bot account.`
@@ -37,6 +43,8 @@ export default class ClientUser {
     };
   }
 
+  private ws: WebSocketManager;
+
   public user: User;
   public email: string;
   public privacy: {
@@ -61,4 +69,8 @@ export default class ClientUser {
   totalSupported: number;
   zen: { map: string; level: number; progress: number; score: number };
   totp: { enabled: boolean; codesRemaining: number };
+
+  public presence(presence: any): void {
+    this.ws.send({ command: "social.presence", data: presence });
+  }
 }
