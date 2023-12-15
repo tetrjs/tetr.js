@@ -1,4 +1,3 @@
-import Client from "../client/Client";
 import { APIResponse } from "../util/types";
 import WebSocketManager from "../ws/WebSocketManager";
 
