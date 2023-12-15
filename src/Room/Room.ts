@@ -1,7 +1,6 @@
 import WebSocketManager from "../ws/WebSocketManager";
 import User from "../user/User";
-
-const EventEmitter = require("node:events");
+import EventEmitter from "node:events";
 
 export default class Room extends EventEmitter {
   constructor(ws: WebSocketManager) {
@@ -362,10 +361,7 @@ export default class Room extends EventEmitter {
    * })
    * ```
    */
-  public ownerTransfer(player: {
-    user: User;
-    bracket: "spectator" | "player";
-  }): void {
+  public ownerTransfer(player: { user: User; bracket: "spectator" | "player" }): void {
     this.ws.send({ command: "room.owner.transfer", data: player.user.id });
   }
 }

@@ -8,7 +8,7 @@
 
 <p align="center">
   <!-- Flat style -->
-  <a href="https://www.typescriptlang.org/" rel="TypeScript"><img src="https://img.shields.io/badge/TypeScript-v4.2.3-blue"></a>
+  <a href="https://www.typescriptlang.org/" rel="TypeScript"><img src="https://img.shields.io/badge/TypeScript-v5.3.3-blue"></a>
   <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/bundlephobia/min/tetr.js"></a>
   <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Version"><img src=" https://img.shields.io/npm/v/tetr.js"></a>
 </p>
@@ -33,16 +33,16 @@ $ npm i tetr.js --save
 ```js
 const { Client } = require("tetr.js");
 
-const client = new Client();
+(async () => {
+  const client = new Client();
 
-client.on("ready", () => {
+  await client.login("YOUR-TOKEN-HERE");
+
   console.log("Bot online");
-});
-
-client.login("YOUR-TOKEN-HERE");
+})();
 ```
 
-Find more examples [here](https://github.com/Proximitynow19/TETR.JS/tree/master/examples)
+<!-- Find more examples [here](https://github.com/Proximitynow19/TETR.JS/tree/master/examples) -->
 
 ## Technologies
 

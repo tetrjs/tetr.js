@@ -4,8 +4,7 @@ import { Packr, Unpackr, unpack } from "msgpackr";
 import { readdirSync } from "fs";
 import { join } from "path";
 import WebSocket from "ws";
-
-const EventEmitter = require("node:events");
+import EventEmitter from "node:events";
 
 const ribbonPackr = new Packr({
   sequential: true,
@@ -13,7 +12,6 @@ const ribbonPackr = new Packr({
 const ribbonUnpackr = new Unpackr({
   sequential: true,
 });
-
 export default class WebSocketManager extends EventEmitter {
   static readonly MESSAGE_TYPE = {
     STANDARD: 0x45,
@@ -34,7 +32,7 @@ export default class WebSocketManager extends EventEmitter {
     (ws: WebSocketManager, message: any) => Promise<void> | void
   > = new Map(
     readdirSync(join(__dirname, "commands"))
-      .filter((file: string) => file.endsWith(__filename.substring(-3)))
+      .filter((file: string) => file.endsWith(__filename.slice(__filename.length - 3)))
       .map((file: string) => [
         file.slice(0, -3),
         require(join(__dirname, "commands", file)).default,
@@ -62,10 +60,7 @@ export default class WebSocketManager extends EventEmitter {
             new Promise<any>(async (resolve, reject) => {
               let spool_ = await checkSpool(spool);
 
-              if (
-                !spool_.health.flags.online ||
-                spool_.health.flags.avoidDueToHighLoad
-              )
+              if (!spool_.health.flags.online || spool_.health.flags.avoidDueToHighLoad)
                 return reject();
 
               resolve(spool_);
@@ -175,10 +170,7 @@ export default class WebSocketManager extends EventEmitter {
             let offset = lengths
               .slice(0, i)
               .reduce((a, b) => a + b, 5 + lengths.length * 4);
-            this.socket?.emit(
-              "message",
-              data.subarray(offset, offset + length)
-            );
+            this.socket?.emit("message", data.subarray(offset, offset + length));
           });
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTENSION:
@@ -194,11 +186,7 @@ export default class WebSocketManager extends EventEmitter {
     });
   }
 
-  public send(
-    message: any,
-    id = true,
-    type = WebSocketManager.MESSAGE_TYPE.STANDARD
-  ) {
+  public send(message: any, id = true, type = WebSocketManager.MESSAGE_TYPE.STANDARD) {
     if (id) {
       message.id = ++this.messageId;
 
@@ -210,10 +198,7 @@ export default class WebSocketManager extends EventEmitter {
           0,
           Math.max(
             100,
-            Math.min(
-              30 * (1000 / (currentCalculation - this.lastIddCalculation)),
-              2000
-            )
+            Math.min(30 * (1000 / (currentCalculation - this.lastIddCalculation)), 2000)
           )
         );
         this.lastIddCalculation = currentCalculation;
@@ -222,9 +207,7 @@ export default class WebSocketManager extends EventEmitter {
 
     // console.log("out :", message.command);
 
-    this.socket?.send(
-      Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)])
-    );
+    this.socket?.send(Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)]));
   }
 
   public async receive(message: any, id?: number) {

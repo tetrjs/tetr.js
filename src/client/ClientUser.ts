@@ -1,8 +1,7 @@
 import User from "../user/User";
 import { APIResponse } from "../util/types";
 import WebSocketManager from "../ws/WebSocketManager";
-
-const EventEmitter = require("node:events");
+import EventEmitter from "node:events";
 
 export default class ClientUser extends EventEmitter {
   constructor(ws: WebSocketManager, { user: me }: APIResponse, user: User) {
