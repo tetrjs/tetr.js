@@ -1,5 +1,5 @@
 import api from "../../util/api";
-import WebSocketManager from "../WebsocketManager";
+import WebSocketManager from "../WebSocketManager";
 
 export default async function (ws: WebSocketManager, message: any) {
   ws.socketId = message.id;

@@ -1,4 +1,4 @@
-import WebSocketManager from "../WebsocketManager";
+import WebSocketManager from "../WebSocketManager";
 
 export default async function ({ client: { room } }: WebSocketManager) {
   room.id = undefined;

@@ -1,10 +1,11 @@
 import api from "../util/api";
 import Client from "../client/Client";
-import WebSocket from "ws";
 import { Packr, Unpackr, unpack } from "msgpackr";
 import { readdirSync } from "fs";
 import { join } from "path";
-import EventEmitter from "node:events";
+import WebSocket from "ws";
+
+const EventEmitter = require("node:events");
 
 const ribbonPackr = new Packr({
   sequential: true,
@@ -32,10 +33,12 @@ export default class WebSocketManager extends EventEmitter {
     string,
     (ws: WebSocketManager, message: any) => Promise<void> | void
   > = new Map(
-    readdirSync(join(__dirname, "commands")).map((file: string) => [
-      file.slice(0, -3),
-      require(join(__dirname, "commands", file)).default,
-    ])
+    readdirSync(join(__dirname, "commands"))
+      .filter((file: string) => file.endsWith(__filename.substring(-3)))
+      .map((file: string) => [
+        file.slice(0, -3),
+        require(join(__dirname, "commands", file)).default,
+      ])
   );
   private lastIddCalculation = Date.now();
   private spool?: any;
@@ -217,7 +220,7 @@ export default class WebSocketManager extends EventEmitter {
       }
     }
 
-    console.log("out :", message.command);
+    // console.log("out :", message.command);
 
     this.socket?.send(
       Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)])
@@ -235,7 +238,7 @@ export default class WebSocketManager extends EventEmitter {
 
     if (command) await command(this, message);
 
-    if (!command) console.log("unknown in :\n", message);
+    // if (!command) console.log("unknown in :\n", message);
 
     this.emit(message.command, message);
   }

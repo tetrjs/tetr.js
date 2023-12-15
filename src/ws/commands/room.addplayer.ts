@@ -1,12 +1,11 @@
-import User from "../../user/User";
-import WebSocketManager from "../WebsocketManager";
+import WebSocketManager from "../WebSocketManager";
 
 export default async function (
   { client }: WebSocketManager,
   { data: { _id, bracket } }: any
 ) {
   let player = {
-    user: await User.fetch(client, _id),
+    user: await client.fetchUser(_id),
     bracket,
   };
 

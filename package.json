@@ -2,8 +2,8 @@
   "devDependencies": {
     "@types/msgpack-lite": "^0.1.11",
     "@types/ws": "^8.5.10",
-    "eslint-plugin-tsdoc": "^0.2.17",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.25.4",
     "typescript": "^5.3.3"
   },
   "dependencies": {
@@ -16,6 +16,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tetrjs/tetr.js.git"
+  },
+  "scripts": {
+    "docs": "typedoc",
+    "build": "tsc"
   },
   "keywords": [
     "tetr.js",
@@ -36,5 +40,6 @@
   "bugs": {
     "url": "https://github.com/tetrjs/tetr.js/issues"
   },
-  "homepage": "https://github.com/tetrjs/tetr.js#readme"
+  "homepage": "https://github.com/tetrjs/tetr.js#readme",
+  "main": "dist/index.js"
 }

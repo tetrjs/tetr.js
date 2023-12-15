@@ -1,7 +1,8 @@
 import User from "../user/User";
 import { APIResponse } from "../util/types";
-import WebSocketManager from "../ws/WebsocketManager";
-import EventEmitter from "node:events";
+import WebSocketManager from "../ws/WebSocketManager";
+
+const EventEmitter = require("node:events");
 
 export default class ClientUser extends EventEmitter {
   constructor(ws: WebSocketManager, { user: me }: APIResponse, user: User) {
@@ -151,7 +152,7 @@ export default class ClientUser extends EventEmitter {
 
   /**
    * Set display presence to other users.
-   * @param presence - The presence data to set
+   * @param presence The presence data to set
    *
    * @example
    * ```

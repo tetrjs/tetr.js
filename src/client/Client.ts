@@ -1,18 +1,16 @@
-import WebSocketManager from "../ws/WebsocketManager";
+import WebSocketManager from "../ws/WebSocketManager";
 import ClientUser from "./ClientUser";
 import api from "../util/api";
 import Room from "../Room/Room";
 import User from "../user/User";
+import channelApi from "../util/channelApi";
 
 /**
  * Represents the client.
  */
 export default class Client {
-  /**
-   * A tunnel for interacting with the Ribbon.
-   *
-   */
-  public readonly ws = new WebSocketManager(this);
+  private readonly ws = new WebSocketManager(this);
+
   /**
    * The client's token.
    */
@@ -30,7 +28,7 @@ export default class Client {
 
   /**
    * Login with a authentication token.
-   * @param token - The authentication token
+   * @param token The authentication token
    *
    * @example
    * ```
@@ -42,15 +40,15 @@ export default class Client {
 
     let me = await api("/users/me", token);
 
-    this.me = new ClientUser(this.ws, me, await User.fetch(this, me.user._id));
+    this.me = new ClientUser(this.ws, me, await this.fetchUser(me.user._id));
 
     await this.ws.connect();
   }
 
   /**
    * Login with a username/password combo.
-   * @param username - The username of the account
-   * @param password - The password of the account
+   * @param username The username of the account
+   * @param password The password of the account
    *
    * @example
    * ```
@@ -74,5 +72,22 @@ export default class Client {
     );
 
     await this.login(auth.token);
+  }
+
+  /**
+   * Search TetraChannel and return a full User object.
+   * @param user User ID or Username
+   * @returns A User object matching the provided details
+   *
+   * @example
+   * ```
+   * // '5f91f037630a88df78736f78':
+   * (await client.fetchUser("proximitynow")).id;
+   * ```
+   */
+  public async fetchUser(user: string): Promise<User> {
+    let user_ = await channelApi(`/users/${user}`);
+
+    return new User(this.ws, user_);
   }
 }
