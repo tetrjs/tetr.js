@@ -28,7 +28,16 @@ export default class Room extends EventEmitter {
   /** unknown */
   public topic?: any;
   /** Autostart settings. */
-  public auto?: { enabled: boolean; status: string; time: number; maxTime: 30 };
+  public auto?: {
+    /** unknown */
+    enabled: boolean;
+    /** unknown */
+    status: string;
+    /** unknown */
+    time: number;
+    /** unknown */
+    maxTime: number;
+  };
   /** Information regarding gameplay settings. */
   public options?: {
     /** Protocol version. */
@@ -250,7 +259,15 @@ export default class Room extends EventEmitter {
     extra: any;
   };
   /** The present players in the room. */
-  public players?: Map<string, { user: User; bracket: "spectator" | "player" }>;
+  public players?: Map<
+    string,
+    {
+      /** The User object tied to this player. */
+      user: User;
+      /** The current bracket the player is in. */
+      bracket: "spectator" | "player";
+    }
+  >;
 
   /**
    * Join an existing room.
@@ -361,7 +378,10 @@ export default class Room extends EventEmitter {
    * })
    * ```
    */
-  public ownerTransfer(player: { user: User; bracket: "spectator" | "player" }): void {
+  public ownerTransfer(player: {
+    user: User;
+    bracket: "spectator" | "player";
+  }): void {
     this.ws.send({ command: "room.owner.transfer", data: player.user.id });
   }
 }
