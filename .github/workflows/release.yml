@@ -30,3 +30,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Generate Documentation
+        run: npm run docs
+
+      - name: Commit and Push Documentation
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add docs
+          git commit -m "docs: update documentation [skip ci]"
+          git push
