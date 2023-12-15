@@ -1,6 +1,7 @@
 import { APIResponse } from "../util/types";
 import WebSocketManager from "../ws/WebSocketManager";
 
+/** Represents a TetraChannel User. */
 export default class User {
   constructor(ws: WebSocketManager, { user }: APIResponse) {
     this.ws = ws;
@@ -10,10 +11,12 @@ export default class User {
     this.role = user.role;
     if (user.ts) this.ts = new Date(user.ts);
     this.botMaster = user.botmaster;
-    this.badges = user.badges.map((badge: { id: string; label: string; ts?: string }) => {
-      if (badge.ts) return { ...badge, ts: new Date(badge.ts) };
-      return badge;
-    });
+    this.badges = user.badges.map(
+      (badge: { id: string; label: string; ts?: string }) => {
+        if (badge.ts) return { ...badge, ts: new Date(badge.ts) };
+        return badge;
+      }
+    );
     this.xp = user.xp;
     this.gamesPlayed = user.gamesplayed;
     this.gamesWon = user.gameswon;
@@ -71,7 +74,14 @@ export default class User {
    *
    * @readonly
    */
-  public readonly role: "anon" | "user" | "bot" | "halfmod" | "mod" | "admin" | "sysop";
+  public readonly role:
+    | "anon"
+    | "user"
+    | "bot"
+    | "halfmod"
+    | "mod"
+    | "admin"
+    | "sysop";
   /**
    * When the user account was created. If not set, this account was created before join dates were recorded.
    *

@@ -2,6 +2,7 @@ import WebSocketManager from "../ws/WebSocketManager";
 import User from "../user/User";
 import EventEmitter from "node:events";
 
+/** Represents the Client's room status. */
 export default class Room extends EventEmitter {
   constructor(ws: WebSocketManager) {
     super();

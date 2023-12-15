@@ -3,6 +3,7 @@ import { APIResponse } from "../util/types";
 import WebSocketManager from "../ws/WebSocketManager";
 import EventEmitter from "node:events";
 
+/** Represents the Client's User. */
 export default class ClientUser extends EventEmitter {
   constructor(ws: WebSocketManager, { user: me }: APIResponse, user: User) {
     super();
