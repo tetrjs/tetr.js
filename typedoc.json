@@ -1,1 +1,1 @@
-{ "entryPoints": ["./src/index.ts"], "out": "./docs" }
+{ "entryPoints": ["./src/index.ts"], "out": "./docs", "cname": "tetr.js.org" }
