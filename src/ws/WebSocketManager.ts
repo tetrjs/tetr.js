@@ -32,7 +32,9 @@ export default class WebSocketManager extends EventEmitter {
     (ws: WebSocketManager, message: any) => Promise<void> | void
   > = new Map(
     readdirSync(join(__dirname, "commands"))
-      .filter((file: string) => file.endsWith(__filename.slice(__filename.length - 3)))
+      .filter((file: string) =>
+        file.endsWith(__filename.slice(__filename.length - 3))
+      )
       .map((file: string) => [
         file.slice(0, -3),
         require(join(__dirname, "commands", file)).default,
@@ -60,7 +62,11 @@ export default class WebSocketManager extends EventEmitter {
             new Promise<any>(async (resolve, reject) => {
               let spool_ = await checkSpool(spool);
 
-              if (!spool_.health.flags.online || spool_.health.flags.avoidDueToHighLoad)
+              if (
+                !spool_ ||
+                !spool_.health.flags.online ||
+                spool_.health.flags.avoidDueToHighLoad
+              )
                 return reject();
 
               resolve(spool_);
@@ -89,26 +95,30 @@ export default class WebSocketManager extends EventEmitter {
     return "tetr.io";
 
     async function checkSpool(spool: any) {
-      let data = await fetch(`https://${spool.host}/spool`);
+      try {
+        let data = await fetch(`https://${spool.host}/spool`);
 
-      let health_ = Buffer.from(await data.arrayBuffer());
+        let health_ = Buffer.from(await data.arrayBuffer());
 
-      let flags_ = health_.readUint8(1);
+        let flags_ = health_.readUint8(1);
 
-      return {
-        ...spool,
-        health: {
-          version: health_.readUint8(),
-          flags: {
-            online: flags_ & 0b10000000,
-            avoidDueToHighLoad: flags_ & 0b01000000,
-            recentlyRestarted: flags_ & 0b00100000,
+        return {
+          ...spool,
+          health: {
+            version: health_.readUint8(),
+            flags: {
+              online: flags_ & 0b10000000,
+              avoidDueToHighLoad: flags_ & 0b01000000,
+              recentlyRestarted: flags_ & 0b00100000,
+            },
+            load1m: health_.readUint8(2) / 64,
+            load5m: health_.readUint8(3) / 64,
+            load15m: health_.readUint8(4) / 64,
           },
-          load1m: health_.readUint8(2) / 64,
-          load5m: health_.readUint8(3) / 64,
-          load15m: health_.readUint8(4) / 64,
-        },
-      };
+        };
+      } catch {
+        return null;
+      }
     }
   }
 
@@ -170,7 +180,10 @@ export default class WebSocketManager extends EventEmitter {
             let offset = lengths
               .slice(0, i)
               .reduce((a, b) => a + b, 5 + lengths.length * 4);
-            this.socket?.emit("message", data.subarray(offset, offset + length));
+            this.socket?.emit(
+              "message",
+              data.subarray(offset, offset + length)
+            );
           });
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTENSION:
@@ -186,7 +199,11 @@ export default class WebSocketManager extends EventEmitter {
     });
   }
 
-  public send(message: any, id = true, type = WebSocketManager.MESSAGE_TYPE.STANDARD) {
+  public send(
+    message: any,
+    id = true,
+    type = WebSocketManager.MESSAGE_TYPE.STANDARD
+  ) {
     if (id) {
       message.id = ++this.messageId;
 
@@ -198,7 +215,10 @@ export default class WebSocketManager extends EventEmitter {
           0,
           Math.max(
             100,
-            Math.min(30 * (1000 / (currentCalculation - this.lastIddCalculation)), 2000)
+            Math.min(
+              30 * (1000 / (currentCalculation - this.lastIddCalculation)),
+              2000
+            )
           )
         );
         this.lastIddCalculation = currentCalculation;
@@ -207,7 +227,9 @@ export default class WebSocketManager extends EventEmitter {
 
     // console.log("out :", message.command);
 
-    this.socket?.send(Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)]));
+    this.socket?.send(
+      Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)])
+    );
   }
 
   public async receive(message: any, id?: number) {
