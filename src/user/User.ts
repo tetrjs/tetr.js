@@ -1,7 +1,11 @@
+import Client from "../client/Client";
+import channelApi from "../util/channelApi";
 import { APIResponse } from "../util/types";
 
 export default class User {
-  constructor({ user }: APIResponse) {
+  constructor(client: Client, { user }: APIResponse) {
+    this.client = client;
+
     this.id = user._id;
     this.username = user.username;
     this.role = user.role;
@@ -50,6 +54,8 @@ export default class User {
     this.friendCount = user.friend_count;
     this.distinguishment = user.distinguishment;
   }
+
+  private client: Client;
 
   /** The user's internal ID. */
   public id: string;
@@ -171,4 +177,21 @@ export default class User {
     /** The type of distinguishment banner. */
     type: string;
   };
+
+  public static async fetch(client: Client, user: string): Promise<User> {
+    let user_ = await channelApi(`/users/${user}`);
+
+    return new this(client, user_);
+  }
+
+  public dm(msg: string): void {
+    this.client.ws.send({
+      command: "social.dm",
+      data: { recipient: this.id, msg },
+    });
+  }
+
+  public invite(): void {
+    this.client.ws.send({ command: "social.invite", data: this.id });
+  }
 }

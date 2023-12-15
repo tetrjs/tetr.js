@@ -15,7 +15,7 @@ export default async function (
     })
   ).json();
 
-  if (!response.success) throw Error(response.error.msg);
+  if (!response.success) throw Error(response.error);
 
   return response.data;
 }
