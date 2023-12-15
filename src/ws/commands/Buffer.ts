@@ -1,5 +1,5 @@
 import WebSocketManager from "../WebsocketManager";
 
-export default function (ws: WebSocketManager, message: any) {
-  ws.socket?.emit("message", Buffer.from(message.data));
+export default function ({ socket }: WebSocketManager, { data }: any) {
+  socket?.emit("message", Buffer.from(data));
 }

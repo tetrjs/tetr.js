@@ -55,20 +55,51 @@ export default class User {
     this.distinguishment = user.distinguishment;
   }
 
-  private client: Client;
+  private readonly client: Client;
 
-  /** The user's internal ID. */
-  public id: string;
-  /** The user's username. */
-  public username: string;
-  /** The user's role. */
-  public role: "anon" | "user" | "bot" | "halfmod" | "mod" | "admin" | "sysop";
-  /** When the user account was created. If not set, this account was created before join dates were recorded. */
-  public ts?: Date;
-  /** If this user is a bot, the bot's operator. */
-  public botMaster?: string;
-  /** The user's badges. */
-  public badges: {
+  /**
+   *  The user's internal ID.
+   *
+   * @readonly
+   */
+  public readonly id: string;
+  /**
+   * The user's username.
+   *
+   * @readonly
+   */
+  public readonly username: string;
+  /**
+   * The user's role.
+   *
+   * @readonly
+   */
+  public readonly role:
+    | "anon"
+    | "user"
+    | "bot"
+    | "halfmod"
+    | "mod"
+    | "admin"
+    | "sysop";
+  /**
+   * When the user account was created. If not set, this account was created before join dates were recorded.
+   *
+   * @readonly
+   */
+  public readonly ts?: Date;
+  /**
+   * If this user is a bot, the bot's operator.
+   *
+   * @readonly
+   */
+  public readonly botMaster?: string;
+  /**
+   * The user's badges.
+   *
+   * @readonly
+   */
+  public readonly badges: {
     /**
      * The badge's internal ID, and the filename of the badge icon.
      *
@@ -81,26 +112,66 @@ export default class User {
     /** The badge's timestamp, if shown. */
     ts?: Date;
   }[];
-  /** The user's XP in points. */
-  public xp: number;
-  /** The amount of online games played by this user. If the user has chosen to hide this statistic, it will be -1. */
-  public gamesPlayed: number;
-  /** The amount of online games won by this user. If the user has chosen to hide this statistic, it wl be -1. */
-  public gamesWon: number;
-  /** The amount of seconds this user spent playing, both on- and offline. If the user has chosen to hide this statistic, it will be -1. */
-  public gameTime: number;
-  /** The user's ISO 3166-1 country code, or null if hidden/unknown. Some vanity flags exist. */
-  public country?: string;
-  /** Whether this user current has a bad standing (recently banned). */
-  public badStanding?: boolean;
-  /** Whether this user is currently support TETR.IO <3 */
-  public supporter: boolean;
-  /** An indicator of their total amount supported, between 0 and 4 inclusive. */
-  public supporterTier: number;
-  /** Whether this user is a verified account. */
-  public verified: boolean;
-  /** This user's current TETRA LEAGUE standing. */
-  public league: {
+  /**
+   * The user's XP in points.
+   *
+   * @readonly
+   */
+  public readonly xp: number;
+  /**
+   * The amount of online games played by this user. If the user has chosen to hide this statistic, it will be -1.
+   *
+   * @readonly
+   */
+  public readonly gamesPlayed: number;
+  /**
+   * The amount of online games won by this user. If the user has chosen to hide this statistic, it wl be -1.
+   *
+   * @readonly
+   */
+  public readonly gamesWon: number;
+  /**
+   * The amount of seconds this user spent playing, both on- and offline. If the user has chosen to hide this statistic, it will be -1.
+   *
+   * @readonly
+   */
+  public readonly gameTime: number;
+  /**
+   * The user's ISO 3166-1 country code, or null if hidden/unknown. Some vanity flags exist.
+   *
+   * @readonly
+   */
+  public readonly country?: string;
+  /**
+   * Whether this user current has a bad standing (recently banned).
+   *
+   * @readonly
+   */
+  public readonly badStanding?: boolean;
+  /**
+   * Whether this user is currently support TETR.IO <3
+   *
+   * @readonly
+   */
+  public readonly supporter: boolean;
+  /**
+   * An indicator of their total amount supported, between 0 and 4 inclusive.
+   *
+   * @readonly
+   */
+  public readonly supporterTier: number;
+  /**
+   * Whether this user is a verified account.
+   *
+   * @readonly
+   */
+  public readonly verified: boolean;
+  /**
+   * This user's current TETRA LEAGUE standing.
+   *
+   * @readonly
+   */
+  public readonly league: {
     /** The amount of TETRA LEAGUE games played by this user. */
     gamesPlayed: number;
     /** The amount of TETRA LEAGUE games won by this user. */
@@ -140,28 +211,52 @@ export default class User {
     /** Whether this user's RD is rising (has not played in the last week). */
     decaying: boolean;
   };
-  /** This user's avatar ID. */
-  public avatarRevision?: number;
-  /** A link to the user's avatar if they have one. */
+  /**
+   * This user's avatar ID.
+   *
+   * @readonly
+   */
+  public readonly avatarRevision?: number;
+  /**
+   * A link to the user's avatar if they have one.
+   *
+   * @readonly
+   */
   public get avatarURL(): string | undefined {
     if (this.avatarRevision)
       return `https://tetr.io/user-content/avatars/${this.id}.jpg?rv=${this.avatarRevision}`;
 
     return;
   }
-  /** This user's banner ID. */
-  public bannerRevision?: number;
-  /** A link to the user's banner if they have one. */
+  /**
+   * This user's banner ID.
+   *
+   * @readonly
+   */
+  public readonly bannerRevision?: number;
+  /**
+   * A link to the user's banner if they have one.
+   *
+   * @readonly
+   */
   public get bannerURL(): string | undefined {
     if (this.bannerRevision)
       return `https://tetr.io/user-content/banners/${this.id}.jpg?rv=${this.avatarRevision}`;
 
     return;
   }
-  /** This user's "About Me" section. */
-  public bio?: string;
-  /** This user's third party connections. */
-  public connections: {
+  /**
+   * This user's "About Me" section.
+   *
+   * @readonly
+   */
+  public readonly bio?: string;
+  /**
+   * This user's third party connections.
+   *
+   * @readonly
+   */
+  public readonly connections: {
     /** This user's connection to Discord. */
     discord?: {
       /** This user's Discord ID. */
@@ -170,20 +265,49 @@ export default class User {
       username: string;
     };
   };
-  /** The amount of players who have added this user to their friends list. */
-  public friendCount: number;
-  /** This user's distinguishment banner, if any. */
-  public distinguishment?: {
+  /**
+   * The amount of players who have added this user to their friends list.
+   *
+   * @readonly
+   */
+  public readonly friendCount: number;
+  /**
+   *  This user's distinguishment banner, if any.
+   *
+   * @readonly
+   */
+  public readonly distinguishment?: {
     /** The type of distinguishment banner. */
     type: string;
   };
 
+  /**
+   * Search TetraChannel and return a full User object.
+   * @param client - Client to perform search
+   * @param user - User ID or Username
+   * @returns A User object matching the provided details
+   *
+   * @example
+   * ```
+   * // '5f91f037630a88df78736f78':
+   * (await User.fetch(client, "proximitynow")).id;
+   * ```
+   */
   public static async fetch(client: Client, user: string): Promise<User> {
     let user_ = await channelApi(`/users/${user}`);
 
     return new this(client, user_);
   }
 
+  /**
+   * Send a direct message to this user.
+   * @param msg - The content of the message to send
+   *
+   * @example
+   * ```
+   * indonesia.send("Hello World!");
+   * ```
+   */
   public dm(msg: string): void {
     this.client.ws.send({
       command: "social.dm",
@@ -191,6 +315,9 @@ export default class User {
     });
   }
 
+  /**
+   * Send an invite to the this user of the client's current room.
+   */
   public invite(): void {
     this.client.ws.send({ command: "social.invite", data: this.id });
   }
