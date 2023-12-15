@@ -117,13 +117,13 @@ export default class Room extends EventEmitter {
     garbageBlocking: string;
     /** unknown */
     garbageTargetBonus: string;
-    /** unknown */
+    /** Presets to apply to */
     presets: string;
     /** The type of system used to generate random pieces. */
     bagType: string;
     /** The type of pieces allowed to do spins. */
     spinBonuses: string;
-    /** unknown */
+    /** What combo table to use. */
     comboTable: string;
     /** The type of kicks that pieces can do. */
     kickSet: string;
@@ -168,7 +168,7 @@ export default class Room extends EventEmitter {
      * */
     roomHandlingDas: number;
     /**
-     * Soft Drop Factor. Use 21 for MAX.
+     * Soft Drop Factor. Use 41 for MAX.
      *
      * @remarks
      * Enforced if "enforce below handling settings" is enabled.
@@ -178,16 +178,16 @@ export default class Room extends EventEmitter {
     manualAllowed: boolean;
     /** Whether to make long Back-to-Back chains become more powerful. */
     b2bChaining: boolean;
-    /** unknown */
+    /** Whether to reward clearing the entire board. */
     allClears: boolean;
     /** Whether to allow out-of-bound placements when they clear a line. */
     clutch: boolean;
     noLockout: boolean;
     /** If disabled, attacks can be canceled while in transit or during latency. Experimental, may be removed or become standard. */
     passthrough: string;
-    /** unknown */
+    /** Whether undoing is enabled. */
     canUndo: boolean;
-    /** unknown */
+    /** Whether retrying is enabled. */
     canRetry: boolean;
     /** unknown */
     retryIsClear: boolean;
@@ -195,9 +195,9 @@ export default class Room extends EventEmitter {
     noExtraWidth: boolean;
     /** unknown */
     stride: boolean;
-    /** unknown */
+    /** The width of the playing field. */
     boardWidth: number;
-    /** unknown */
+    /** The height of the playing field. */
     boardHeight: number;
     /** unknown */
     newPayback: boolean;
@@ -209,7 +209,7 @@ export default class Room extends EventEmitter {
    * Does not apply retroactively.
    */
   public userLimit?: number;
-  /** unknown */
+  /** Countdown until the room start. (0 = to disable) */
   public autoStart?: number;
   /**
    * Whether to allow anonymous users to enter this room.
@@ -218,13 +218,13 @@ export default class Room extends EventEmitter {
    * Does not apply retroactively.
    */
   public allowAnonymous?: boolean;
-  /** unknown */
+  /** Whether to allow unranked users to play in this room. */
   public allowUnranked?: boolean;
   /** unknown */
   public allowBots?: boolean;
-  /** unknown */
+  /** The maximum TETRA LEAGUE rank players may have to play in this room. */
   public userRankLimit?: string;
-  /** unknown */
+  /** If a rank limit is set, use the players' top ranks instead of their current ranks. */
   public useBestRankAsLimit?: boolean;
   /** unknown */
   public forceRequireXPToChat?: boolean;
@@ -232,14 +232,14 @@ export default class Room extends EventEmitter {
   public bgm?: string;
   /** unknown */
   public match?: {
-    /** unknown */
+    /** Game mode. */
     gameMode: string;
     /** unknown */
     modeName: string;
     /** Amount of rounds one must win to win the game. */
     ft: number;
     /** Amount of points one must have over the second place to secure the win. */
-    wb: 1;
+    wb: number;
     /** unknown */
     recordReplays: boolean;
     /** unknown */
