@@ -1,7 +1,10 @@
 import WebSocketManager from "../WebsocketManager";
 
-export default async function (ws: WebSocketManager, message: any) {
+export default async function (
+  ws: WebSocketManager,
+  { data: { endpoint } }: any
+) {
   clearInterval(ws.heartbeat);
   ws.socket?.close();
-  await ws.connect(true, message.data.endpoint);
+  await ws.connect(true, endpoint);
 }

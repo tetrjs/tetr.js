@@ -1,91 +1,98 @@
 import User from "../../user/User";
 import WebSocketManager from "../WebsocketManager";
 
-export default async function (ws: WebSocketManager, message: any) {
-  ws.client.room.id = message.data.id;
-  ws.client.room.name = message.data.name;
-  ws.client.room.nameSafe = message.data.name_safe;
-  ws.client.room.type = message.data.type;
-  ws.client.room.owner = await User.fetch(ws.client, message.data.owner);
-  ws.client.room.creator = await User.fetch(ws.client, message.data.creator);
-  ws.client.room.topic = message.data.topic;
-  ws.client.room.options = {
-    ...message.data.options,
-    seedRandom: message.data.options.seed_random,
-    countdownCount: message.data.options.countdown_count,
-    countdownInterval: message.data.options.countdown_interval,
-    missionType: message.data.options.mission_type,
-    zoomInto: message.data.options.zoom_into,
-    slotCounter1: message.data.options.slot_counter1,
-    slotCounter2: message.data.options.slot_counter2,
-    slotCounter3: message.data.options.slot_counter3,
-    slotCounter4: message.data.options.slot_counter4,
-    slotCounter5: message.data.options.slot_counter5,
-    slotBar1: message.data.options.slot_bar1,
-    displayFire: message.data.options.display_fire,
-    displayUsername: message.data.options.display_username,
-    hasGarbage: message.data.options.hasgarbage,
-    bgmNoReset: message.data.options.bgmnoreset,
-    neverStopBgm: message.data.options.neverstopbgm,
-    displayNext: message.data.options.display_next,
-    displayHold: message.data.options.display_hold,
-    infiniteHold: message.data.options.infinite_hold,
-    gMargin: message.data.options.gmargin,
-    gIncrease: message.data.options.gincrease,
-    garbageMultiplier: message.data.options.garbagemultiplier,
-    garbageMargin: message.data.options.garbagemargin,
-    garbageIncrease: message.data.options.garbageincrease,
-    garbageCapMax: message.data.options.garbagecapmax,
-    garbageAbsoluteCap: message.data.options.garbageabsolutecap,
-    garbageHoleSize: message.data.options.garbageholesize,
-    garbagePhase: message.data.options.garbagephase,
-    garbageQueue: message.data.options.garbagequeue,
-    garbageAre: message.data.options.garbageare,
-    garbageEntry: message.data.options.garbageentry,
-    garbageBlocking: message.data.options.garbageblocking,
-    garbageTargetBonus: message.data.options.garbagetargetbonus,
-    bagType: message.data.options.bagtype,
-    spinBonuses: message.data.options.spinbonuses,
-    comboTable: message.data.options.combotable,
-    kickSet: message.data.options.kickset,
-    nextCount: message.data.options.nextcount,
-    allowHardDrop: message.data.options.allow_harddrop,
-    displayShadow: message.data.options.display_shadow,
-    lockTime: message.data.options.locktime,
-    garbageSpeed: message.data.options.garbagespeed,
-    forfeitTime: message.data.options.forfeit_time,
-    lineClearAre: message.data.options.lineclear_are,
-    infiniteMovement: message.data.options.infinitemovement,
-    lockResets: message.data.options.lockresets,
-    roomHandling: message.data.options.room_handling,
-    roomHandlingArr: message.data.options.room_handling_arr,
-    roomHandlingDas: message.data.options.room_handling_das,
-    roomHandlignSdf: message.data.options.room_handling_sdf,
-    manualAllowed: message.data.options.manual_allowed,
-    b2bChaining: message.data.options.b2bchaining,
-    allClears: message.data.options.allclears,
-    noLockout: message.data.options.nolockout,
-    canUndo: message.data.options.can_undo,
-    canRetry: message.data.options.can_retry,
-    retryIsClear: message.data.options.retryisclear,
-    noExtraWidth: message.data.options.noextrawidth,
-    boardWidth: message.data.options.boardwidth,
-    boardHeight: message.data.options.boardheight,
-    newPayback: message.data.options.new_payback,
+export default async function ({ client }: WebSocketManager, { data }: any) {
+  client.room.id = data.id;
+  client.room.name = data.name;
+  client.room.nameSafe = data.name_safe;
+  client.room.type = data.type;
+  client.room.owner = await User.fetch(client, data.owner);
+  client.room.creator = await User.fetch(client, data.creator);
+  client.room.topic = data.topic;
+  client.room.options = {
+    ...data.options,
+    seedRandom: data.options.seed_random,
+    countdownCount: data.options.countdown_count,
+    countdownInterval: data.options.countdown_interval,
+    missionType: data.options.mission_type,
+    zoomInto: data.options.zoom_into,
+    slotCounter1: data.options.slot_counter1,
+    slotCounter2: data.options.slot_counter2,
+    slotCounter3: data.options.slot_counter3,
+    slotCounter4: data.options.slot_counter4,
+    slotCounter5: data.options.slot_counter5,
+    slotBar1: data.options.slot_bar1,
+    displayFire: data.options.display_fire,
+    displayUsername: data.options.display_username,
+    hasGarbage: data.options.hasgarbage,
+    bgmNoReset: data.options.bgmnoreset,
+    neverStopBgm: data.options.neverstopbgm,
+    displayNext: data.options.display_next,
+    displayHold: data.options.display_hold,
+    infiniteHold: data.options.infinite_hold,
+    gMargin: data.options.gmargin,
+    gIncrease: data.options.gincrease,
+    garbageMultiplier: data.options.garbagemultiplier,
+    garbageMargin: data.options.garbagemargin,
+    garbageIncrease: data.options.garbageincrease,
+    garbageCapMax: data.options.garbagecapmax,
+    garbageAbsoluteCap: data.options.garbageabsolutecap,
+    garbageHoleSize: data.options.garbageholesize,
+    garbagePhase: data.options.garbagephase,
+    garbageQueue: data.options.garbagequeue,
+    garbageAre: data.options.garbageare,
+    garbageEntry: data.options.garbageentry,
+    garbageBlocking: data.options.garbageblocking,
+    garbageTargetBonus: data.options.garbagetargetbonus,
+    bagType: data.options.bagtype,
+    spinBonuses: data.options.spinbonuses,
+    comboTable: data.options.combotable,
+    kickSet: data.options.kickset,
+    nextCount: data.options.nextcount,
+    allowHardDrop: data.options.allow_harddrop,
+    displayShadow: data.options.display_shadow,
+    lockTime: data.options.locktime,
+    garbageSpeed: data.options.garbagespeed,
+    forfeitTime: data.options.forfeit_time,
+    lineClearAre: data.options.lineclear_are,
+    infiniteMovement: data.options.infinitemovement,
+    lockResets: data.options.lockresets,
+    roomHandling: data.options.room_handling,
+    roomHandlingArr: data.options.room_handling_arr,
+    roomHandlingDas: data.options.room_handling_das,
+    roomHandlignSdf: data.options.room_handling_sdf,
+    manualAllowed: data.options.manual_allowed,
+    b2bChaining: data.options.b2bchaining,
+    allClears: data.options.allclears,
+    noLockout: data.options.nolockout,
+    canUndo: data.options.can_undo,
+    canRetry: data.options.can_retry,
+    retryIsClear: data.options.retryisclear,
+    noExtraWidth: data.options.noextrawidth,
+    boardWidth: data.options.boardwidth,
+    boardHeight: data.options.boardheight,
+    newPayback: data.options.new_payback,
   };
-  ws.client.room.userLimit = message.data.userLimit;
-  ws.client.room.autoStart = message.data.autoStart;
-  ws.client.room.allowAnonymous = message.data.allowAnonymous;
-  ws.client.room.allowUnranked = message.data.allowUnranked;
-  ws.client.room.allowBots = message.data.allowBots;
-  (ws.client.room.userRankLimit = message.data.userRankLimit),
-    (ws.client.room.useBestRankAsLimit = message.data.useBestRankAsLimit);
-  ws.client.room.forceRequireXPToChat = message.data.forceRequireXPToChat;
-  ws.client.room.bgm = message.data.bgm;
-  ws.client.room.match = {
-    ...message.data.match,
-    gameMode: message.data.match.gamemode,
-    modeName: message.data.match.modename,
-    recordReplays: message.data.match.record_replays,
+  client.room.userLimit = data.userLimit;
+  client.room.autoStart = data.autoStart;
+  client.room.allowAnonymous = data.allowAnonymous;
+  client.room.allowUnranked = data.allowUnranked;
+  client.room.allowBots = data.allowBots;
+  (client.room.userRankLimit = data.userRankLimit),
+    (client.room.useBestRankAsLimit = data.useBestRankAsLimit);
+  client.room.forceRequireXPToChat = data.forceRequireXPToChat;
+  client.room.bgm = data.bgm;
+  client.room.match = {
+    ...data.match,
+    gameMode: data.match.gamemode,
+    modeName: data.match.modename,
+    recordReplays: data.match.record_replays,
   };
+  client.room.players = new Map(
+    await Promise.all(
+      data.players.map(async ({ _id, bracket }: any) => {
+        return [_id, { user: await User.fetch(client, _id), bracket }];
+      })
+    )
+  );
 }

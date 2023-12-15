@@ -1,5 +1,5 @@
 import WebSocketManager from "../WebsocketManager";
 
-export default function (ws: WebSocketManager) {
-  ws.client.me?.presence({ status: "online", detail: "menus" });
+export default function ({ client: { me } }: WebSocketManager) {
+  me?.presence({ status: "online", detail: "menus" });
 }
