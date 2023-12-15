@@ -8,7 +8,7 @@
 
 <p align="center">
   <!-- Flat style -->
-  <a href="https://www.typescriptlang.org/" rel="TypeScript"><img src="https://img.shields.io/badge/TypeScript-v4.2.3-blue"></a>
+  <a href="https://www.typescriptlang.org/" rel="TypeScript"><img src="https://img.shields.io/badge/TypeScript-v5.3.3-blue"></a>
   <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Size"><img src="https://img.shields.io/bundlephobia/min/tetr.js"></a>
   <a href="https://www.npmjs.com/package/tetr.js" rel="NPM Version"><img src=" https://img.shields.io/npm/v/tetr.js"></a>
 </p>
@@ -25,9 +25,10 @@
 </ul>
 <a id="md:install" class="tsd-anchor"></a><h2><a href="#md:install">Install</a></h2><pre><code class="language-sh"><span class="hl-0">$</span><span class="hl-1"> </span><span class="hl-2">npm</span><span class="hl-1"> </span><span class="hl-2">i</span><span class="hl-1"> </span><span class="hl-2">tetr.js</span><span class="hl-1"> </span><span class="hl-3">--save</span>
 </code><button>Copy</button></pre>
-<a id="md:example" class="tsd-anchor"></a><h2><a href="#md:example">Example</a></h2><pre><code class="language-js"><span class="hl-3">const</span><span class="hl-1"> { </span><span class="hl-4">Client</span><span class="hl-1"> } = </span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&quot;tetr.js&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-4">client</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">Client</span><span class="hl-1">();</span><br/><br/><span class="hl-5">client</span><span class="hl-1">.</span><span class="hl-0">on</span><span class="hl-1">(</span><span class="hl-2">&quot;ready&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&quot;Bot online&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-5">client</span><span class="hl-1">.</span><span class="hl-0">login</span><span class="hl-1">(</span><span class="hl-2">&quot;YOUR-TOKEN-HERE&quot;</span><span class="hl-1">);</span>
+<a id="md:example" class="tsd-anchor"></a><h2><a href="#md:example">Example</a></h2><pre><code class="language-js"><span class="hl-3">const</span><span class="hl-1"> { </span><span class="hl-4">Client</span><span class="hl-1"> } = </span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&quot;tetr.js&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-1">(</span><span class="hl-3">async</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-4">client</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">Client</span><span class="hl-1">();</span><br/><br/><span class="hl-1">  </span><span class="hl-5">await</span><span class="hl-1"> </span><span class="hl-6">client</span><span class="hl-1">.</span><span class="hl-0">login</span><span class="hl-1">(</span><span class="hl-2">&quot;YOUR-TOKEN-HERE&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-6">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&quot;Bot online&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">})();</span>
 </code><button>Copy</button></pre>
-<p>Find more examples <a href="https://github.com/Proximitynow19/TETR.JS/tree/master/examples">here</a></p>
+<!-- Find more examples [here](https://github.com/Proximitynow19/TETR.JS/tree/master/examples) -->
+
 <a id="md:technologies" class="tsd-anchor"></a><h2><a href="#md:technologies">Technologies</a></h2><ul>
 <li><a href="https://www.typescriptlang.org/">TypeScript</a></li>
 <li><a href="https://typedoc.org//">TypeDoc</a></li>
