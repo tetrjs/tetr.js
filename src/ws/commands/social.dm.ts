@@ -1,5 +1,4 @@
-import User from "../../user/User";
-import WebSocketManager from "../WebsocketManager";
+import WebSocketManager from "../WebSocketManager";
 
 export default async function (
   { client }: WebSocketManager,
@@ -13,6 +12,6 @@ export default async function (
 
   client.me?.emit("dm", {
     content,
-    author: await User.fetch(client, user),
+    author: await client.fetchUser(user),
   });
 }

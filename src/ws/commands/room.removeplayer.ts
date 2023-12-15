@@ -1,8 +1,7 @@
-import User from "../../user/User";
-import WebSocketManager from "../WebsocketManager";
+import WebSocketManager from "../WebSocketManager";
 
 export default async function ({ client }: WebSocketManager, { data }: any) {
   client.room.players?.delete(data);
 
-  client.room.emit("leave", await User.fetch(client, data));
+  client.room.emit("leave", await client.fetchUser(data));
 }

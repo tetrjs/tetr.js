@@ -1,10 +1,10 @@
 import Client from "../client/Client";
-import channelApi from "../util/channelApi";
 import { APIResponse } from "../util/types";
+import WebSocketManager from "../ws/WebSocketManager";
 
 export default class User {
-  constructor(client: Client, { user }: APIResponse) {
-    this.client = client;
+  constructor(ws: WebSocketManager, { user }: APIResponse) {
+    this.ws = ws;
 
     this.id = user._id;
     this.username = user.username;
@@ -55,7 +55,7 @@ export default class User {
     this.distinguishment = user.distinguishment;
   }
 
-  private readonly client: Client;
+  private readonly ws: WebSocketManager;
 
   /**
    *  The user's internal ID.
@@ -282,26 +282,8 @@ export default class User {
   };
 
   /**
-   * Search TetraChannel and return a full User object.
-   * @param client - Client to perform search
-   * @param user - User ID or Username
-   * @returns A User object matching the provided details
-   *
-   * @example
-   * ```
-   * // '5f91f037630a88df78736f78':
-   * (await User.fetch(client, "proximitynow")).id;
-   * ```
-   */
-  public static async fetch(client: Client, user: string): Promise<User> {
-    let user_ = await channelApi(`/users/${user}`);
-
-    return new this(client, user_);
-  }
-
-  /**
    * Send a direct message to this user.
-   * @param msg - The content of the message to send
+   * @param msg The content of the message to send
    *
    * @example
    * ```
@@ -309,7 +291,7 @@ export default class User {
    * ```
    */
   public dm(msg: string): void {
-    this.client.ws.send({
+    this.ws.send({
       command: "social.dm",
       data: { recipient: this.id, msg },
     });
@@ -319,6 +301,6 @@ export default class User {
    * Send an invite to the this user of the client's current room.
    */
   public invite(): void {
-    this.client.ws.send({ command: "social.invite", data: this.id });
+    this.ws.send({ command: "social.invite", data: this.id });
   }
 }

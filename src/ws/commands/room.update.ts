@@ -1,13 +1,12 @@
-import User from "../../user/User";
-import WebSocketManager from "../WebsocketManager";
+import WebSocketManager from "../WebSocketManager";
 
 export default async function ({ client }: WebSocketManager, { data }: any) {
   client.room.id = data.id;
   client.room.name = data.name;
   client.room.nameSafe = data.name_safe;
   client.room.type = data.type;
-  client.room.owner = await User.fetch(client, data.owner);
-  client.room.creator = await User.fetch(client, data.creator);
+  client.room.owner = await client.fetchUser(data.owner);
+  client.room.creator = await client.fetchUser(data.creator);
   client.room.topic = data.topic;
   client.room.options = {
     ...data.options,
@@ -91,7 +90,7 @@ export default async function ({ client }: WebSocketManager, { data }: any) {
   client.room.players = new Map(
     await Promise.all(
       data.players.map(async ({ _id, bracket }: any) => {
-        return [_id, { user: await User.fetch(client, _id), bracket }];
+        return [_id, { user: await client.fetchUser(_id), bracket }];
       })
     )
   );

@@ -1,6 +1,7 @@
-import EventEmitter from "node:events";
-import WebSocketManager from "../ws/WebsocketManager";
+import WebSocketManager from "../ws/WebSocketManager";
 import User from "../user/User";
+
+const EventEmitter = require("node:events");
 
 export default class Room extends EventEmitter {
   constructor(ws: WebSocketManager) {
@@ -254,7 +255,7 @@ export default class Room extends EventEmitter {
 
   /**
    * Join an existing room.
-   * @param room - The room ID to join
+   * @param room The room ID to join
    *
    * @returns The room object of the joined room
    *
@@ -284,7 +285,7 @@ export default class Room extends EventEmitter {
 
   /**
    * Creates a new room.
-   * @param data - The visibility status of the room
+   * @param data The visibility status of the room
    *
    * @returns The newly created room
    *
@@ -304,7 +305,7 @@ export default class Room extends EventEmitter {
 
   /**
    * Send a message in the room chat.
-   * @param data - The content of the message to send
+   * @param data The content of the message to send
    *
    * @example
    * ```
@@ -317,8 +318,8 @@ export default class Room extends EventEmitter {
 
   /**
    * Switch a player's bracket in the room. Defaults to the client's player.
-   * @param data - The new bracket to switch to
-   * @param player - The target player
+   * @param data The new bracket to switch to
+   * @param player The target player
    *
    * @example
    * ```
@@ -350,7 +351,7 @@ export default class Room extends EventEmitter {
 
   /**
    * Transfer the host privileges to a present player.
-   * @param player - The player to receive host
+   * @param player The player to receive host
    *
    * @example
    * ```
