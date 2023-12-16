@@ -1,7 +1,7 @@
 import WebSocketManager from "../ws/WebSocketManager";
 import ClientUser from "./ClientUser";
 import api from "../util/api";
-import Room from "../Room/Room";
+import Room from "../room/Room";
 import User from "../user/User";
 import channelApi from "../util/channelApi";
 
