@@ -1,6 +1,7 @@
 import WebSocketManager from "../ws/WebSocketManager";
 import User from "../user/User";
 import EventEmitter from "node:events";
+import Game from "../game/Game";
 
 /** Represents the Client's room status. */
 export default class Room extends EventEmitter {
@@ -12,9 +13,11 @@ export default class Room extends EventEmitter {
 
   private ws: WebSocketManager;
 
+  /** Gameplay events for this room */
+  public game?: Game;
   /** The room ID. */
   public id?: string;
-  /** Name this room will display in the listing as */
+  /** Name this room will display in the listing as. */
   public name?: string;
   /** unknown */
   public nameSafe?: string;
@@ -260,7 +263,7 @@ export default class Room extends EventEmitter {
     extra: any;
   };
   /** The present players in the room. */
-  public players?: Map<string, Player>;
+  public players?: Map<string, Member>;
 
   /**
    * Join an existing room.
@@ -371,28 +374,34 @@ export default class Room extends EventEmitter {
    * })
    * ```
    */
-  public ownerTransfer(player: Player): void {
+  public ownerTransfer(player: Member): void {
     this.ws.send({ command: "room.owner.transfer", data: player.user.id });
+  }
+
+  public start(): void {
+    this.ws.send({ command: "room.start" });
   }
 }
 
 export default interface Client extends EventEmitter {
   /**  Emitted when a player joins the room. */
-  on(eventName: "join", listener: (player: Player) => void): this;
+  on(eventName: "join", listener: (player: Member) => void): this;
 
   /** Emitted when a player sends a message. */
-  on(eventName: "chat", listener: (player: Player) => void): this;
+  on(eventName: "chat", listener: (player: Member) => void): this;
 
   /** Emitted when a player leaves the room. */
   on(eventName: "leave", listener: (player: User) => void): this;
 
   /** Emitted when a player switches brackets. */
-  on(eventName: "bracket", listener: (player: Player) => void): this;
+  on(eventName: "bracket", listener: (player: Member) => void): this;
+
+  on(eventName: "start", listener: (game: Game) => void): this;
 }
 
-export type Player = {
-  /** The User object tied to this player. */
+export type Member = {
+  /** The User object tied to this member. */
   user: User;
-  /** The current bracket the player is in. */
+  /** The current bracket this member is in. */
   bracket: "spectator" | "player";
 };
