@@ -1,17 +1,21 @@
 import api from "../util/api";
 import Client from "../client/Client";
-import { Packr, Unpackr, unpack } from "msgpackr";
+import { Packr, Unpackr } from "msgpackr";
 import { readdirSync } from "fs";
 import { join } from "path";
 import WebSocket from "ws";
 import EventEmitter from "node:events";
 
-const ribbonPackr = new Packr({
+const { unpack } = new Unpackr({ useRecords: false });
+const { pack: ribbonPackr } = new Packr({
   sequential: true,
+  useRecords: false,
 });
-const ribbonUnpackr = new Unpackr({
+const { unpack: ribbonUnpackr } = new Unpackr({
   sequential: true,
+  useRecords: false,
 });
+
 export default class WebSocketManager extends EventEmitter {
   static readonly MESSAGE_TYPE = {
     STANDARD: 0x45,
@@ -165,7 +169,7 @@ export default class WebSocketManager extends EventEmitter {
     this.socket.on("message", (data: Buffer) => {
       switch (Number(data.readUint8())) {
         case WebSocketManager.MESSAGE_TYPE.STANDARD:
-          this.receive(ribbonUnpackr.unpack(data.subarray(1)));
+          this.receive(ribbonUnpackr(data.subarray(1)));
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTRACTED_ID:
           this.receive(unpack(data.subarray(5)), data.readUint32BE(1));
@@ -228,7 +232,7 @@ export default class WebSocketManager extends EventEmitter {
     // console.log("out :", message.command);
 
     this.socket?.send(
-      Buffer.concat([Buffer.from([type]), ribbonPackr.pack(message)])
+      Buffer.concat([Buffer.from([type]), ribbonPackr(message)])
     );
   }
 
