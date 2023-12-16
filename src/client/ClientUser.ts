@@ -169,3 +169,14 @@ export default class ClientUser extends EventEmitter {
     this.ws.send({ command: "social.presence", data: presence });
   }
 }
+
+export default interface Client extends EventEmitter {
+  /** Emitted when a user sends a direct message to the client. */
+  on(eventName: "dm", listener: (content: string, author: User) => void): this;
+
+  /** Emitted when a user sends an invite to the client.*/
+  on(eventName: "invite", listener: (author: User, room: string) => void): this;
+
+  /** Emitted when the server sends an update on how many users online. */
+  on(eventName: "online", listener: (online: number) => void): this;
+}

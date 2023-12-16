@@ -260,15 +260,7 @@ export default class Room extends EventEmitter {
     extra: any;
   };
   /** The present players in the room. */
-  public players?: Map<
-    string,
-    {
-      /** The User object tied to this player. */
-      user: User;
-      /** The current bracket the player is in. */
-      bracket: "spectator" | "player";
-    }
-  >;
+  public players?: Map<string, Player>;
 
   /**
    * Join an existing room.
@@ -379,10 +371,28 @@ export default class Room extends EventEmitter {
    * })
    * ```
    */
-  public ownerTransfer(player: {
-    user: User;
-    bracket: "spectator" | "player";
-  }): void {
+  public ownerTransfer(player: Player): void {
     this.ws.send({ command: "room.owner.transfer", data: player.user.id });
   }
 }
+
+export default interface Client extends EventEmitter {
+  /**  Emitted when a player joins the room. */
+  on(eventName: "join", listener: (player: Player) => void): this;
+
+  /** Emitted when a player sends a message. */
+  on(eventName: "chat", listener: (player: Player) => void): this;
+
+  /** Emitted when a player leaves the room. */
+  on(eventName: "leave", listener: (player: User) => void): this;
+
+  /** Emitted when a player switches brackets. */
+  on(eventName: "bracket", listener: (player: Player) => void): this;
+}
+
+export type Player = {
+  /** The User object tied to this player. */
+  user: User;
+  /** The current bracket the player is in. */
+  bracket: "spectator" | "player";
+};
