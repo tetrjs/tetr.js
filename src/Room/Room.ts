@@ -43,178 +43,7 @@ export default class Room extends EventEmitter {
     maxTime: number;
   };
   /** Information regarding gameplay settings. */
-  public options?: {
-    /** Protocol version. */
-    version: number;
-    /** unknown */
-    seedRandom: boolean;
-    /** The RNG seed of the game. */
-    seed: number;
-    /** Starting gravity (how fast blocks drop). Higher is faster. */
-    g: number;
-    /** Amount of extra lives one has. */
-    stock: number;
-    /** Whether the game has a countdown. */
-    countdown: boolean;
-    /** The number from which to countdown. */
-    countdownCount: number;
-    /** The time in millisecond between each count. */
-    countdownInterval: number;
-    /** The time in milliseconds before the countdown begins. */
-    precountdown: number;
-    /** unknown */
-    prestart: number;
-    /** unknown */
-    mission: string;
-    /** unknown */
-    missionType: string;
-    /** unknown */
-    zoomInto: string;
-    /** unknown */
-    slotCounter1: string;
-    /** unknown */
-    slotCounter2: string;
-    /** unknown */
-    slotCounter3: string;
-    /** unknown */
-    slotCounter4: string;
-    /** unknown */
-    slotCounter5: string;
-    /** unknown */
-    slotBar1: string;
-    /** Whether to display fire. */
-    displayFire: boolean;
-    /** unknown */
-    displayUsername: boolean;
-    /** unknown */
-    hasGarbage: boolean;
-    /** unknown */
-    bgmNoReset: boolean;
-    /** Whether to keep the BGM playing between games. */
-    neverStopBgm: boolean;
-    /** Whether to show the NEXT queue. */
-    displayNext: boolean;
-    /** Whether to use the HOLD queue. */
-    displayHold: boolean;
-    /** unknown */
-    infiniteHold: boolean;
-    /** Amount of time in frames until the gravity starts to increase. */
-    gMargin: number;
-    /** The amount of gravity increase per second. */
-    gIncrease: number;
-    /** Starting garbage multiplier. 1 means normal amount of garbage, 2 means double. */
-    garbageMultiplier: number;
-    /** Amount of time in frames until the garbage multiplier starts to increase. */
-    garbageMargin: number;
-    /** The amount of garbage multiplier increase per second. */
-    garbageIncrease: number;
-    /** Amount of garbage that may enter the screen at once. */
-    garbageCap: number;
-    /** The amount of garbage cap increase per second. */
-    garbageCapIncrease: number;
-    /** Maximum amount the garbage cap may reach. */
-    garbageCapMax: number;
-    /** unknown */
-    garbageAbsoluteCap: boolean;
-    /** unknown */
-    garbageHoleSize: number;
-    /** unknown */
-    garbagePhase: number;
-    /** unknown */
-    garbageQueue: boolean;
-    /** unknown */
-    garbageAre: number;
-    /** unknown */
-    garbageEntry: string;
-    /** unknown */
-    garbageBlocking: string;
-    /** unknown */
-    garbageTargetBonus: string;
-    /** Presets to apply to */
-    presets: string;
-    /** The type of system used to generate random pieces. */
-    bagType: string;
-    /** The type of pieces allowed to do spins. */
-    spinBonuses: string;
-    /** What combo table to use. */
-    comboTable: string;
-    /** The type of kicks that pieces can do. */
-    kickSet: string;
-    /** Amount of pieces shown in the NEXT queue, if said queue is enabled. */
-    nextCount: number;
-    /** Whether to allow use of the Hard Drop button. */
-    allowHardDrop: boolean;
-    /** Whether to show the shadow piece. */
-    displayShadow: boolean;
-    /** If not using master levels, the amount of frames until a piece locks down. */
-    lockTime: number;
-    /** The time it takes in frames for garbage to travel. */
-    garbageSpeed: number;
-    /** unknown */
-    forfeitTime: number;
-    /** Amount of time in frames in between a piece being placed and the next one spawning. */
-    are: number;
-    /** Amount of time in frames in between a piece being placed and the next one spawning, if a line was cleared. */
-    lineClearAre: boolean;
-    /** Whether to enable infinite movement (disables lockResets). */
-    infiniteMovement: boolean;
-    /** How many times to enable resetting the lock delay (by rotating or moving a piece). */
-    lockResets: number;
-    /** Whether to allow the 180 rotation key to be used. */
-    allow180: boolean;
-    /** unknown */
-    objective: any;
-    /** Whether to enforce the handling settings below. */
-    roomHandling: boolean;
-    /**
-     * Auto Repeat Rate.
-     *
-     * @remarks
-     * Enforced if "enforce below handling settings" is enabled.
-     * */
-    roomHandlingArr: number;
-    /**
-     * Delayed Auto Shift.
-     *
-     * @remarks
-     * Enforced if "enforce below handling settings" is enabled.
-     * */
-    roomHandlingDas: number;
-    /**
-     * Soft Drop Factor. Use 41 for MAX.
-     *
-     * @remarks
-     * Enforced if "enforce below handling settings" is enabled.
-     * */
-    roomHandlignSdf: number;
-    /** Whether to allow users to click boards to manually target them. */
-    manualAllowed: boolean;
-    /** Whether to make long Back-to-Back chains become more powerful. */
-    b2bChaining: boolean;
-    /** Whether to reward clearing the entire board. */
-    allClears: boolean;
-    /** Whether to allow out-of-bound placements when they clear a line. */
-    clutch: boolean;
-    noLockout: boolean;
-    /** If disabled, attacks can be canceled while in transit or during latency. Experimental, may be removed or become standard. */
-    passthrough: string;
-    /** Whether undoing is enabled. */
-    canUndo: boolean;
-    /** Whether retrying is enabled. */
-    canRetry: boolean;
-    /** unknown */
-    retryIsClear: boolean;
-    /** unknown */
-    noExtraWidth: boolean;
-    /** unknown */
-    stride: boolean;
-    /** The width of the playing field. */
-    boardWidth: number;
-    /** The height of the playing field. */
-    boardHeight: number;
-    /** unknown */
-    newPayback: boolean;
-  };
+  public options?: GameOptions;
   /**
    *  Maximum players in this room. (0 = no limit.)
    *
@@ -404,4 +233,177 @@ export type Member = {
   user: User;
   /** The current bracket this member is in. */
   bracket: "spectator" | "player";
+};
+
+export type GameOptions = {
+  /** Protocol version. */
+  version: number;
+  /** unknown */
+  seedRandom: boolean;
+  /** The RNG seed of the game. */
+  seed: number;
+  /** Starting gravity (how fast blocks drop). Higher is faster. */
+  g: number;
+  /** Amount of extra lives one has. */
+  stock: number;
+  /** Whether the game has a countdown. */
+  countdown: boolean;
+  /** The number from which to countdown. */
+  countdownCount: number;
+  /** The time in millisecond between each count. */
+  countdownInterval: number;
+  /** The time in milliseconds before the countdown begins. */
+  precountdown: number;
+  /** unknown */
+  prestart: number;
+  /** unknown */
+  mission: string;
+  /** unknown */
+  missionType: string;
+  /** unknown */
+  zoomInto: string;
+  /** unknown */
+  slotCounter1: string;
+  /** unknown */
+  slotCounter2: string;
+  /** unknown */
+  slotCounter3: string;
+  /** unknown */
+  slotCounter4: string;
+  /** unknown */
+  slotCounter5: string;
+  /** unknown */
+  slotBar1: string;
+  /** Whether to display fire. */
+  displayFire: boolean;
+  /** unknown */
+  displayUsername: boolean;
+  /** unknown */
+  hasGarbage: boolean;
+  /** unknown */
+  bgmNoReset: boolean;
+  /** Whether to keep the BGM playing between games. */
+  neverStopBgm: boolean;
+  /** Whether to show the NEXT queue. */
+  displayNext: boolean;
+  /** Whether to use the HOLD queue. */
+  displayHold: boolean;
+  /** unknown */
+  infiniteHold: boolean;
+  /** Amount of time in frames until the gravity starts to increase. */
+  gMargin: number;
+  /** The amount of gravity increase per second. */
+  gIncrease: number;
+  /** Starting garbage multiplier. 1 means normal amount of garbage, 2 means double. */
+  garbageMultiplier: number;
+  /** Amount of time in frames until the garbage multiplier starts to increase. */
+  garbageMargin: number;
+  /** The amount of garbage multiplier increase per second. */
+  garbageIncrease: number;
+  /** Amount of garbage that may enter the screen at once. */
+  garbageCap: number;
+  /** The amount of garbage cap increase per second. */
+  garbageCapIncrease: number;
+  /** Maximum amount the garbage cap may reach. */
+  garbageCapMax: number;
+  /** unknown */
+  garbageAbsoluteCap: boolean;
+  /** unknown */
+  garbageHoleSize: number;
+  /** unknown */
+  garbagePhase: number;
+  /** unknown */
+  garbageQueue: boolean;
+  /** unknown */
+  garbageAre: number;
+  /** unknown */
+  garbageEntry: string;
+  /** unknown */
+  garbageBlocking: string;
+  /** unknown */
+  garbageTargetBonus: string;
+  /** Presets to apply to */
+  presets: string;
+  /** The type of system used to generate random pieces. */
+  bagType: string;
+  /** The type of pieces allowed to do spins. */
+  spinBonuses: string;
+  /** What combo table to use. */
+  comboTable: string;
+  /** The type of kicks that pieces can do. */
+  kickSet: string;
+  /** Amount of pieces shown in the NEXT queue, if said queue is enabled. */
+  nextCount: number;
+  /** Whether to allow use of the Hard Drop button. */
+  allowHardDrop: boolean;
+  /** Whether to show the shadow piece. */
+  displayShadow: boolean;
+  /** If not using master levels, the amount of frames until a piece locks down. */
+  lockTime: number;
+  /** The time it takes in frames for garbage to travel. */
+  garbageSpeed: number;
+  /** unknown */
+  forfeitTime: number;
+  /** Amount of time in frames in between a piece being placed and the next one spawning. */
+  are: number;
+  /** Amount of time in frames in between a piece being placed and the next one spawning, if a line was cleared. */
+  lineClearAre: boolean;
+  /** Whether to enable infinite movement (disables lockResets). */
+  infiniteMovement: boolean;
+  /** How many times to enable resetting the lock delay (by rotating or moving a piece). */
+  lockResets: number;
+  /** Whether to allow the 180 rotation key to be used. */
+  allow180: boolean;
+  /** unknown */
+  objective: any;
+  /** Whether to enforce the handling settings below. */
+  roomHandling: boolean;
+  /**
+   * Auto Repeat Rate.
+   *
+   * @remarks
+   * Enforced if "enforce below handling settings" is enabled.
+   * */
+  roomHandlingArr: number;
+  /**
+   * Delayed Auto Shift.
+   *
+   * @remarks
+   * Enforced if "enforce below handling settings" is enabled.
+   * */
+  roomHandlingDas: number;
+  /**
+   * Soft Drop Factor. Use 41 for MAX.
+   *
+   * @remarks
+   * Enforced if "enforce below handling settings" is enabled.
+   * */
+  roomHandlignSdf: number;
+  /** Whether to allow users to click boards to manually target them. */
+  manualAllowed: boolean;
+  /** Whether to make long Back-to-Back chains become more powerful. */
+  b2bChaining: boolean;
+  /** Whether to reward clearing the entire board. */
+  allClears: boolean;
+  /** Whether to allow out-of-bound placements when they clear a line. */
+  clutch: boolean;
+  noLockout: boolean;
+  /** If disabled, attacks can be canceled while in transit or during latency. Experimental, may be removed or become standard. */
+  passthrough: string;
+  /** Whether undoing is enabled. */
+  canUndo: boolean;
+  /** Whether retrying is enabled. */
+  canRetry: boolean;
+  /** unknown */
+  retryIsClear: boolean;
+  /** unknown */
+  noExtraWidth: boolean;
+  /** unknown */
+  stride: boolean;
+  /** The width of the playing field. */
+  boardWidth: number;
+  /** The height of the playing field. */
+  boardHeight: number;
+  /** unknown */
+  newPayback: boolean;
 };

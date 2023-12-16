@@ -1,5 +1,9 @@
+import { GameOptions } from "../room/Room";
+import User from "../user/User";
+
 export default class Player {
   constructor(player: any) {
+    this.user = player.user;
     this.options = player.options;
 
     this.t = this.options.seed % 2147483647;
@@ -7,9 +11,13 @@ export default class Player {
     if (this.t <= 0) this.t += 2147483646;
   }
 
-  private options: any;
   private t = 2147483646;
   private lastGenerated?: number;
+
+  // not the exact same as on room.update
+  // pls compare and see what should be added to type
+  public options: GameOptions;
+  public user: User;
 
   private next(): number {
     return (this.t = (16807 * this.t) % 2147483647);
