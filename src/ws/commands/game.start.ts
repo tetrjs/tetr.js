@@ -1,13 +1,15 @@
 import WebSocketManager from "../WebSocketManager";
 
-export default function ({ client: { room } }: WebSocketManager) {
-  if (!room.game?.me) return;
-
-  setTimeout(() => {
-    if (!room.game?.me) return;
-
-    console.log(room.game);
-
-    room.game.emit("start", room.game.me);
-  }, room.game.me.player.pregameTime);
+export default function ({
+  client: {
+    room: { game },
+  },
+}: WebSocketManager) {
+  if (game?.me)
+    setTimeout(() => {
+      if (!game.me) return;
+      game.me.lastFrame = Date.now();
+      game.me.replay();
+      game.me.emit("start", game.me);
+    }, game.me.player.pregameTime);
 }

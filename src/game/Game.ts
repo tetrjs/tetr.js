@@ -1,26 +1,22 @@
 import EventEmitter from "node:events";
 import Player from "./Player";
-import ClientUser from "../client/ClientUser";
 import ClientPlayer from "../client/ClientPlayer";
+import WebSocketManager from "../ws/WebSocketManager";
+import ClientUser from "../client/ClientUser";
 
 export default class Game extends EventEmitter {
-  constructor(me: ClientUser, players: Player[]) {
+  constructor(ws: WebSocketManager, me: ClientUser, players: Player[]) {
     super();
 
-    this.players = new Map(players.map((player) => [player.id, player]));
+    this.players = new Map(players.map((player) => [player.user.id, player]));
 
-    this.me_ = me;
+    let me_;
+
+    if ((me_ = this.players.get(me.user.id)))
+      this.me = new ClientPlayer(ws, me_);
   }
 
-  private me_: ClientUser;
+  public me?: ClientPlayer;
 
   public players: Map<string, Player>;
-
-  public get me(): ClientPlayer | undefined {
-    let me;
-
-    if (!(me = this.players.get(this.me_.user.id))) return;
-
-    return new ClientPlayer(me);
-  }
 }
