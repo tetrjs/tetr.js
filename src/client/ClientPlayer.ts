@@ -3,8 +3,26 @@ import Player from "../game/Player";
 import WebSocketManager from "../ws/WebSocketManager";
 
 const full = {
-  successful: false,
+  aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
+  diyusi: 0,
+  enemies: [],
+  fire: 0,
+  game: {
+    controlling: {
+      lastshift: 0,
+      ldas: 0,
+      ldasiter: 0,
+      lshift: false,
+      rdas: 0,
+      rdasiter: 0,
+      rshift: false,
+      softdrop: false,
+    },
+    hold: { piece: null, locked: false },
+    playing: true,
+  },
   gameoverreason: null,
+  killer: { gameid: null, name: null, type: "sizzle" },
   replay: {},
   source: {},
   stats: {
@@ -12,7 +30,14 @@ const full = {
     level_lines: 0,
     level_lines_needed: 1,
     inputs: 0,
-    time: { start: 0, zero: true, locked: false, prev: 0, frameoffset: 0 },
+    holds: 0,
+    time: {
+      start: 0,
+      zero: true,
+      locked: false,
+      prev: 0,
+      frameoffset: 0,
+    },
     score: 0,
     zenlevel: 1,
     zenprogress: 0,
@@ -22,6 +47,7 @@ const full = {
     topcombo: 0,
     btb: 0,
     topbtb: 0,
+    currentbtbchainpower: 0,
     tspins: 0,
     piecesplaced: 0,
     clears: {
@@ -29,6 +55,7 @@ const full = {
       doubles: 0,
       triples: 0,
       quads: 0,
+      pentas: 0,
       realtspins: 0,
       minitspins: 0,
       minitspinsingles: 0,
@@ -37,31 +64,24 @@ const full = {
       tspindoubles: 0,
       tspintriples: 0,
       tspinquads: 0,
+      tspinpentas: 0,
       allclear: 0,
     },
-    garbage: { sent: 0, received: 0, attack: 0, cleared: 0 },
-    kills: 0,
-    finesse: { combo: 0, faults: 0, perfectpieces: 0 },
-  },
-  targets: [],
-  fire: 0,
-  game: {
-    hold: { piece: null, locked: false },
-    controlling: {
-      ldas: 0,
-      ldasiter: 0,
-      lshift: false,
-      rdas: 0,
-      rdasiter: 0,
-      rshift: false,
-      lastshift: 0,
-      softdrop: false,
+    garbage: {
+      sent: 0,
+      received: 0,
+      attack: 0,
+      cleared: 0,
     },
-    playing: true,
+    kills: 0,
+    finesse: {
+      combo: 0,
+      faults: 0,
+      perfectpieces: 0,
+    },
   },
-  killer: { name: null, type: "sizzle" },
-  assumptions: {},
-  aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
+  successful: false,
+  targets: [],
 };
 
 export default class ClientPlayer extends EventEmitter {
@@ -77,16 +97,25 @@ export default class ClientPlayer extends EventEmitter {
           stats: { ...full.stats, seed: me.options.seed },
           game: {
             ...full.game,
+            bag: me.nextPieces,
             board: new Array(
               me.options.boardHeight + me.player_.options.boardbuffer
             ).fill(new Array(me.options.boardWidth).fill(null)),
-            bag: me.nextPieces,
             g: me.options.g,
+            handling: me.player_.options.handling,
           },
         },
       },
       { type: "start", data: {} },
     ];
+
+    // let z = this.frames[0].data;
+
+    // console.log(z.stats.seed);
+    // console.log(z.game.bag);
+    // console.log(z.game.board);
+    // console.log(z.game.g);
+    // console.log(z.game.handling);
 
     this.ws = ws;
     this.player = me;
