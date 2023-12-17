@@ -1,10 +1,13 @@
 import { GameOptions } from "../room/Room";
 import User from "../user/User";
 
+// switch to member
 export default class Player {
-  constructor(player: any) {
-    this.user = player.user;
-    this.options = player.options;
+  constructor(id: string, user: User, options: GameOptions) {
+    this.user = user;
+    this.options = options;
+    this.board = new Board(options);
+    this.id = id;
 
     this.t = this.options.seed % 2147483647;
 
@@ -18,6 +21,8 @@ export default class Player {
   // pls compare and see what should be added to type
   public options: GameOptions;
   public user: User;
+  public board: Board;
+  public id: string;
 
   private next(): number {
     return (this.t = (16807 * this.t) % 2147483647);
@@ -38,6 +43,14 @@ export default class Player {
     }
 
     return array;
+  }
+
+  public get pregameTime() {
+    return (
+      1000 +
+      this.options.precountdown +
+      this.options.countdownInterval * this.options.countdownCount
+    );
   }
 
   public get nextPieces(): string[] {
@@ -70,3 +83,13 @@ export default class Player {
 }
 
 const bag = ["Z", "L", "O", "S", "I", "J", "T"];
+
+export class Board {
+  constructor(options: GameOptions) {
+    this.pieces = new Array(options.boardHeight).fill(
+      new Array(options.boardWidth).fill(null)
+    );
+  }
+
+  public pieces: (string | null)[][];
+}

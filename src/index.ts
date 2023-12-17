@@ -4,5 +4,16 @@ import ClientUser from "./client/ClientUser";
 import User from "./user/User";
 import Game from "./game/Game";
 import Player from "./game/Player";
+import ClientPlayer from "./client/ClientPlayer";
 
-export { Client, ClientUser, Room, Member, User, Game, Player, GameOptions };
+export {
+  Client,
+  ClientUser,
+  Room,
+  Member,
+  User,
+  Game,
+  Player,
+  GameOptions,
+  ClientPlayer,
+};
