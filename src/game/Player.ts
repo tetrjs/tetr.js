@@ -3,11 +3,82 @@ import User from "../user/User";
 
 // switch to member
 export default class Player {
-  constructor(id: string, user: User, options: GameOptions) {
+  constructor(player: any, user: User, isNew: boolean) {
     this.user = user;
-    this.options = options;
-    this.board = new Board(options);
-    this.id = id;
+
+    this.isNew = isNew;
+    this.player_ = player;
+
+    // redo this sometime and change gameoption type to PlayerOption
+    // not all the same
+    this.options = {
+      ...player.options,
+      seedRandom: player.options.seed_random,
+      countdownCount: player.options.countdown_count,
+      countdownInterval: player.options.countdown_interval,
+      missionType: player.options.mission_type,
+      zoomInto: player.options.zoom_into,
+      slotCounter1: player.options.slot_counter1,
+      slotCounter2: player.options.slot_counter2,
+      slotCounter3: player.options.slot_counter3,
+      slotCounter4: player.options.slot_counter4,
+      slotCounter5: player.options.slot_counter5,
+      slotBar1: player.options.slot_bar1,
+      displayFire: player.options.display_fire,
+      displayUsername: player.options.display_username,
+      hasGarbage: player.options.hasgarbage,
+      bgmNoReset: player.options.bgmnoreset,
+      neverStopBgm: player.options.neverstopbgm,
+      displayNext: player.options.display_next,
+      displayHold: player.options.display_hold,
+      infiniteHold: player.options.infinite_hold,
+      gMargin: player.options.gmargin,
+      gIncrease: player.options.gincrease,
+      garbageMultiplier: player.options.garbagemultiplier,
+      garbageMargin: player.options.garbagemargin,
+      garbageIncrease: player.options.garbageincrease,
+      garbageCapMax: player.options.garbagecapmax,
+      garbageAbsoluteCap: player.options.garbageabsolutecap,
+      garbageHoleSize: player.options.garbageholesize,
+      garbagePhase: player.options.garbagephase,
+      garbageQueue: player.options.garbagequeue,
+      garbageAre: player.options.garbageare,
+      garbageEntry: player.options.garbageentry,
+      garbageBlocking: player.options.garbageblocking,
+      garbageTargetBonus: player.options.garbagetargetbonus,
+      bagType: player.options.bagtype,
+      spinBonuses: player.options.spinbonuses,
+      comboTable: player.options.combotable,
+      kickSet: player.options.kickset,
+      nextCount: player.options.nextcount,
+      allowHardDrop: player.options.allow_harddrop,
+      displayShadow: player.options.display_shadow,
+      lockTime: player.options.locktime,
+      garbageSpeed: player.options.garbagespeed,
+      forfeitTime: player.options.forfeit_time,
+      lineClearAre: player.options.lineclear_are,
+      infiniteMovement: player.options.infinitemovement,
+      lockResets: player.options.lockresets,
+      roomHandling: player.options.room_handling,
+      roomHandlingArr: player.options.room_handling_arr,
+      roomHandlingDas: player.options.room_handling_das,
+      roomHandlignSdf: player.options.room_handling_sdf,
+      manualAllowed: player.options.manual_allowed,
+      b2bChaining: player.options.b2bchaining,
+      allClears: player.options.allclears,
+      noLockout: player.options.nolockout,
+      canUndo: player.options.can_undo,
+      canRetry: player.options.can_retry,
+      retryIsClear: player.options.retryisclear,
+      noExtraWidth: player.options.noextrawidth,
+      boardWidth: player.options.boardwidth,
+      boardHeight: player.options.boardheight,
+      newPayback: player.options.new_payback,
+    };
+
+    this.board = new Board(this.options);
+    this.id = player.gameid;
+    this.player_ = player;
 
     this.t = this.options.seed % 2147483647;
 
@@ -16,6 +87,10 @@ export default class Player {
 
   private t = 2147483646;
   private lastGenerated?: number;
+  private isNew: boolean;
+
+  // raw init data
+  public player_: any;
 
   // not the exact same as on room.update
   // pls compare and see what should be added to type
@@ -47,9 +122,11 @@ export default class Player {
 
   public get pregameTime() {
     return (
-      1000 +
-      this.options.precountdown +
-      this.options.countdownInterval * this.options.countdownCount
+      this.options.prestart +
+      (this.isNew ? this.options.precountdown : 0) +
+      (this.options.countdown
+        ? this.options.countdownInterval * this.options.countdownCount
+        : 0)
     );
   }
 
