@@ -74,6 +74,12 @@ export default class Client {
     await this.login(auth.token);
   }
 
+  public logout(): void {
+    this.ws.send({ command: "die" }, false);
+    clearInterval(this.ws.heartbeat);
+    this.ws.socket?.close();
+  }
+
   /**
    * Search TetraChannel and return a full User object.
    * @param user User ID or Username
