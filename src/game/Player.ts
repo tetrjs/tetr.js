@@ -159,7 +159,7 @@ export default class Player {
   }
 }
 
-const bag = ["Z", "L", "O", "S", "I", "J", "T"];
+const bag = ["z", "l", "o", "s", "i", "j", "t"];
 
 export class Board {
   constructor(options: GameOptions) {
