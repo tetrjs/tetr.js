@@ -212,7 +212,7 @@ export default class Room extends EventEmitter {
   }
 }
 
-export default interface Client extends EventEmitter {
+export default interface Room extends EventEmitter {
   /**  Emitted when a player joins the room. */
   on(eventName: "join", listener: (player: Member) => void): this;
 

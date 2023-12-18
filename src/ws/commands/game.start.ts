@@ -5,11 +5,7 @@ export default function ({
     room: { game },
   },
 }: WebSocketManager) {
-  if (game?.me)
-    setTimeout(() => {
-      if (!game.me) return;
-      game.me.lastFrame = Date.now();
-      game.me.replay();
-      game.me.emit("start", game.me);
-    }, game.me.player.pregameTime);
+  setTimeout(() => {
+    game?.me?.start();
+  }, game?.me?.player.pregameTime);
 }
