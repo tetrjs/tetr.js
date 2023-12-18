@@ -3,26 +3,9 @@ import Player from "../game/Player";
 import WebSocketManager from "../ws/WebSocketManager";
 
 const full = {
-  aggregatestats: { apm: 0, pps: 0, vsscore: 0 },
-  diyusi: 0,
-  enemies: [],
-  fire: 0,
-  game: {
-    controlling: {
-      lastshift: 0,
-      ldas: 0,
-      ldasiter: 0,
-      lshift: false,
-      rdas: 0,
-      rdasiter: 0,
-      rshift: false,
-      softdrop: false,
-    },
-    hold: { piece: null, locked: false },
-    playing: true,
-  },
+  successful: false,
+  // not needed for init
   gameoverreason: null,
-  killer: { gameid: null, name: null, type: "sizzle" },
   replay: {},
   source: {},
   stats: {
@@ -80,8 +63,38 @@ const full = {
       perfectpieces: 0,
     },
   },
-  successful: false,
+  diyusi: 0,
+  enemies: [],
   targets: [],
+  // not needed for init
+  fire: 0,
+  game: {
+    hold: {
+      piece: null,
+      locked: false,
+    },
+    controlling: {
+      ldas: 0,
+      ldasiter: 0,
+      lshift: false,
+      rdas: 0,
+      rdasiter: 0,
+      rshift: false,
+      lastshift: 0,
+      softdrop: false,
+    },
+    playing: true,
+  },
+  killer: {
+    gameid: null,
+    name: null,
+    type: "sizzle",
+  },
+  aggregatestats: {
+    apm: 0,
+    pps: 0,
+    vsscore: 0,
+  },
 };
 
 export default class ClientPlayer extends EventEmitter {
@@ -107,7 +120,35 @@ export default class ClientPlayer extends EventEmitter {
         },
       },
       { type: "start", data: {} },
+      // {
+      //   type: "ige",
+      //   data: {
+      //     data: {
+      //       frame: this.frame,
+      //       targets: ws.client.room.game
+      //         ? [...ws.client.room.game.players.entries()]
+      //             .filter((entry) => entry[1].id !== me.id)
+      //             .map((entry) => entry[1])
+      //         : [],
+      //       type: "target",
+      //     },
+      //     frame: this.frame,
+      //     id: 0,
+      //     type: "ige",
+      //   },
+      // },
+      // {
+      //   type: "ige",
+      //   data: {
+      //     data: { frame: this.frame, type: "allow_targeting", value: false },
+      //     frame: this.frame,
+      //     id: 1,
+      //     type: "ige",
+      //   },
+      // },
     ];
+
+    me.resetPieces();
 
     // let z = this.frames[0].data;
 
@@ -122,30 +163,42 @@ export default class ClientPlayer extends EventEmitter {
   }
 
   private ws: WebSocketManager;
-  private frameCount = 0;
   private frames: { type: string; data: any }[];
   private replayTimeout?: NodeJS.Timeout;
+  private firstFrame = 0;
+  private lastFrame = 0;
 
   public player: Player;
-  public lastFrame = 0;
 
   public get subframe(): number {
-    return (Date.now() - this.lastFrame) / 1000 / 60;
+    return (((Date.now() - this.firstFrame) / 1000) * 60) % 1;
   }
 
-  public replay() {
-    clearTimeout(this.replayTimeout);
+  public get frame(): number {
+    return Math.floor(((Date.now() - this.firstFrame) / 1000) * 60);
+  }
 
-    let currentFrame = this.frameCount++;
+  public start() {
+    this.firstFrame = Date.now();
+    this.lastFrame = Date.now();
+    this.replay();
+    this.emit("start", this);
+    setInterval(() => {
+      if (this.frames.length > 0) this.replay();
+    }, 1000 / 60);
+  }
+
+  private replay() {
+    clearTimeout(this.replayTimeout);
 
     this.ws.send({
       command: "replay",
       data: {
         frames: this.frames.splice(0).map((frame) => {
-          return { ...frame, frame: currentFrame };
+          return { ...frame, frame: this.frame };
         }),
         gameid: this.player?.id,
-        provisioned: currentFrame,
+        provisioned: this.frame,
       },
     });
 
@@ -156,11 +209,108 @@ export default class ClientPlayer extends EventEmitter {
     }, 500);
   }
 
-  public hardDrop() {
+  public hardDrop(frames = 0) {
     this.frames.push({
       type: "keydown",
       data: { key: "hardDrop", subframe: this.subframe },
     });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "hardDrop", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public softDrop(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "softDrop", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "softDrop", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public moveLeft(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "moveLeft", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "moveLeft", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public moveRight(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "moveRight", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "moveRight", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public rotateCW(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "rotateCW", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "rotateCW", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public rotateCCW(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "rotateCCW", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "rotateCCW", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public rotate180(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "rotate180", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "rotate180", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
+  }
+
+  public hold(frames = 0) {
+    this.frames.push({
+      type: "keydown",
+      data: { key: "hold", subframe: this.subframe },
+    });
+    setTimeout(() => {
+      this.frames.push({
+        type: "keyup",
+        data: { key: "hold", subframe: this.subframe },
+      });
+    }, (frames / 60) * 1000);
   }
 }
 

@@ -78,7 +78,6 @@ export default class Player {
 
     this.board = new Board(this.options);
     this.id = player.gameid;
-    this.player_ = player;
 
     this.t = this.options.seed % 2147483647;
 
@@ -88,6 +87,7 @@ export default class Player {
   private t = 2147483646;
   private lastGenerated?: number;
   private isNew: boolean;
+  private bag = INIT_BAG.slice();
 
   // raw init data
   public player_: any;
@@ -133,18 +133,18 @@ export default class Player {
   public get nextPieces(): string[] {
     switch (this.options.bagType) {
       case "7-bag":
-        return this.shuffleArray(bag);
+        return this.shuffleArray(this.bag);
       case "14-bag":
-        return this.shuffleArray(bag.concat(bag));
+        return this.shuffleArray(this.bag.concat(this.bag));
       case "classic":
-        let index = Math.floor(this.nextFloat() * (bag.length + 1));
+        let index = Math.floor(this.nextFloat() * (this.bag.length + 1));
 
-        if (index === this.lastGenerated || index >= bag.length) {
-          index = Math.floor(this.nextFloat() * bag.length);
+        if (index === this.lastGenerated || index >= this.bag.length) {
+          index = Math.floor(this.nextFloat() * this.bag.length);
         }
 
         this.lastGenerated = index;
-        return [bag[index]];
+        return [this.bag[index]];
       case "pairs":
         let s = this.shuffleArray(["Z", "L", "O", "S", "I", "J", "T"]);
         let pairs = [s[0], s[0], s[0], s[1], s[1], s[1]];
@@ -152,14 +152,24 @@ export default class Player {
 
         return pairs;
       case "total mayhem":
-        return [bag[Math.floor(this.nextFloat() * bag.length)]];
+        return [this.bag[Math.floor(this.nextFloat() * this.bag.length)]];
       default:
-        return bag;
+        return this.bag;
     }
+  }
+
+  public resetPieces() {
+    this.bag = INIT_BAG.slice();
+
+    this.lastGenerated = undefined;
+
+    this.t = this.options.seed % 2147483647;
+
+    if (this.t <= 0) this.t += 2147483646;
   }
 }
 
-const bag = ["z", "l", "o", "s", "i", "j", "t"];
+const INIT_BAG = ["z", "l", "o", "s", "i", "j", "t"];
 
 export class Board {
   constructor(options: GameOptions) {

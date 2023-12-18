@@ -28,7 +28,7 @@ export default async function (ws: WebSocketManager, message: any) {
         handling: {
           arr: 0,
           das: 1,
-          sdf: 5,
+          sdf: 41,
           safelock: false,
           cancel: false,
           dcd: 0,

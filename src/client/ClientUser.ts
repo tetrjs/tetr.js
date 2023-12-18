@@ -175,7 +175,10 @@ export default interface Client extends EventEmitter {
   on(eventName: "dm", listener: (content: string, author: User) => void): this;
 
   /** Emitted when a user sends an invite to the client.*/
-  on(eventName: "invite", listener: (author: User, room: string) => void): this;
+  on(
+    eventName: "invite",
+    listener: (invite: { author: User; room: string }) => void
+  ): this;
 
   /** Emitted when the server sends an update on how many users online. */
   on(eventName: "online", listener: (online: number) => void): this;
