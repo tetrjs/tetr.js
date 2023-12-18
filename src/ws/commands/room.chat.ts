@@ -11,6 +11,6 @@ export default async function (
 ) {
   client.room.emit("chat", {
     content,
-    player: client.room.players?.get(_id),
+    author: client.room.players?.get(_id),
   });
 }

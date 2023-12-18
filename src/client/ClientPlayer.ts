@@ -166,7 +166,6 @@ export default class ClientPlayer extends EventEmitter {
   private frames: { type: string; data: any }[];
   private replayTimeout?: NodeJS.Timeout;
   private firstFrame = 0;
-  private lastFrame = 0;
 
   public player: Player;
 
@@ -180,7 +179,6 @@ export default class ClientPlayer extends EventEmitter {
 
   public start() {
     this.firstFrame = Date.now();
-    this.lastFrame = Date.now();
     this.replay();
     this.emit("start", this);
     setInterval(() => {
@@ -202,115 +200,153 @@ export default class ClientPlayer extends EventEmitter {
       },
     });
 
-    this.lastFrame = Date.now();
-
     this.replayTimeout = setTimeout(() => {
       this.replay();
     }, 500);
   }
 
-  public hardDrop(frames = 0) {
+  public async hardDrop() {
     this.frames.push({
       type: "keydown",
       data: { key: "hardDrop", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "hardDrop", subframe: this.subframe },
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.frames.push({
+          type: "keyup",
+          data: { key: "hardDrop", subframe: this.subframe },
+        });
+
+        resolve();
       });
-    }, (frames / 60) * 1000);
+    });
   }
 
-  public softDrop(frames = 0) {
+  public async softDrop() {
     this.frames.push({
       type: "keydown",
       data: { key: "softDrop", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "softDrop", subframe: this.subframe },
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.frames.push({
+          type: "keyup",
+          data: { key: "softDrop", subframe: this.subframe },
+        });
+
+        resolve();
       });
-    }, (frames / 60) * 1000);
+    });
   }
 
-  public moveLeft(frames = 0) {
+  // unreliable between frames arr activates
+  public async moveLeft(arr = false) {
     this.frames.push({
       type: "keydown",
       data: { key: "moveLeft", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "moveLeft", subframe: this.subframe },
-      });
-    }, (frames / 60) * 1000);
+    await new Promise<void>((resolve) => {
+      setTimeout(
+        () => {
+          this.frames.push({
+            type: "keyup",
+            data: { key: "moveLeft", subframe: this.subframe },
+          });
+
+          resolve();
+        },
+        arr ? (this.player.player_.options.handling.das / 60) * 1000 : 0
+      );
+    });
   }
 
-  public moveRight(frames = 0) {
+  // unreliable between frames arr activates
+  public async moveRight(arr = false) {
     this.frames.push({
       type: "keydown",
       data: { key: "moveRight", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "moveRight", subframe: this.subframe },
-      });
-    }, (frames / 60) * 1000);
+    await new Promise<void>((resolve) => {
+      setTimeout(
+        () => {
+          this.frames.push({
+            type: "keyup",
+            data: { key: "moveRight", subframe: this.subframe },
+          });
+
+          resolve();
+        },
+        arr ? (this.player.player_.options.handling.das / 60) * 1000 : 0
+      );
+    });
   }
 
-  public rotateCW(frames = 0) {
+  public async rotateCW() {
     this.frames.push({
       type: "keydown",
       data: { key: "rotateCW", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "rotateCW", subframe: this.subframe },
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.frames.push({
+          type: "keyup",
+          data: { key: "rotateCW", subframe: this.subframe },
+        });
+
+        resolve();
       });
-    }, (frames / 60) * 1000);
+    });
   }
 
-  public rotateCCW(frames = 0) {
+  public async rotateCCW() {
     this.frames.push({
       type: "keydown",
       data: { key: "rotateCCW", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "rotateCCW", subframe: this.subframe },
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.frames.push({
+          type: "keyup",
+          data: { key: "rotateCCW", subframe: this.subframe },
+        });
+
+        resolve();
       });
-    }, (frames / 60) * 1000);
+    });
   }
 
-  public rotate180(frames = 0) {
+  public async rotate180() {
     this.frames.push({
       type: "keydown",
       data: { key: "rotate180", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "rotate180", subframe: this.subframe },
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.frames.push({
+          type: "keyup",
+          data: { key: "rotate180", subframe: this.subframe },
+        });
+
+        resolve();
       });
-    }, (frames / 60) * 1000);
+    });
   }
 
-  public hold(frames = 0) {
+  public async hold() {
     this.frames.push({
       type: "keydown",
       data: { key: "hold", subframe: this.subframe },
     });
-    setTimeout(() => {
-      this.frames.push({
-        type: "keyup",
-        data: { key: "hold", subframe: this.subframe },
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.frames.push({
+          type: "keyup",
+          data: { key: "hold", subframe: this.subframe },
+        });
+
+        resolve();
       });
-    }, (frames / 60) * 1000);
+    });
   }
 }
 

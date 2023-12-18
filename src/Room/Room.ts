@@ -217,7 +217,10 @@ export default interface Room extends EventEmitter {
   on(eventName: "join", listener: (player: Member) => void): this;
 
   /** Emitted when a player sends a message. */
-  on(eventName: "chat", listener: (player: Member) => void): this;
+  on(
+    eventName: "chat",
+    listener: (message: { content: string; author: Member }) => void
+  ): this;
 
   /** Emitted when a player leaves the room. */
   on(eventName: "leave", listener: (player: User) => void): this;
