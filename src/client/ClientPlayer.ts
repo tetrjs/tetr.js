@@ -158,8 +158,17 @@ export default class ClientPlayer extends EventEmitter {
   private frames: { type: string; data: any }[];
   private replayTimeout?: NodeJS.Timeout;
   private firstFrame = 0;
+  private currentOrientation = 0;
+  private knownPieces: string[] = [];
+  private holdPiece?: string;
 
   public player: Player;
+
+  public get nextPieces(): string[] {
+    let pieces = this.player.nextPieces;
+    this.knownPieces.concat(pieces);
+    return pieces;
+  }
 
   public get subframe(): number {
     return (((Date.now() - this.firstFrame) / 1000) * 60) % 1;
@@ -208,6 +217,9 @@ export default class ClientPlayer extends EventEmitter {
         data: { key: "hardDrop", subframe: this.subframe + 0.0000000000000001 },
       }
     );
+
+    this.currentOrientation = 0;
+    this.knownPieces.shift();
   }
 
   public async softDrop() {
@@ -292,6 +304,9 @@ export default class ClientPlayer extends EventEmitter {
         data: { key: "rotateCW", subframe: this.subframe + 0.0000000000000001 },
       }
     );
+
+    this.currentOrientation =
+      (this.currentOrientation + 1) % this.knownPieces[0].length;
   }
 
   public rotateCCW() {
@@ -308,6 +323,9 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
+
+    this.currentOrientation =
+      (this.currentOrientation - 1) % this.knownPieces[0].length;
   }
 
   public rotate180() {
@@ -324,6 +342,9 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
+
+    this.currentOrientation =
+      (this.currentOrientation + 2) % this.knownPieces[0].length;
   }
 
   public hold() {
@@ -340,6 +361,13 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
+
+    if (this.holdPiece) {
+      this.knownPieces.unshift(this.holdPiece);
+      this.holdPiece = this.knownPieces.splice(1, 1)[0];
+    } else {
+      this.holdPiece = this.knownPieces.shift();
+    }
   }
 }
 
