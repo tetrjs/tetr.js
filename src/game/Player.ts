@@ -87,7 +87,7 @@ export default class Player {
   private t = 2147483646;
   private lastGenerated?: number;
   private isNew: boolean;
-  private bag = INIT_BAG.slice();
+  private bag = Object.keys(TETROMINOS);
 
   // raw init data
   public player_: any;
@@ -159,7 +159,7 @@ export default class Player {
   }
 
   public resetPieces() {
-    this.bag = INIT_BAG.slice();
+    this.bag = Object.keys(TETROMINOS);
 
     this.lastGenerated = undefined;
 
@@ -169,7 +169,125 @@ export default class Player {
   }
 }
 
-const INIT_BAG = ["z", "l", "o", "s", "i", "j", "t"];
+const TETROMINOS = {
+  z: {
+    width: 3,
+    orientation: [
+      [
+        ["z", "z"],
+        [null, "z", "z"],
+      ],
+      [
+        [null, null, "z"],
+        [null, "z", "z"],
+        [null, "z"],
+      ],
+      [[], ["z", "z"], [null, "z", "z"]],
+      [[null, "z"], ["z", "z"], ["z"]],
+    ],
+  },
+  l: {
+    width: 3,
+    orientation: [
+      [
+        [null, null, "l"],
+        ["l", "l", "l"],
+      ],
+      [
+        [null, "l"],
+        [null, "l"],
+        [null, "l", "l"],
+      ],
+      [[], ["l", "l", "l"], ["l"]],
+      [
+        ["l", "l"],
+        [null, "l"],
+        [null, "l"],
+      ],
+    ],
+  },
+  o: {
+    width: 3,
+    orientation: [
+      [
+        [null, "o", "o"],
+        [null, "o", "o"],
+      ],
+    ],
+  },
+  s: {
+    width: 3,
+    orientation: [
+      [
+        [null, "s", "s"],
+        ["s", "s"],
+      ],
+      [
+        [null, "s"],
+        [null, "s", "s"],
+        [null, null, "s"],
+      ],
+      [[], [null, "s", "s"], ["s", "s"]],
+      [["s"], ["s", "s"], [null, "s"]],
+    ],
+  },
+  i: {
+    width: 4,
+    orientation: [
+      [[], ["i", "i", "i", "i"]],
+      [
+        [null, null, "i"],
+        [null, null, "i"],
+        [null, null, "i"],
+        [null, null, "i"],
+      ],
+      [[], [], ["i", "i", "i", "i"]],
+      [
+        [null, "i"],
+        [null, "i"],
+        [null, "i"],
+        [null, "i"],
+      ],
+    ],
+  },
+  j: {
+    width: 3,
+    orientation: [
+      [["j"], ["j", "j", "j"]],
+      [
+        [null, "j", "j"],
+        [null, "j"],
+        [null, "j"],
+      ],
+      [[], ["j", "j", "j"], [null, null, "j"]],
+      [
+        [null, "j"],
+        [null, "j"],
+        ["j", "j"],
+      ],
+    ],
+  },
+  t: {
+    width: 3,
+    orientation: [
+      [
+        [null, "t"],
+        ["t", "t", "t"],
+      ],
+      [
+        [null, "t"],
+        [null, "t", "t"],
+        [null, "t"],
+      ],
+      [[], ["t", "t", "t"], [null, "t"]],
+      [
+        [null, "t"],
+        ["t", "t"],
+        [null, "t"],
+      ],
+    ],
+  },
+};
 
 export class Board {
   constructor(options: GameOptions) {
