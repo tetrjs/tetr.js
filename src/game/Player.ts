@@ -120,16 +120,6 @@ export default class Player {
     return array;
   }
 
-  public get pregameTime() {
-    return (
-      this.options.prestart +
-      (this.isNew ? this.options.precountdown : 0) +
-      (this.options.countdown
-        ? this.options.countdownInterval * this.options.countdownCount
-        : 0)
-    );
-  }
-
   public get nextPieces(): string[] {
     switch (this.options.bagType) {
       case "7-bag":
@@ -146,7 +136,7 @@ export default class Player {
         this.lastGenerated = index;
         return [this.bag[index]];
       case "pairs":
-        let s = this.shuffleArray(["Z", "L", "O", "S", "I", "J", "T"]);
+        let s = this.shuffleArray(Object.keys(TETROMINOS));
         let pairs = [s[0], s[0], s[0], s[1], s[1], s[1]];
         this.shuffleArray(pairs);
 
@@ -156,6 +146,16 @@ export default class Player {
       default:
         return this.bag;
     }
+  }
+
+  public get pregameTime() {
+    return (
+      this.options.prestart +
+      (this.isNew ? this.options.precountdown : 0) +
+      (this.options.countdown
+        ? this.options.countdownInterval * this.options.countdownCount
+        : 0)
+    );
   }
 
   public resetPieces() {
@@ -169,7 +169,7 @@ export default class Player {
   }
 }
 
-const TETROMINOS = {
+export const TETROMINOS = {
   z: {
     width: 3,
     orientation: [
