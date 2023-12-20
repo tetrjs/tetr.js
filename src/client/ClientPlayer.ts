@@ -166,7 +166,8 @@ export default class ClientPlayer extends EventEmitter {
 
   public get nextPieces(): string[] {
     let pieces = this.player.nextPieces;
-    this.knownPieces.concat(pieces);
+    this.knownPieces.push(...pieces);
+
     return pieces;
   }
 
@@ -217,6 +218,8 @@ export default class ClientPlayer extends EventEmitter {
         data: { key: "hardDrop", subframe: this.subframe + 0.0000000000000001 },
       }
     );
+
+    if (this.knownPieces.length <= 0) this.nextPieces;
 
     this.currentOrientation = 0;
     this.knownPieces.shift();
@@ -305,6 +308,8 @@ export default class ClientPlayer extends EventEmitter {
       }
     );
 
+    if (this.knownPieces.length <= 0) this.nextPieces;
+
     this.currentOrientation =
       (this.currentOrientation + 1) % this.knownPieces[0].length;
   }
@@ -323,6 +328,8 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
+
+    if (this.knownPieces.length <= 0) this.nextPieces;
 
     this.currentOrientation =
       (this.currentOrientation - 1) % this.knownPieces[0].length;
@@ -343,6 +350,8 @@ export default class ClientPlayer extends EventEmitter {
       }
     );
 
+    if (this.knownPieces.length <= 0) this.nextPieces;
+
     this.currentOrientation =
       (this.currentOrientation + 2) % this.knownPieces[0].length;
   }
@@ -361,6 +370,8 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
+
+    if (this.knownPieces.length <= 0) this.nextPieces;
 
     if (this.holdPiece) {
       this.knownPieces.unshift(this.holdPiece);
