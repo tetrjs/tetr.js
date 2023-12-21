@@ -9,11 +9,7 @@ export default async function (ws: WebSocketManager, { data }: any) {
       ws.client.me,
       await Promise.all(
         data.players.map(async (player: any) => {
-          return new Player(
-            player,
-            await ws.client.fetchUser(player.userid),
-            data.isNew
-          );
+          return new Player(player, await ws.client.fetchUser(player.userid));
         })
       )
     );

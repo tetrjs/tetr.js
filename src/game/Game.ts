@@ -8,12 +8,11 @@ export default class Game extends EventEmitter {
   constructor(ws: WebSocketManager, me: ClientUser, players: Player[]) {
     super();
 
-    this.players = new Map(players.map((player) => [player.user.id, player]));
+    this.players = new Map(players.map((player) => [player.id, player]));
 
-    let me_;
+    let me_ = [...this.players.values()].find((k) => k.user.id === me.user.id);
 
-    if ((me_ = this.players.get(me.user.id)))
-      this.me = new ClientPlayer(ws, me_);
+    if (me_) this.me = new ClientPlayer(ws, me_);
   }
 
   public me?: ClientPlayer;
