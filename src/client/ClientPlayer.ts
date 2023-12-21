@@ -97,114 +97,225 @@ const full = {
   },
 };
 
+const tetromino = {
+  z: {
+    width: 3,
+    orientation: [
+      [
+        ["z", "z"],
+        [null, "z", "z"],
+      ],
+      [
+        [null, null, "z"],
+        [null, "z", "z"],
+        [null, "z"],
+      ],
+      [[], ["z", "z"], [null, "z", "z"]],
+      [[null, "z"], ["z", "z"], ["z"]],
+    ],
+  },
+  l: {
+    width: 3,
+    orientation: [
+      [
+        [null, null, "l"],
+        ["l", "l", "l"],
+      ],
+      [
+        [null, "l"],
+        [null, "l"],
+        [null, "l", "l"],
+      ],
+      [[], ["l", "l", "l"], ["l"]],
+      [
+        ["l", "l"],
+        [null, "l"],
+        [null, "l"],
+      ],
+    ],
+  },
+  o: {
+    width: 3,
+    orientation: [
+      [
+        [null, "o", "o"],
+        [null, "o", "o"],
+      ],
+    ],
+  },
+  s: {
+    width: 3,
+    orientation: [
+      [
+        [null, "s", "s"],
+        ["s", "s"],
+      ],
+      [
+        [null, "s"],
+        [null, "s", "s"],
+        [null, null, "s"],
+      ],
+      [[], [null, "s", "s"], ["s", "s"]],
+      [["s"], ["s", "s"], [null, "s"]],
+    ],
+  },
+  i: {
+    width: 4,
+    orientation: [
+      [[], ["i", "i", "i", "i"]],
+      [
+        [null, null, "i"],
+        [null, null, "i"],
+        [null, null, "i"],
+        [null, null, "i"],
+      ],
+      [[], [], ["i", "i", "i", "i"]],
+      [
+        [null, "i"],
+        [null, "i"],
+        [null, "i"],
+        [null, "i"],
+      ],
+    ],
+  },
+  j: {
+    width: 3,
+    orientation: [
+      [["j"], ["j", "j", "j"]],
+      [
+        [null, "j", "j"],
+        [null, "j"],
+        [null, "j"],
+      ],
+      [[], ["j", "j", "j"], [null, null, "j"]],
+      [
+        [null, "j"],
+        [null, "j"],
+        ["j", "j"],
+      ],
+    ],
+  },
+  t: {
+    width: 3,
+    orientation: [
+      [
+        [null, "t"],
+        ["t", "t", "t"],
+      ],
+      [
+        [null, "t"],
+        [null, "t", "t"],
+        [null, "t"],
+      ],
+      [[], ["t", "t", "t"], [null, "t"]],
+      [
+        [null, "t"],
+        ["t", "t"],
+        [null, "t"],
+      ],
+    ],
+  },
+};
+
 export default class ClientPlayer extends EventEmitter {
   constructor(ws: WebSocketManager, me: Player) {
     super();
 
+    this.ws = ws;
+    this.player = me;
+    this.resetBag();
     this.frames = [
       {
         type: "full",
         data: {
           ...full,
-          options: me.player_.options,
+          options: me.options,
           stats: { ...full.stats, seed: me.options.seed },
           game: {
             ...full.game,
-            bag: me.nextPieces,
-            board: new Array(
-              me.options.boardHeight + me.player_.options.boardbuffer
-            ).fill(new Array(me.options.boardWidth).fill(null)),
+            bag: this.nextPieces,
+            board: me.board,
             g: me.options.g,
-            handling: me.player_.options.handling,
+            handling: me.options.handling,
           },
         },
       },
       { type: "start", data: {} },
-      // {
-      //   type: "ige",
-      //   data: {
-      //     data: {
-      //       frame: this.frame,
-      //       targets: ws.client.room.game
-      //         ? [...ws.client.room.game.players.entries()]
-      //             .filter((entry) => entry[1].id !== me.id)
-      //             .map((entry) => entry[1])
-      //         : [],
-      //       type: "target",
-      //     },
-      //     frame: this.frame,
-      //     id: 0,
-      //     type: "ige",
-      //   },
-      // },
-      // {
-      //   type: "ige",
-      //   data: {
-      //     data: { frame: this.frame, type: "allow_targeting", value: false },
-      //     frame: this.frame,
-      //     id: 1,
-      //     type: "ige",
-      //   },
-      // },
     ];
-
-    me.resetPieces();
-
-    this.ws = ws;
-    this.player = me;
+    this.resetBag();
   }
 
   private ws: WebSocketManager;
   private frames: { type: string; data: any }[];
   private replayTimeout?: NodeJS.Timeout;
-  private firstFrame = 0;
-  private currentOrientation = 0;
-  private knownPieces: string[] = [];
-  private holdPiece?: string;
+  private t = 0;
+  private lastGenerated?: number;
+  private bag = Object.keys(tetromino);
+  private firstFrame = Date.now();
+  private frameInterval?: NodeJS.Timeout;
 
   public player: Player;
 
-  public get nextPieces(): string[] {
-    let pieces = this.player.nextPieces;
-    this.knownPieces.push(...pieces);
-
-    return pieces;
-  }
-
-  public get subframe(): number {
-    return (((Date.now() - this.firstFrame) / 1000) * 60) % 1;
-  }
-
-  public get frame(): number {
-    return Math.floor(((Date.now() - this.firstFrame) / 1000) * 60);
-  }
-
-  public start() {
-    this.firstFrame = Date.now();
-    this.replay();
-    this.emit("start", this);
-    setInterval(() => {
-      if (this.frames.length > 0) this.replay();
-    }, 1000 / 60);
-  }
-
   private replay() {
     clearTimeout(this.replayTimeout);
-
+    console.log(this.frame, this.frames);
     this.ws.send({
       command: "replay",
       data: {
         frames: this.frames.splice(0).map((frame) => {
           return { ...frame, frame: this.frame };
         }),
-        gameid: this.player?.id,
+        gameid: this.player.id,
         provisioned: this.frame,
       },
     });
 
-    this.replayTimeout = setTimeout(() => {
-      this.replay();
-    }, 500);
+    this.replayTimeout = setTimeout(() => this.replay(), 500);
+  }
+
+  public start() {
+    this.emit("start", this);
+    this.firstFrame = Date.now();
+    this.replay();
+    this.frameInterval = setInterval(() => {
+      if (this.frames.length > 0) this.replay();
+    }, 1000 / 60);
+  }
+
+  public end() {
+    clearTimeout(this.replayTimeout);
+    clearInterval(this.frameInterval);
+  }
+
+  public resetBag() {
+    this.bag = Object.keys(tetromino);
+
+    this.lastGenerated = undefined;
+
+    this.t = this.player.options.seed % 2147483647;
+
+    if (this.t <= 0) this.t += 2147483646;
+  }
+
+  private next(): number {
+    return (this.t = (16807 * this.t) % 2147483647);
+  }
+
+  private nextFloat(): number {
+    return (this.next() - 1) / 2147483646;
+  }
+
+  private shuffleArray(array: string[]): string[] {
+    if (array.length == 0) {
+      return array;
+    }
+
+    for (let i = array.length - 1; i != 0; i--) {
+      const r = Math.floor(this.nextFloat() * (i + 1));
+      [array[i], array[r]] = [array[r], array[i]];
+    }
+
+    return array;
   }
 
   public hardDrop() {
@@ -218,11 +329,6 @@ export default class ClientPlayer extends EventEmitter {
         data: { key: "hardDrop", subframe: this.subframe + 0.0000000000000001 },
       }
     );
-
-    if (this.knownPieces.length <= 0) this.nextPieces;
-
-    this.currentOrientation = 0;
-    this.knownPieces.shift();
   }
 
   public async softDrop() {
@@ -263,7 +369,7 @@ export default class ClientPlayer extends EventEmitter {
           });
 
           resolve();
-        }, (this.player.player_.options.handling.das / 60) * 1000);
+        }, (this.player.options.handling.das / 60) * 1000);
       });
     }
   }
@@ -291,7 +397,7 @@ export default class ClientPlayer extends EventEmitter {
           });
 
           resolve();
-        }, (this.player.player_.options.handling.das / 60) * 1000);
+        }, (this.player.options.handling.das / 60) * 1000);
       });
     }
   }
@@ -307,11 +413,6 @@ export default class ClientPlayer extends EventEmitter {
         data: { key: "rotateCW", subframe: this.subframe + 0.0000000000000001 },
       }
     );
-
-    if (this.knownPieces.length <= 0) this.nextPieces;
-
-    this.currentOrientation =
-      (this.currentOrientation + 1) % this.knownPieces[0].length;
   }
 
   public rotateCCW() {
@@ -328,11 +429,6 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
-
-    if (this.knownPieces.length <= 0) this.nextPieces;
-
-    this.currentOrientation =
-      (this.currentOrientation - 1) % this.knownPieces[0].length;
   }
 
   public rotate180() {
@@ -349,11 +445,6 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
-
-    if (this.knownPieces.length <= 0) this.nextPieces;
-
-    this.currentOrientation =
-      (this.currentOrientation + 2) % this.knownPieces[0].length;
   }
 
   public hold() {
@@ -370,15 +461,42 @@ export default class ClientPlayer extends EventEmitter {
         },
       }
     );
+  }
 
-    if (this.knownPieces.length <= 0) this.nextPieces;
+  public get nextPieces(): string[] {
+    switch (this.player.options.bagtype) {
+      case "7-bag":
+        return this.shuffleArray(this.bag);
+      case "14-bag":
+        return this.shuffleArray(this.bag.concat(this.bag));
+      case "classic":
+        let index = Math.floor(this.nextFloat() * (this.bag.length + 1));
 
-    if (this.holdPiece) {
-      this.knownPieces.unshift(this.holdPiece);
-      this.holdPiece = this.knownPieces.splice(1, 1)[0];
-    } else {
-      this.holdPiece = this.knownPieces.shift();
+        if (index === this.lastGenerated || index >= this.bag.length) {
+          index = Math.floor(this.nextFloat() * this.bag.length);
+        }
+
+        this.lastGenerated = index;
+        return [this.bag[index]];
+      case "pairs":
+        let s = this.shuffleArray(Object.keys(tetromino));
+        let pairs = [s[0], s[0], s[0], s[1], s[1], s[1]];
+        this.shuffleArray(pairs);
+
+        return pairs;
+      case "total mayhem":
+        return [this.bag[Math.floor(this.nextFloat() * this.bag.length)]];
+      default:
+        return this.bag;
     }
+  }
+
+  public get subframe(): number {
+    return (((Date.now() - this.firstFrame) / 1000) * 60) % 1;
+  }
+
+  public get frame(): number {
+    return Math.floor(((Date.now() - this.firstFrame) / 1000) * 60);
   }
 }
 

@@ -229,6 +229,8 @@ export default interface Room extends EventEmitter {
   on(eventName: "bracket", listener: (player: Member) => void): this;
 
   on(eventName: "start", listener: (game: Game) => void): this;
+
+  on(eventName: "end", listener: () => void): this;
 }
 
 export type Member = {
