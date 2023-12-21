@@ -258,7 +258,6 @@ export default class ClientPlayer extends EventEmitter {
 
   private replay() {
     clearTimeout(this.replayTimeout);
-    console.log(this.frame, this.frames);
     this.ws.send({
       command: "replay",
       data: {
