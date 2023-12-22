@@ -348,57 +348,33 @@ export default class ClientPlayer extends EventEmitter {
     });
   }
 
-  public async moveLeft(arr = false) {
-    this.frames.push({
-      type: "keydown",
-      data: { key: "moveLeft", subframe: this.subframe },
-    });
-
-    if (!arr) {
-      this.frames.push({
+  public moveLeft(arr = false) {
+    this.frames.push(
+      {
+        type: "keydown",
+        data: { key: "moveLeft", hoisted: arr, subframe: this.subframe },
+      },
+      {
         type: "keyup",
         data: { key: "moveLeft", subframe: this.subframe + 0.0000000000000001 },
-      });
-    } else {
-      await new Promise<void>((resolve) => {
-        setTimeout(() => {
-          this.frames.push({
-            type: "keyup",
-            data: { key: "moveLeft", subframe: this.subframe },
-          });
-
-          resolve();
-        }, (this.player.options.handling.das / 60) * 1000);
-      });
-    }
+      }
+    );
   }
 
-  public async moveRight(arr = false) {
-    this.frames.push({
-      type: "keydown",
-      data: { key: "moveRight", subframe: this.subframe },
-    });
-
-    if (!arr) {
-      this.frames.push({
+  public moveRight(arr = false) {
+    this.frames.push(
+      {
+        type: "keydown",
+        data: { key: "moveRight", hoisted: arr, subframe: this.subframe },
+      },
+      {
         type: "keyup",
         data: {
           key: "moveRight",
           subframe: this.subframe + 0.0000000000000001,
         },
-      });
-    } else {
-      await new Promise<void>((resolve) => {
-        setTimeout(() => {
-          this.frames.push({
-            type: "keyup",
-            data: { key: "moveRight", subframe: this.subframe },
-          });
-
-          resolve();
-        }, (this.player.options.handling.das / 60) * 1000);
-      });
-    }
+      }
+    );
   }
 
   public rotateCW() {
