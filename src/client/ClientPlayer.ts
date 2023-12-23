@@ -97,7 +97,11 @@ const full = {
   },
 };
 
-const tetromino = {
+interface Tetrominos {
+  [piece: string]: { width: number; orientation: (null | string)[][][] };
+}
+
+const tetromino: Tetrominos = {
   z: {
     width: 3,
     orientation: [
@@ -253,6 +257,11 @@ export default class ClientPlayer extends EventEmitter {
   private bag = Object.keys(tetromino);
   private firstFrame = Date.now();
   private frameInterval?: NodeJS.Timeout;
+  public orientation = 0;
+  // wrong after first bag
+  public currentBag?: string[] = [];
+  private bagQueue: string[][] = [];
+  public holdPiece?: string;
 
   public player: Player;
 
@@ -294,6 +303,8 @@ export default class ClientPlayer extends EventEmitter {
     this.t = this.player.options.seed % 2147483647;
 
     if (this.t <= 0) this.t += 2147483646;
+
+    this.bagQueue = [];
   }
 
   private next(): number {
@@ -318,6 +329,7 @@ export default class ClientPlayer extends EventEmitter {
   }
 
   public hardDrop() {
+    this.nextPiece();
     this.frames.push(
       {
         type: "keydown",
@@ -330,29 +342,24 @@ export default class ClientPlayer extends EventEmitter {
     );
   }
 
-  public async softDrop() {
-    this.frames.push({
-      type: "keydown",
-      data: { key: "softDrop", subframe: this.subframe },
-    });
-
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        this.frames.push({
-          type: "keyup",
-          data: { key: "softDrop", subframe: this.subframe },
-        });
-
-        resolve();
-      }, (1 / 60) * 1000);
-    });
-  }
-
-  public moveLeft(arr = false) {
+  public softDrop() {
     this.frames.push(
       {
         type: "keydown",
-        data: { key: "moveLeft", hoisted: arr, subframe: this.subframe },
+        data: { key: "softDrop", hoisted: true, subframe: this.subframe },
+      },
+      {
+        type: "keyup",
+        data: { key: "softDrop", subframe: this.subframe },
+      }
+    );
+  }
+
+  public moveLeft(hoisted = false) {
+    this.frames.push(
+      {
+        type: "keydown",
+        data: { key: "moveLeft", hoisted, subframe: this.subframe },
       },
       {
         type: "keyup",
@@ -361,11 +368,11 @@ export default class ClientPlayer extends EventEmitter {
     );
   }
 
-  public moveRight(arr = false) {
+  public moveRight(hoisted = false) {
     this.frames.push(
       {
         type: "keydown",
-        data: { key: "moveRight", hoisted: arr, subframe: this.subframe },
+        data: { key: "moveRight", hoisted, subframe: this.subframe },
       },
       {
         type: "keyup",
@@ -378,6 +385,9 @@ export default class ClientPlayer extends EventEmitter {
   }
 
   public rotateCW() {
+    this.orientation =
+      (this.orientation + 1) %
+      (this.currentPiece ? tetromino[this.currentPiece].orientation.length : 4);
     this.frames.push(
       {
         type: "keydown",
@@ -391,6 +401,9 @@ export default class ClientPlayer extends EventEmitter {
   }
 
   public rotateCCW() {
+    this.orientation =
+      (this.orientation - 1) %
+      (this.currentPiece ? tetromino[this.currentPiece].orientation.length : 4);
     this.frames.push(
       {
         type: "keydown",
@@ -407,6 +420,9 @@ export default class ClientPlayer extends EventEmitter {
   }
 
   public rotate180() {
+    this.orientation =
+      (this.orientation + 2) %
+      (this.currentPiece ? tetromino[this.currentPiece].orientation.length : 4);
     this.frames.push(
       {
         type: "keydown",
@@ -423,6 +439,15 @@ export default class ClientPlayer extends EventEmitter {
   }
 
   public hold() {
+    if (!this.currentBag) return;
+    let currentPiece = this.currentBag[0];
+    if (!this.holdPiece) {
+      this.nextPiece();
+    } else {
+      this.currentBag?.shift();
+      this.currentBag?.unshift(this.holdPiece);
+    }
+    this.holdPiece = currentPiece;
     this.frames.push(
       {
         type: "keydown",
@@ -438,12 +463,31 @@ export default class ClientPlayer extends EventEmitter {
     );
   }
 
+  private nextPiece(): void {
+    this.orientation = 0;
+    this.currentBag?.shift();
+    if (!this.currentBag || this.currentBag.length <= 0) {
+      if (this.bagQueue.length <= 0) {
+        this.nextPieces;
+      }
+      this.currentBag = this.bagQueue.shift();
+    }
+  }
+
+  public get currentPiece(): string | undefined {
+    if (!this.currentBag || this.currentBag.length <= 0) this.nextPiece();
+    if (this.currentBag) return this.currentBag[0];
+  }
+
   public get nextPieces(): string[] {
+    let bag: string[];
     switch (this.player.options.bagtype) {
       case "7-bag":
-        return this.shuffleArray(this.bag);
+        bag = this.shuffleArray(this.bag);
+        break;
       case "14-bag":
-        return this.shuffleArray(this.bag.concat(this.bag));
+        bag = this.shuffleArray(this.bag.concat(this.bag));
+        break;
       case "classic":
         let index = Math.floor(this.nextFloat() * (this.bag.length + 1));
 
@@ -452,18 +496,24 @@ export default class ClientPlayer extends EventEmitter {
         }
 
         this.lastGenerated = index;
-        return [this.bag[index]];
+        bag = [this.bag[index]];
+        break;
       case "pairs":
         let s = this.shuffleArray(Object.keys(tetromino));
         let pairs = [s[0], s[0], s[0], s[1], s[1], s[1]];
         this.shuffleArray(pairs);
 
-        return pairs;
+        bag = pairs;
+        break;
       case "total mayhem":
-        return [this.bag[Math.floor(this.nextFloat() * this.bag.length)]];
+        bag = [this.bag[Math.floor(this.nextFloat() * this.bag.length)]];
+        break;
       default:
-        return this.bag;
+        bag = this.bag;
+        break;
     }
+    this.bagQueue.push(bag.slice());
+    return bag;
   }
 
   public get subframe(): number {
