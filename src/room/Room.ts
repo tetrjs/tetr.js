@@ -106,7 +106,10 @@ export default class Room extends EventEmitter {
    * ```
    */
   public async join(room: string): Promise<Room> {
-    this.ws.send({ command: "room.join", data: room.slice(-4) });
+    this.ws.send({
+      command: "room.join",
+      data: room.split("#")[room.split("#").length - 1],
+    });
     return await new Promise<Room>((resolve) => {
       this.ws.once("room.update", () => {
         return resolve(this);
@@ -217,10 +220,7 @@ export default interface Room extends EventEmitter {
   on(eventName: "join", listener: (player: Member) => void): this;
 
   /** Emitted when a player sends a message. */
-  on(
-    eventName: "chat",
-    listener: (message: { content: string; author: Member }) => void
-  ): this;
+  on(eventName: "chat", listener: (message: { content: string; author: Member }) => void): this;
 
   /** Emitted when a player leaves the room. */
   on(eventName: "leave", listener: (player: User) => void): this;
