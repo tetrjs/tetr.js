@@ -7,14 +7,6 @@ import WebSocket from "ws";
 import EventEmitter from "node:events";
 
 const { unpack } = new Unpackr({ useRecords: false });
-const { pack: ribbonPackr } = new Packr({
-  sequential: true,
-  useRecords: false,
-});
-const { unpack: ribbonUnpackr } = new Unpackr({
-  sequential: true,
-  useRecords: false,
-});
 
 export default class WebSocketManager extends EventEmitter {
   static readonly MESSAGE_TYPE = {
@@ -29,21 +21,30 @@ export default class WebSocketManager extends EventEmitter {
     super();
 
     this.client = client;
+    const { pack } = new Packr({
+      sequential: true,
+      useRecords: false,
+    });
+    this.pack = pack;
+    const { unpack } = new Unpackr({
+      sequential: true,
+      useRecords: false,
+    });
+    this.unpack = unpack;
   }
 
-  private commands: Map<
-    string,
-    (ws: WebSocketManager, message: any) => Promise<void> | void
-  > = new Map(
-    readdirSync(join(__dirname, "commands"))
-      .filter((file: string) =>
-        file.endsWith(__filename.slice(__filename.length - 3))
-      )
-      .map((file: string) => [
-        file.slice(0, -3),
-        require(join(__dirname, "commands", file)).default,
-      ])
-  );
+  private pack: (value: any) => Buffer | Uint8Array;
+  private unpack: (messagePack: Buffer | Uint8Array) => any;
+
+  private commands: Map<string, (ws: WebSocketManager, message: any) => Promise<void> | void> =
+    new Map(
+      readdirSync(join(__dirname, "commands"))
+        .filter((file: string) => file.endsWith(__filename.slice(__filename.length - 3)))
+        .map((file: string) => [
+          file.slice(0, -3),
+          require(join(__dirname, "commands", file)).default,
+        ])
+    );
   private lastIddCalculation = Date.now();
   private spool?: any;
 
@@ -66,11 +67,7 @@ export default class WebSocketManager extends EventEmitter {
             new Promise<any>(async (resolve, reject) => {
               let spool_ = await checkSpool(spool);
 
-              if (
-                !spool_ ||
-                !spool_.health.flags.online ||
-                spool_.health.flags.avoidDueToHighLoad
-              )
+              if (!spool_ || !spool_.health.flags.online || spool_.health.flags.avoidDueToHighLoad)
                 return reject();
 
               resolve(spool_);
@@ -133,10 +130,7 @@ export default class WebSocketManager extends EventEmitter {
 
     if (!endpoint) ({ endpoint } = ribbon);
 
-    this.socket = new WebSocket(
-      `wss://${this.spool.host}${endpoint}`,
-      ribbon.spools.token
-    );
+    this.socket = new WebSocket(`wss://${this.spool.host}${endpoint}`, ribbon.spools.token);
 
     this.socket.on("error", (err: string) => {
       throw new Error(err);
@@ -153,15 +147,14 @@ export default class WebSocketManager extends EventEmitter {
           false
         );
       } else {
-        this.send({ command: "new" }, false);
+        setTimeout(() => {
+          this.send({ command: "new" }, false);
+        }, 1000);
       }
 
       this.heartbeat = setInterval(() => {
         this.socket?.send(
-          Buffer.from([
-            WebSocketManager.MESSAGE_TYPE.EXTENSION,
-            WebSocketManager.EXTENSION.PING,
-          ])
+          Buffer.from([WebSocketManager.MESSAGE_TYPE.EXTENSION, WebSocketManager.EXTENSION.PING])
         );
       }, 5000);
     });
@@ -169,7 +162,7 @@ export default class WebSocketManager extends EventEmitter {
     this.socket.on("message", (data: Buffer) => {
       switch (Number(data.readUint8())) {
         case WebSocketManager.MESSAGE_TYPE.STANDARD:
-          this.receive(ribbonUnpackr(data.subarray(1)));
+          this.receive(this.unpack(data.subarray(1)));
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTRACTED_ID:
           this.receive(unpack(data.subarray(5)), data.readUint32BE(1));
@@ -181,13 +174,8 @@ export default class WebSocketManager extends EventEmitter {
             lengths.push(length);
           }
           lengths.forEach((length, i) => {
-            let offset = lengths
-              .slice(0, i)
-              .reduce((a, b) => a + b, 5 + lengths.length * 4);
-            this.socket?.emit(
-              "message",
-              data.subarray(offset, offset + length)
-            );
+            let offset = lengths.slice(0, i).reduce((a, b) => a + b, 5 + lengths.length * 4);
+            this.socket?.emit("message", data.subarray(offset, offset + length));
           });
           break;
         case WebSocketManager.MESSAGE_TYPE.EXTENSION:
@@ -203,11 +191,7 @@ export default class WebSocketManager extends EventEmitter {
     });
   }
 
-  public send(
-    message: any,
-    id = true,
-    type = WebSocketManager.MESSAGE_TYPE.STANDARD
-  ) {
+  public send(message: any, id = true, type = WebSocketManager.MESSAGE_TYPE.STANDARD) {
     if (id) {
       message.id = ++this.messageId;
 
@@ -219,21 +203,16 @@ export default class WebSocketManager extends EventEmitter {
           0,
           Math.max(
             100,
-            Math.min(
-              30 * (1000 / (currentCalculation - this.lastIddCalculation)),
-              2000
-            )
+            Math.min(30 * (1000 / (currentCalculation - this.lastIddCalculation)), 2000)
           )
         );
         this.lastIddCalculation = currentCalculation;
       }
     }
 
-    // console.log("out :", message.command);
+    // console.log("out :", message);
 
-    this.socket?.send(
-      Buffer.concat([Buffer.from([type]), ribbonPackr(message)])
-    );
+    this.socket?.send(Buffer.concat([Buffer.from([type]), this.pack(message)]));
   }
 
   public async receive(message: any, id?: number) {
