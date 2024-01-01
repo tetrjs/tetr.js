@@ -6,7 +6,11 @@ import { join } from "path";
 import WebSocket from "ws";
 import EventEmitter from "node:events";
 
-const { unpack } = new Unpackr({ useRecords: false });
+const { unpack } = new Unpackr({
+  int64AsType: "number",
+  bundleStrings: true,
+  sequential: false,
+});
 
 export default class WebSocketManager extends EventEmitter {
   static readonly MESSAGE_TYPE = {
@@ -22,13 +26,15 @@ export default class WebSocketManager extends EventEmitter {
 
     this.client = client;
     const { pack } = new Packr({
-      sequential: true,
-      useRecords: false,
+      int64AsType: "number",
+      bundleStrings: true,
+      sequential: false,
     });
     this.pack = pack;
     const { unpack } = new Unpackr({
-      sequential: true,
-      useRecords: false,
+      int64AsType: "number",
+      bundleStrings: true,
+      sequential: false,
     });
     this.unpack = unpack;
   }
