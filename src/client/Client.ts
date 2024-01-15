@@ -38,7 +38,10 @@ export default class Client {
   public async login(token: string): Promise<void> {
     this.token = token;
 
-    let me = await api("/users/me", token);
+    let me = await api("/users/me", token, undefined, undefined, undefined, {
+      expire: new Date().getTime() + 10000,
+      key: "users_me_" + token,
+    });
 
     this.me = new ClientUser(this.ws, me, await this.fetchUser(me.user._id));
 
@@ -59,10 +62,7 @@ export default class Client {
    *
    * A "user" account must not be used and a "bot" account is required. To obtain one, contact [osk](https://osk.sh/).
    */
-  public async login_password(
-    username: string,
-    password: string
-  ): Promise<void> {
+  public async login_password(username: string, password: string): Promise<void> {
     let auth = await api(
       "/users/authenticate",
       undefined,

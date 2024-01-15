@@ -33,7 +33,12 @@ export default async function (ws: WebSocketManager, message: any) {
           cancel: false,
           dcd: 0,
         },
-        signature: (await api("/server/environment")).signature,
+        signature: (
+          await api("/server/environment", undefined, undefined, undefined, undefined, {
+            expire: new Date().getTime() + 60000 * 5,
+            key: "server_environment",
+          })
+        ).signature,
       },
     });
   }
