@@ -241,7 +241,7 @@ export default class User {
    */
   public get bannerURL(): string | undefined {
     if (this.bannerRevision)
-      return `https://tetr.io/user-content/banners/${this.id}.jpg?rv=${this.avatarRevision}`;
+      return `https://tetr.io/user-content/banners/${this.id}.jpg?rv=${this.bannerRevision}`;
 
     return;
   }
