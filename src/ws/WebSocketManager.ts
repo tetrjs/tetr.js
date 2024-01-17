@@ -131,7 +131,7 @@ export default class WebSocketManager extends EventEmitter {
 
   public async connect(resume = false, endpoint?: string): Promise<void> {
     let ribbon = await api("/server/ribbon", this.client.token, undefined, undefined, undefined, {
-      expire: new Date().getTime() + 5000,
+      expire: new Date().getTime() + 15 * 60000,
       key: "server_ribbon_" + this.client.token,
     });
 

@@ -35,7 +35,7 @@ export default async function (ws: WebSocketManager, message: any) {
         },
         signature: (
           await api("/server/environment", undefined, undefined, undefined, undefined, {
-            expire: new Date().getTime() + 60000 * 5,
+            expire: new Date().getTime() + 5 * 60000,
             key: "server_environment",
           })
         ).signature,

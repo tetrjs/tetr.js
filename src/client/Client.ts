@@ -39,7 +39,7 @@ export default class Client {
     this.token = token;
 
     let me = await api("/users/me", token, undefined, undefined, undefined, {
-      expire: new Date().getTime() + 10000,
+      expire: new Date().getTime() + 5 * 60000,
       key: "users_me_" + token,
     });
 
