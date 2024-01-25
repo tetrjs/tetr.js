@@ -150,14 +150,15 @@ export default class Room extends EventEmitter {
   /**
    * Send a message in the room chat.
    * @param data The content of the message to send
+   * @param announce Whether to announce the message
    *
    * @example
    * ```
    * client.room.chat("Hello World!");
    * ```
    */
-  public chat(data: string): void {
-    this.ws.send({ command: "room.chat.send", data: { content: data, pinned: false } });
+  public chat(data: string, announce: boolean = false): void {
+    this.ws.send({ command: "room.chat.send", data: { content: data, pinned: announce } });
   }
 
   /**
