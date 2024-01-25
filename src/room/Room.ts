@@ -157,7 +157,7 @@ export default class Room extends EventEmitter {
    * ```
    */
   public chat(data: string): void {
-    this.ws.send({ command: "room.chat.send", data });
+    this.ws.send({ command: "room.chat.send", data: { content: data, pinned: false } });
   }
 
   /**
