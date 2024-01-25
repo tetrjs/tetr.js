@@ -183,7 +183,7 @@ export default class Room extends EventEmitter {
    */
   public bracketSwitch(
     data: "spectator" | "player",
-    player?: { user: User; bracket: "spectator" | "player" }
+    player?: Member
   ): void {
     if (player)
       return this.ws.send({
