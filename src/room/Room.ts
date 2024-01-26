@@ -3,6 +3,20 @@ import User from "../user/User";
 import EventEmitter from "node:events";
 import Game from "../game/Game";
 
+function flattenObject(obj: Record<string, any>, prefix = "") {
+  return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
+    const pre = prefix.length ? prefix + "." : "";
+
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      Object.assign(acc, flattenObject(obj[key], pre + key));
+    } else {
+      acc[pre + key] = obj[key];
+    }
+
+    return acc;
+  }, {});
+}
+
 /** Represents the Client's room status. */
 export default class Room extends EventEmitter {
   constructor(ws: WebSocketManager) {
@@ -181,10 +195,7 @@ export default class Room extends EventEmitter {
    * })
    * ```
    */
-  public bracketSwitch(
-    data: "spectator" | "player",
-    player?: Member
-  ): void {
+  public bracketSwitch(data: "spectator" | "player", player?: Member): void {
     if (player)
       return this.ws.send({
         command: "room.bracket.move",
@@ -214,6 +225,23 @@ export default class Room extends EventEmitter {
   public start(): void {
     this.ws.send({ command: "room.start" });
   }
+
+  public setConfig(config: { index: string; value: any }[] | Record<string, any>) {
+    if (!Array.isArray(config)) {
+      this.ws.send({
+        command: "room.setconfig",
+        data: Object.entries(flattenObject(config)).map(([index, value]) => ({
+          index,
+          value: String(value),
+        })),
+      });
+    } else {
+      this.ws.send({
+        command: "room.setconfig",
+        data: config,
+      });
+    }
+  }
 }
 
 export default interface Room extends EventEmitter {
@@ -229,8 +257,10 @@ export default interface Room extends EventEmitter {
   /** Emitted when a player switches brackets. */
   on(eventName: "bracket", listener: (player: Member) => void): this;
 
+  /** Emitted when the game starts. */
   on(eventName: "start", listener: (game: Game) => void): this;
 
+  /** Emitted when the game ends. */
   on(eventName: "end", listener: () => void): this;
 }
 
