@@ -19,3 +19,11 @@ export default class Game extends EventEmitter {
 
   public players: Map<string, Player>;
 }
+
+export default interface Game extends EventEmitter {
+  /**  Emitted when the score updates. */
+  on(
+    eventName: "score",
+    listener: (data: { player: Player; success: boolean; wins: number }[], victor: Player) => void
+  ): this;
+}

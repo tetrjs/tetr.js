@@ -3,6 +3,7 @@ import WebSocketManager from "../WebSocketManager";
 
 export default async function (ws: WebSocketManager, { data }: any) {
   if (!ws.client.room?.game) return;
+
   let leaderboard: { player: Player; success: boolean; wins: number }[] = [];
   let victor!: Player;
 
@@ -19,8 +20,4 @@ export default async function (ws: WebSocketManager, { data }: any) {
   });
 
   ws.client.room.game.emit("score", leaderboard, victor);
-
-  ws.client.room.game.me?.end();
-
-  ws.client.room.emit("end");
 }
