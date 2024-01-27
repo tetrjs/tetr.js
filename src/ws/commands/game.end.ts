@@ -1,9 +1,10 @@
+import { Leaderboard } from "../../game/Game";
 import Player from "../../game/Player";
 import WebSocketManager from "../WebSocketManager";
 
 export default async function (ws: WebSocketManager, { data }: any) {
   if (!ws.client.room?.game) return;
-  let leaderboard: { player: Player; success: boolean; wins: number }[] = [];
+  let leaderboard: Leaderboard[] = [];
   let victor!: Player;
 
   (data.leaderboard as any[]).forEach((x) => {
@@ -15,6 +16,10 @@ export default async function (ws: WebSocketManager, { data }: any) {
       player,
       success: x.success,
       wins: x.wins,
+      active: x.active,
+      inputs: x.inputs,
+      naturalorder: x.naturalorder,
+      piecesplaced: x.piecesplaced,
     });
   });
 
@@ -22,5 +27,5 @@ export default async function (ws: WebSocketManager, { data }: any) {
 
   ws.client.room.game.me?.end();
 
-  ws.client.room.emit("end");
+  ws.client.room.emit("end", leaderboard, victor);
 }

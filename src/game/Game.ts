@@ -4,6 +4,16 @@ import ClientPlayer from "../client/ClientPlayer";
 import WebSocketManager from "../ws/WebSocketManager";
 import ClientUser from "../client/ClientUser";
 
+export interface Leaderboard {
+  player: Player;
+  success: boolean;
+  wins: number;
+  active: boolean;
+  inputs: number;
+  naturalorder: number;
+  piecesplaced: number;
+}
+
 export default class Game extends EventEmitter {
   constructor(ws: WebSocketManager, me: ClientUser, players: Player[]) {
     super();
@@ -22,8 +32,5 @@ export default class Game extends EventEmitter {
 
 export default interface Game extends EventEmitter {
   /**  Emitted when the score updates. */
-  on(
-    eventName: "score",
-    listener: (data: { player: Player; success: boolean; wins: number }[], victor: Player) => void
-  ): this;
+  on(eventName: "score", listener: (leaderboard: Leaderboard[], victor: Player) => void): this;
 }

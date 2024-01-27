@@ -1,7 +1,8 @@
 import WebSocketManager from "../ws/WebSocketManager";
 import User from "../user/User";
 import EventEmitter from "node:events";
-import Game from "../game/Game";
+import Game, { Leaderboard } from "../game/Game";
+import Player from "../game/Player";
 
 function flattenObject(obj: Record<string, any>, prefix = "") {
   return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
@@ -261,7 +262,7 @@ export default interface Room extends EventEmitter {
   on(eventName: "start", listener: (game: Game) => void): this;
 
   /** Emitted when the game ends. */
-  on(eventName: "end", listener: () => void): this;
+  on(eventName: "end", listener: (leaderboard: Leaderboard[], victor: Player) => void): this;
 }
 
 export type Member = {
