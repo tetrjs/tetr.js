@@ -18,6 +18,20 @@ function flattenObject(obj: Record<string, any>, prefix = "") {
   }, {});
 }
 
+function flattenObject(obj: Record<string, any>, prefix = "") {
+  return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
+    const pre = prefix.length ? prefix + "." : "";
+
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      Object.assign(acc, flattenObject(obj[key], pre + key));
+    } else {
+      acc[pre + key] = obj[key];
+    }
+
+    return acc;
+  }, {});
+}
+
 /** Represents the Client's room status. */
 export default class Room extends EventEmitter {
   constructor(ws: WebSocketManager) {
