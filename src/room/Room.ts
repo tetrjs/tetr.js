@@ -233,7 +233,7 @@ export default class Room extends EventEmitter {
         command: "room.setconfig",
         data: Object.entries(flattenObject(config)).map(([index, value]) => ({
           index,
-          value: String(value),
+          value: typeof value == "boolean" ? value : String(value),
         })),
       });
     } else {
