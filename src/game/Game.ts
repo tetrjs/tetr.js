@@ -25,6 +25,8 @@ export default class Game extends EventEmitter {
     if (me_) this.me = new ClientPlayer(ws, me_);
   }
 
+  public ended = false;
+
   public me?: ClientPlayer;
 
   public players: Map<string, Player>;

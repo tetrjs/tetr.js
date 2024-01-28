@@ -23,6 +23,8 @@ export default async function (ws: WebSocketManager, { data }: any) {
     });
   });
 
+  ws.client.room.game.ended = true;
+
   ws.client.room.game.emit("score", leaderboard, victor);
 
   ws.client.room.game.me?.end();
