@@ -27,9 +27,24 @@ export default class Game extends EventEmitter {
 
   public ended = false;
 
+  public replaySaved?: Promise<void>;
+  public endData?: any;
+  public replayData: any[] = [];
+
   public me?: ClientPlayer;
 
   public players: Map<string, Player>;
+
+  public async saveReplay() {
+    if (!this.endData.leaderboard || !this.replaySaved) throw new Error("The game has not ended!");
+    await this.replaySaved;
+    return JSON.stringify({
+      ismulti: !0,
+      data: this.replayData,
+      endcontext: this.endData.leaderboard,
+      ts: new Date().toISOString(),
+    });
+  }
 }
 
 export default interface Game extends EventEmitter {
