@@ -27,9 +27,22 @@ export default class Game extends EventEmitter {
 
   public ended = false;
 
+  public endData?: any;
+  public replayData: any[] = [];
+
   public me?: ClientPlayer;
 
   public players: Map<string, Player>;
+
+  public saveReplay() {
+    if (!this.endData.leaderboard) throw new Error("The game has not ended!");
+    return JSON.stringify({
+      ismulti: !0,
+      data: this.replayData,
+      endcontext: this.endData.leaderboard,
+      ts: new Date().toISOString(),
+    });
+  }
 }
 
 export default interface Game extends EventEmitter {
