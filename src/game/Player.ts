@@ -5,13 +5,14 @@ export default class Player {
     this.id = player.gameid;
     this.user = user;
     this.options = player.options;
-    this.board = new Array(
-      player.options.boardheight + player.options.boardbuffer
-    ).fill(new Array(player.options.boardwidth).fill(null));
+    this.board = new Array(player.options.boardheight + player.options.boardbuffer).fill(
+      new Array(player.options.boardwidth).fill(null)
+    );
   }
 
   public id: string;
   public user: User;
   public options: any;
   public board: any;
+  public replayFrames: any[] = [];
 }
