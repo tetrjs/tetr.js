@@ -27,6 +27,7 @@ export default class Game extends EventEmitter {
 
   public ended = false;
 
+  public replaySaved?: Promise<void>;
   public endData?: any;
   public replayData: any[] = [];
 
@@ -34,8 +35,9 @@ export default class Game extends EventEmitter {
 
   public players: Map<string, Player>;
 
-  public saveReplay() {
-    if (!this.endData.leaderboard) throw new Error("The game has not ended!");
+  public async saveReplay() {
+    if (!this.endData.leaderboard || !this.replaySaved) throw new Error("The game has not ended!");
+    await this.replaySaved;
     return JSON.stringify({
       ismulti: !0,
       data: this.replayData,
