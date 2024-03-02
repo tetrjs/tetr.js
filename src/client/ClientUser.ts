@@ -172,16 +172,10 @@ export default class ClientUser extends EventEmitter {
 
 export default interface Client extends EventEmitter {
   /** Emitted when a user sends a direct message to the client. */
-  on(
-    eventName: "dm",
-    listener: (message: { content: string; author: User }) => void
-  ): this;
+  on(eventName: "dm", listener: (message: { content: string; author: User }) => void): this;
 
   /** Emitted when a user sends an invite to the client.*/
-  on(
-    eventName: "invite",
-    listener: (invite: { room: string; author: User }) => void
-  ): this;
+  on(eventName: "invite", listener: (invite: { room: string; author: User }) => void): this;
 
   /** Emitted when the server sends an update on how many users online. */
   on(eventName: "online", listener: (online: number) => void): this;
