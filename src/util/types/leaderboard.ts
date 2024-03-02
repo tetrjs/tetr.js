@@ -1,6 +1,6 @@
 import { LeagueInfosType, RoleType } from ".";
 
-export type Base_Leaderboard_UserInfoType = {
+export type BaseLeaderboardUserInfoType = {
   /** The user's internal ID. */
   _id: string;
   /** The user's username. */
@@ -17,12 +17,12 @@ export type Base_Leaderboard_UserInfoType = {
   verified: boolean;
 };
 
-export type TL_Leaderboard_UserInfoType = Base_Leaderboard_UserInfoType & {
+export type LeagueLeaderboardUserInfoType = BaseLeaderboardUserInfoType & {
   /** This user's current TETRA LEAGUE standing: */
   league: LeagueInfosType;
 };
 
-export type XP_Leaderboard_UserInfoType = Base_Leaderboard_UserInfoType & {
+export type XPLeaderboardUserInfoType = BaseLeaderboardUserInfoType & {
   /** When the user account was created. If not set, this account was created before join dates were recorded. */
   ts?: string;
   /** The amount of online games played by this user. If the user has chosen to hide this statistic, it will be -1. */

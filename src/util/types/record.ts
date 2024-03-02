@@ -60,19 +60,16 @@ export type streamID = `${"40l" | "blitz" | "any"}_${"global" | "userbest" | "us
 /** News Records */
 
 export type LatestNewsType = {
-  /** The latest news items: */
-  news: {
-    /** The item's internal ID. */
-    _id: string;
-    /** The item's stream. */
-    stream: string;
-    /** The item's type. */
-    type: string;
-    /** The item's records. */
-    data: NewsRecordsType;
-    /** The item's creation date. */
-    ts: string;
-  };
+  /** The item's internal ID. */
+  _id: string;
+  /** The item's stream. */
+  stream: string;
+  /** The item's type. */
+  type: string;
+  /** The item's records. */
+  data: NewsRecordsType;
+  /** The item's creation date. */
+  ts: string;
 };
 
 export type NewsRecordsType =
