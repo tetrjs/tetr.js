@@ -12,7 +12,7 @@ export default class ClientUser extends EventEmitter {
 
     if (me.role !== "bot")
       throw new Error(
-        `Client "${me.username}" is not a bot account. Contact osk (https://osk.sh/) to apply for a bot account.`
+        `Client "${me.username}" is not a bot account. Contact TETR.IO Support (https://tetr.io/about/support/) to apply for a bot account.`
       );
 
     this.user = user;
