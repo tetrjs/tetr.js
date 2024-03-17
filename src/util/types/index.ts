@@ -1,8 +1,8 @@
 export type APIResponse = any;
 
-export * from "./General";
-export * from "./League";
-export * from "./User";
-export * from "./Leaderboard";
-export * from "./Record";
-export * from "./News";
+export * from "./general";
+export * from "./league";
+export * from "./user";
+export * from "./leaderboard";
+export * from "./record";
+export * from "./news";
